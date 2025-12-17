@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const sqlite3 = require('sqlite3').verbose();
+
 require('dotenv').config();
 
 const app = express();
@@ -19,16 +19,7 @@ app.use((req, res, next) => {
 });
 
 // Database Connection
-const dbPath = path.resolve(__dirname, 'db', 'database.sqlite');
-const db = new sqlite3.Database(dbPath, (err) => {
-    if (err) {
-        console.error('Error opening database ' + dbPath + ': ' + err.message);
-    } else {
-        console.log('Connected to the SQLite database.');
-        // Enable foreign keys
-        db.run("PRAGMA foreign_keys = ON");
-    }
-});
+const db = require('./db/connection');
 
 // Make db accessible to router and ensure schema updates
 app.use((req, res, next) => {
@@ -38,19 +29,25 @@ app.use((req, res, next) => {
 
 // AUTO-MIGRATION to add level/xp/avatar if missing
 db.serialize(() => {
-    db.run("ALTER TABLE users ADD COLUMN level INTEGER DEFAULT 1", (err) => { });
-    db.run("ALTER TABLE users ADD COLUMN xp INTEGER DEFAULT 0", (err) => { });
-    db.run("ALTER TABLE users ADD COLUMN avatar TEXT", (err) => { });
-    db.run("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'", (err) => { });
+    // Helper to ignore errors (e.g. column already exists)
+    const ignoreErr = (err) => { };
+
+    db.run("ALTER TABLE users ADD COLUMN level INTEGER DEFAULT 1", ignoreErr);
+    db.run("ALTER TABLE users ADD COLUMN xp INTEGER DEFAULT 0", ignoreErr);
+    db.run("ALTER TABLE users ADD COLUMN avatar TEXT", ignoreErr);
+    db.run("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'", ignoreErr);
 
     // Create Promotions table if not exists
+    // Handle syntax difference for Auto Increment
+    const autoInc = db.isMysql ? "AUTO_INCREMENT" : "AUTOINCREMENT";
+
     db.run(`CREATE TABLE IF NOT EXISTS promotions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER PRIMARY KEY ${autoInc},
         title TEXT NOT NULL,
         description TEXT,
         active BOOLEAN DEFAULT 1,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )`);
+    )`, ignoreErr);
 });
 
 // Static Files
