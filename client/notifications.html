@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificações - Manicure</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container pb-5">
+        <div class="p-4">
+            <button onclick="history.back()" class="btn-outline"
+                style="width: auto; padding: 0.5rem 1rem; margin-bottom: 1rem;">← Voltar</button>
+            <h1>Notificações</h1>
+            <div id="notifList" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                <p>Carregando...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const list = document.getElementById('notifList');
+            try {
+                // Mark all as read when opening page
+                api.post('/notifications/mark-read', {});
+
+                const notifs = await api.get('/notifications');
+                if (notifs.length === 0) {
+                    list.innerHTML = '<p class="text-light">Nenhuma notificação.</p>';
+                    return;
+                }
+
+                list.innerHTML = notifs.map(n => `
+                    <div class="card" style="margin-bottom: 0.5rem; ${n.read ? 'opacity: 0.7;' : ''}">
+                        <h3 style="font-size: 1rem; margin-bottom: 0.25rem;">${n.title}</h3>
+                        <p style="font-size: 0.9rem;">${n.message}</p>
+                        <span style="font-size: 0.7rem; color: var(--text-light);">${new Date(n.created_at).toLocaleString('pt-BR')}</span>
+                    </div>
+                `).join('');
+            } catch (e) {
+                list.innerHTML = '<p>Erro ao carregar notificações.</p>';
+            }
+        });
+    </script>
+</body>
+
+</html>

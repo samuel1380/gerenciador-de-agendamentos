@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendamentos - Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">Admin Panel</div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link"><i class="ph-duotone ph-squares-four icon-dashboard"></i>
+                Dashboard</a>
+            <a href="financials.html" class="nav-link"><i class="ph-duotone ph-chart-line-up icon-finance"></i>
+                Financeiro</a>
+            <a href="users.html" class="nav-link"><i class="ph-duotone ph-users-three icon-users"></i> Clientes</a>
+            <a href="appointments.html" class="nav-link active"><i
+                    class="ph-duotone ph-calendar-check icon-appointments"></i> Agendamentos</a>
+            <a href="services.html" class="nav-link"><i class="ph-duotone ph-sparkle icon-services"></i> Serviços</a>
+            <a href="promotions.html" class="nav-link"><i class="ph-duotone ph-tag icon-promo"></i> Promoções</a>
+            <a href="schedule-settings.html" class="nav-link"><i class="ph-duotone ph-clock icon-time"></i> Horários</a>
+            <a href="notifications-admin.html" class="nav-link"><i class="ph-duotone ph-bell-ringing icon-bell"></i>
+                Notificações</a>
+            <a href="settings.html" class="nav-link"><i class="ph-duotone ph-trophy icon-game"></i> Gamificação</a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <div class="header" style="margin-bottom: 2rem;">
+            <div>
+                <h1>Gestão de Agendamentos</h1>
+                <p style="color: var(--text-light); margin-top: 4px;">Gerencie, filtre e exporte os atendimentos do seu
+                    salão.</p>
+            </div>
+            <button onclick="exportCSV()" class="btn btn-outline"
+                style="border-color: var(--primary); color: var(--primary);">
+                <i class="ph-bold ph-download-simple"></i> Exportar Relatório
+            </button>
+        </div>
+
+        <!-- Filters Bar -->
+        <div class="card-modern" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+            <div class="filters-grid">
+                <div class="filter-group search-full">
+                    <label>Buscar</label>
+                    <div class="input-group-modern">
+                        <i class="ph-bold ph-magnifying-glass"></i>
+                        <input type="text" id="searchInput" placeholder="Nome do cliente ou serviço"
+                            class="filter-input input-with-icon">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="statusFilter" class="filter-input">
+                        <option value="">Todos</option>
+                        <option value="pending">Pendentes</option>
+                        <option value="accepted">Aceitos</option>
+                        <option value="completed">Concluídos</option>
+                        <option value="cancelled">Cancelados</option>
+                        <option value="rejected">Recusados</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>Ordenação</label>
+                    <select id="sortFilter" class="filter-input">
+                        <option value="recent">Mais Recentes</option>
+                        <option value="oldest">Mais Antigos</option>
+                        <option value="upcoming">Próximos</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label>De (Início)</label>
+                    <div class="input-group-modern">
+                        <i class="ph-bold ph-calendar-blank"></i>
+                        <input type="date" id="dateStart" class="filter-input input-with-icon">
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <label>Até (Fim)</label>
+                    <div class="input-group-modern">
+                        <i class="ph-bold ph-calendar-blank"></i>
+                        <input type="date" id="dateEnd" class="filter-input input-with-icon">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-modern">
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="padding:12px;">ID</th>
+                            <th>Cliente</th>
+                            <th>Serviço</th>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="editModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items:center; justify-content:center;">
+        <div class="card-modern" style="width: 400px; max-width: 90%; animation: slideInUp 0.3s ease-out;">
+            <h3 style="margin-bottom: 1.5rem; color: var(--text-main);">🗓️ Reagendar Atendimento</h3>
+            <form id="editForm">
+                <input type="hidden" name="id">
+                <div style="display: grid; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label>Nova Data</label>
+                        <input type="date" name="date" class="input" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nova Hora</label>
+                        <input type="time" name="time" class="input" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="closeEdit()" class="btn btn-outline"
+                        style="border-color: var(--border); color: var(--text-secondary);">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="../client/js/api.js"></script>
+    <script src="../client/js/toast.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/pages/appointments.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financeiro - Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">Admin Panel</div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link"><i class="ph-duotone ph-squares-four icon-dashboard"></i>
+                Dashboard</a>
+            <a href="financials.html" class="nav-link active"><i class="ph-duotone ph-chart-line-up icon-finance"></i>
+                Financeiro</a>
+            <a href="users.html" class="nav-link"><i class="ph-duotone ph-users-three icon-users"></i> Clientes</a>
+            <a href="appointments.html" class="nav-link"><i class="ph-duotone ph-calendar-check icon-appointments"></i>
+                Agendamentos</a>
+            <a href="services.html" class="nav-link"><i class="ph-duotone ph-sparkle icon-services"></i> Serviços</a>
+            <a href="promotions.html" class="nav-link"><i class="ph-duotone ph-tag icon-promo"></i> Promoções</a>
+            <a href="schedule-settings.html" class="nav-link"><i class="ph-duotone ph-clock icon-time"></i> Horários</a>
+            <a href="notifications-admin.html" class="nav-link"><i class="ph-duotone ph-bell-ringing icon-bell"></i>
+                Notificações</a>
+            <a href="settings.html" class="nav-link"><i class="ph-duotone ph-trophy icon-game"></i> Gamificação</a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <div class="header" style="margin-bottom: 2rem;">
+            <div>
+                <h1>Gestão Financeira</h1>
+                <p style="color: var(--text-light); margin-top: 4px;">Acompanhe o desempenho e o resultado do seu
+                    negócio.</p>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card finance">
+                <div class="stat-icon" style="background: rgba(255,255,255,0.2); color:white;">
+                    <i class="ph-bold ph-currency-dollar"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Faturamento Total</span>
+                    <span class="stat-value" id="totalRevenue">R$ 0,00</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--success-bg); color: var(--success);">
+                    <i class="ph-bold ph-trend-up"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Este Mês</span>
+                    <span class="stat-value" id="monthRevenue">R$ 0,00</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--info-bg); color: var(--info);">
+                    <i class="ph-bold ph-chart-bar"></i>
+                </div>
+                <div class="stat-content">
+                    <span class="stat-label">Hoje</span>
+                    <span class="stat-value" id="todayRevenue">R$ 0,00</span>
+                </div>
+            </div>
+        </div>
+
+        <div
+            style="display:grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap:2rem; margin-top:2rem;">
+            <!-- Service Performance -->
+            <div class="card-modern">
+                <h3 style="margin-bottom: 1.5rem; color: var(--text-main);">
+                    <i class="ph-duotone ph-sparkle" style="margin-right: 8px; color: var(--warning);"></i>
+                    Faturamento por Serviço
+                </h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Serviço</th>
+                                <th>Qtd</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="serviceRevenueTable">
+                            <!-- JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="card-modern">
+                <h3 style="margin-bottom: 1.5rem; color: var(--text-main);">
+                    <i class="ph-duotone ph-receipt" style="margin-right: 8px; color: var(--primary);"></i>
+                    Últimas Transações
+                </h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th>Serviço</th>
+                                <th>Valor</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentTransactionsTable">
+                            <!-- JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="../client/js/api.js"></script>
+    <script src="../client/js/toast.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/pages/financials.js"></script>
+</body>
+
+</html>

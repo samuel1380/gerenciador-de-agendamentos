@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Clientes - Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">Admin Panel</div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link"><i class="ph-duotone ph-squares-four icon-dashboard"></i>
+                Dashboard</a>
+            <a href="financials.html" class="nav-link"><i class="ph-duotone ph-chart-line-up icon-finance"></i>
+                Financeiro</a>
+            <a href="users.html" class="nav-link active"><i class="ph-duotone ph-users-three icon-users"></i>
+                Clientes</a>
+            <a href="appointments.html" class="nav-link"><i class="ph-duotone ph-calendar-check icon-appointments"></i>
+                Agendamentos</a>
+            <a href="services.html" class="nav-link"><i class="ph-duotone ph-sparkle icon-services"></i> Serviços</a>
+            <a href="promotions.html" class="nav-link"><i class="ph-duotone ph-tag icon-promo"></i> Promoções</a>
+            <a href="schedule-settings.html" class="nav-link"><i class="ph-duotone ph-clock icon-time"></i> Horários</a>
+            <a href="notifications-admin.html" class="nav-link"><i class="ph-duotone ph-bell-ringing icon-bell"></i>
+                Notificações</a>
+            <a href="settings.html" class="nav-link"><i class="ph-duotone ph-trophy icon-game"></i> Gamificação</a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <div class="header" style="margin-bottom: 2rem;">
+            <h1>Gestão de Clientes</h1>
+            <p style="color: var(--text-light); margin-top: 4px;">Visualize o histórico, LTV e gerencie o status dos
+                seus clientes.</p>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="card-modern" style="margin-bottom: 2rem; padding: 1.5rem;">
+            <div class="filters-grid" style="grid-template-columns: 3fr 1fr;">
+                <div class="filter-group">
+                    <label>Buscar Cliente</label>
+                    <div class="input-group-modern">
+                        <i class="ph-bold ph-magnifying-glass"></i>
+                        <input type="text" id="userSearch" placeholder="Nome, Email ou Telefone..."
+                            class="filter-input input-with-icon" onkeyup="filterUsers()">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label>Ordenar por</label>
+                    <select id="userSort" class="filter-input" onchange="sortUsers()">
+                        <option value="recent">Mais Recentes</option>
+                        <option value="ltv">Maior LTV (Gasto)</option>
+                        <option value="appointments">Mais Agendamentos</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-modern">
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Cliente</th>
+                            <th>Nível</th>
+                            <th>LTV (Total Gasto)</th>
+                            <th>Agendamentos</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersList">
+                        <!-- Loaded via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="userModal"
+        style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:9999; background:rgba(0,0,0,0.5); backdrop-filter: blur(4px); align-items:center; justify-content:center;">
+        <div class="card-modern"
+            style="width: 700px; max-width: 90%; max-height: 90vh; overflow-y: auto; animation: slideInUp 0.3s ease-out; position: relative;">
+            <button onclick="document.getElementById('userModal').style.display='none'" class="btn-icon"
+                style="position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.2rem;">
+                <i class="ph-bold ph-x"></i>
+            </button>
+            <div id="modalContent">
+                <!-- Details Loaded via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script src="../client/js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script src="js/pages/users.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Estilo - Manicure</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container pb-5">
+        <div class="p-4">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <button onclick="history.back()" class="btn-outline"
+                    style="width: auto; padding: 0.5rem 1rem; border:none; box-shadow:none;">
+                    <span style="font-size: 1.2rem;">←</span>
+                </button>
+                <span style="font-size: 0.9rem; color: var(--text-light); font-weight: 600;">Quiz de Estilo</span>
+                <div style="width: 24px;"></div> <!-- Spacer -->
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="quiz-progress">
+                <div class="quiz-progress-bar" id="progressBar"></div>
+            </div>
+
+            <div id="quizContainer" class="quiz-container">
+                <div id="questionBox" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <h2 id="questionText" class="quiz-question-title">Pergunta...</h2>
+                    <div id="optionsList">
+                        <!-- Options injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="resultBox" class="hidden text-center result-card-anim" style="padding-top: 2rem;">
+                <div style="font-size: 4rem; margin-bottom: 1rem;">✨</div>
+                <h1 style="font-size: 2rem;">Seu Match!</h1>
+                <p class="text-light mb-4">Baseado nas suas escolhas, seu estilo ideal é:</p>
+
+                <div class="card"
+                    style="background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; margin-bottom: 2rem; border: none; padding: 2rem;">
+                    <h2 id="resultTitle" style="color: white; font-size: 2rem; margin-bottom: 0.5rem;">Estilo X</h2>
+                    <p id="resultDesc" style="font-size: 1.1rem; opacity: 0.9;">Descrição do estilo...</p>
+                </div>
+
+                <button onclick="saveAndRedirect()" class="btn"
+                    style="font-size: 1.1rem; padding: 1.25rem; box-shadow: 0 10px 25px rgba(224, 141, 157, 0.4);">
+                    Agendar Serviço Recomendado
+                </button>
+                <button onclick="location.reload()" class="btn-outline"
+                    style="margin-top: 1rem; border: 2px solid var(--text-light); color: var(--text); padding: 1rem; font-weight: 600; border-radius: var(--radius); width: 100%; transition: all 0.3s ease;">
+                    ↻ Refazer Quiz
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        const questions = [
+            {
+                text: "Qual sua cor favorita para unhas?",
+                options: [
+                    { text: "Nude, Rosê ou Branco Transparente", score: 1 },
+                    { text: "Vermelho, Vinho ou Preto", score: 2 },
+                    { text: "Neon, Glitter ou Multicolorido", score: 3 },
+                    { text: "Tons Pastéis (Lavanda, Menta, Bebê)", score: 2 }
+                ]
+            },
+            {
+                text: "Qual tamanho de unha você costuma usar?",
+                options: [
+                    { text: "Curta e Prática", score: 1 },
+                    { text: "Média (passando a ponta do dedo)", score: 2 },
+                    { text: "Longa e Poderosa", score: 3 },
+                    { text: "Extra Longa (Stiletto/Bailarina)", score: 3 }
+                ]
+            },
+            {
+                text: "Qual formato você prefere?",
+                options: [
+                    { text: "Quadrada ou Quadrada com cantos arredondados", score: 1 },
+                    { text: "Redonda ou Oval", score: 1 },
+                    { text: "Almond (Amendoada)", score: 2 },
+                    { text: "Stiletto ou Bailarina", score: 3 }
+                ]
+            },
+            {
+                text: "Como é a sua rotina diária?",
+                options: [
+                    { text: "Muitas tarefas manuais (casa, artesanato, digitação intensa)", score: 1 },
+                    { text: "Equilibrada, uso as mãos mas com cuidado", score: 2 },
+                    { text: "Tranquila, evito impactos nas unhas", score: 3 }
+                ]
+            },
+            {
+                text: "O que você acha de Nail Art (decoração)?",
+                options: [
+                    { text: "Prefiro sem nada, apenas esmalte liso", score: 1 },
+                    { text: "Uma filha única ou francesinha discreta", score: 2 },
+                    { text: "Pedrarias simples ou glitter encapsulado", score: 3 },
+                    { text: "Desenhos elaborados, 3D e muito brilho!", score: 4 }
+                ]
+            },
+            {
+                text: "Qual acabamento você mais gosta?",
+                options: [
+                    { text: "Extra Brilho (Verniz)", score: 2 },
+                    { text: "Fosco (Matte)", score: 3 },
+                    { text: "Cintilante ou Perolado", score: 1 }
+                ]
+            },
+            {
+                text: "Com que frequência você faz as unhas?",
+                options: [
+                    { text: "Toda semana religiosamente", score: 2 },
+                    { text: "A cada 15 dias (manutenção)", score: 2 },
+                    { text: "Apenas em ocasiões especiais", score: 1 }
+                ]
+            },
+            {
+                text: "Você costuma usar anéis e pulseiras?",
+                options: [
+                    { text: "Raramente uso acessórios", score: 1 },
+                    { text: "Uso peças delicadas e finas", score: 2 },
+                    { text: "Adoro anéis grandes e mix de acessórios", score: 3 }
+                ]
+            }
+        ];
+
+        let currentQ = 0;
+        let totalScore = 0;
+        let answers = [];
+
+        function updateProgress() {
+            const pct = ((currentQ + 1) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+        }
+
+        function renderQuestion() {
+            updateProgress();
+            const q = questions[currentQ];
+
+            // Fade out effect
+            const container = document.getElementById('quizContainer');
+            container.style.opacity = '0';
+
+            setTimeout(() => {
+                document.getElementById('questionText').textContent = q.text;
+                const opts = document.getElementById('optionsList');
+                opts.innerHTML = '';
+
+                q.options.forEach(opt => {
+                    const div = document.createElement('div');
+                    div.className = 'quiz-option';
+                    div.textContent = opt.text;
+                    div.onclick = () => selectOption(opt);
+                    opts.appendChild(div);
+                });
+                container.style.opacity = '1';
+            }, 200);
+        }
+
+        function selectOption(opt) {
+            totalScore += opt.score;
+            answers.push(opt.text);
+            currentQ++;
+            if (currentQ < questions.length) {
+                renderQuestion();
+            } else {
+                showResult();
+            }
+        }
+
+        function showResult() {
+            document.getElementById('quizContainer').classList.add('hidden');
+            document.querySelector('.quiz-progress').classList.add('hidden');
+            const resBox = document.getElementById('resultBox');
+            resBox.classList.remove('hidden');
+
+            let title = "";
+            let desc = "";
+
+            if (totalScore <= 4) {
+                title = "Clássica & Elegante";
+                desc = "Você prefere tons discretos e atemporais. Recomendamos a Manicure Completa com esmaltação tradicional.";
+            } else if (totalScore <= 7) {
+                title = "Moderna & Chic";
+                desc = "Você gosta de estar na moda mas sem exageros. Que tal experimentar um tom vibrante ou uma leve nail art?";
+            } else {
+                title = "Ousada & Criativa";
+                desc = "Você adora chamar atenção! Unhas decoradas, alongamentos e formatos ousados são sua cara.";
+            }
+
+            document.getElementById('resultTitle').textContent = title;
+            document.getElementById('resultDesc').textContent = desc;
+        }
+
+        async function saveAndRedirect() {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const response = await api.post('/quiz/result', { score: totalScore, answers: answers });
+
+                    // Update local user if level changed or xp changed
+                    const currentUser = JSON.parse(localStorage.getItem('user'));
+                    if (currentUser) {
+                        currentUser.level = response.level;
+                        currentUser.xp = response.xp;
+                        localStorage.setItem('user', JSON.stringify(currentUser));
+                    }
+
+                    // Show XP gain alert
+                    // The instruction provided an estimated XP calculation, but it's safer to rely on the server's message if available.
+                    // If the server provides a specific message (e.g., "Level Up!"), use that.
+                    if (response.message) {
+                        alert(response.message);
+                    } else {
+                        // Fallback if no specific message, or combine with XP gain
+                        alert(`🎉 Quiz Concluído!\n\nVocê ganhou XP!\nConfira seu novo progresso no perfil.`);
+                    }
+
+                    window.location.href = 'profile.html';
+                } catch (error) {
+                    // If 429 (Too Many Requests), show specific limit message
+                    if (error.message && error.message.includes('429')) { // Check error.message for 429
+                        alert('⚠️ Você atingiu o limite diário de Quizzes!\n\nTente novamente amanhã para ganhar mais XP.');
+                        window.location.href = 'profile.html';
+                        return;
+                    }
+
+                    // If it's a regular error but we have the response object from api.js error throw
+                    if (error.response && error.response.status === 429) {
+                        alert('⚠️ Limite diário de quizzes atingido!');
+                        window.location.href = 'profile.html'; // Redirect to profile for 429 from response
+                        return;
+                    } else {
+                        console.error('Erro ao salvar quiz:', error);
+                        // Show specific server error if available
+                        const msg = error.message || 'Erro ao salvar resultado. Tente novamente.';
+                        alert(`Erro: ${msg}`);
+                    }
+                    // If it's any other error, we still redirect to services.html
+                    window.location.href = 'services.html';
+                }
+            } else {
+                alert('Crie uma conta para salvar seu resultado! Redirecionando para cadastro...');
+                window.location.href = 'register.html';
+                return;
+            }
+        }
+
+        renderQuestion();
+    </script>
+</body>
+
+</html>

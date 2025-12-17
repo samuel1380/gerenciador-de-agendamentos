@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">Admin Panel</div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link"><i class="ph-duotone ph-squares-four icon-dashboard"></i>
+                Dashboard</a>
+            <a href="financials.html" class="nav-link"><i class="ph-duotone ph-chart-line-up icon-finance"></i>
+                Financeiro</a>
+            <a href="users.html" class="nav-link"><i class="ph-duotone ph-users-three icon-users"></i> Clientes</a>
+            <a href="appointments.html" class="nav-link"><i class="ph-duotone ph-calendar-check icon-appointments"></i>
+                Agendamentos</a>
+            <a href="services.html" class="nav-link"><i class="ph-duotone ph-sparkle icon-services"></i> Serviços</a>
+            <a href="promotions.html" class="nav-link"><i class="ph-duotone ph-tag icon-promo"></i> Promoções</a>
+            <a href="schedule-settings.html" class="nav-link"><i class="ph-duotone ph-clock icon-time"></i> Horários</a>
+            <a href="notifications-admin.html" class="nav-link"><i class="ph-duotone ph-bell-ringing icon-bell"></i>
+                Notificações</a>
+            <a href="settings.html" class="nav-link active"><i class="ph-duotone ph-trophy icon-game"></i>
+                Gamificação</a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <h1>Configurações de Pontuação</h1>
+        <p style="margin-bottom: 2rem; color: var(--text-light);">Configure os limites e recompensas do sistema de
+            gamificação.</p>
+
+        <div class="card-modern" style="max-width: 600px;">
+            <form id="settingsForm">
+                <div style="display: grid; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label>Limite Diário de Quiz</label>
+                        <input type="number" id="quizLimit" name="quiz_daily_limit" class="input" min="1" max="10"
+                            required>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Quantos quizzes um
+                            usuário pode fazer por dia</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>XP por Quiz</label>
+                        <input type="number" id="quizXp" name="quiz_xp_reward" class="input" min="10" max="500"
+                            step="10" required>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Pontos de
+                            experiência ganhos ao completar um quiz</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>XP por Agendamento Concluído</label>
+                        <input type="number" id="appointmentXp" name="appointment_xp_reward" class="input" min="10"
+                            max="500" step="10" required>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Pontos ganhos
+                            quando um agendamento é marcado como concluído</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>XP Necessário por Nível</label>
+                        <input type="number" id="xpPerLevel" name="xp_per_level" class="input" min="100" max="1000"
+                            step="50" required>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Quantidade de XP
+                            necessária para subir cada nível</p>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Salvar Configurações</button>
+                </div>
+            </form>
+
+            <div id="statusMessage" style="margin-top: 1rem; display: none;" class="alert"></div>
+        </div>
+    </div>
+
+    <script src="../client/js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', loadSettings);
+
+        async function loadSettings() {
+            try {
+                const settings = await api.get('/admin/settings');
+
+                document.getElementById('quizLimit').value = settings.quiz_daily_limit || 3;
+                document.getElementById('quizXp').value = settings.quiz_xp_reward || 50;
+                document.getElementById('appointmentXp').value = settings.appointment_xp_reward || 100;
+                document.getElementById('xpPerLevel').value = settings.xp_per_level || 200;
+            } catch (e) {
+                console.error('Error loading settings:', e);
+            }
+        }
+
+        document.getElementById('settingsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const settings = Object.fromEntries(formData.entries());
+
+            try {
+                await api.post('/admin/settings', settings);
+                showMessage('Configurações salvas com sucesso!', 'success');
+            } catch (err) {
+                showMessage('Erro ao salvar: ' + err.message, 'error');
+            }
+        });
+
+        function showMessage(text, type) {
+            const msg = document.getElementById('statusMessage');
+            msg.textContent = text;
+            msg.className = `alert alert-${type}`;
+            msg.style.display = 'block';
+            setTimeout(() => msg.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+
+</html>

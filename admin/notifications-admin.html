@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificações - Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">Admin Panel</div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link"><i class="ph-duotone ph-squares-four icon-dashboard"></i>
+                Dashboard</a>
+            <a href="financials.html" class="nav-link"><i class="ph-duotone ph-chart-line-up icon-finance"></i>
+                Financeiro</a>
+            <a href="users.html" class="nav-link"><i class="ph-duotone ph-users-three icon-users"></i> Clientes</a>
+            <a href="appointments.html" class="nav-link"><i class="ph-duotone ph-calendar-check icon-appointments"></i>
+                Agendamentos</a>
+            <a href="services.html" class="nav-link"><i class="ph-duotone ph-sparkle icon-services"></i> Serviços</a>
+            <a href="promotions.html" class="nav-link"><i class="ph-duotone ph-tag icon-promo"></i> Promoções</a>
+            <a href="schedule-settings.html" class="nav-link"><i class="ph-duotone ph-clock icon-time"></i> Horários</a>
+            <a href="notifications-admin.html" class="nav-link active"><i
+                    class="ph-duotone ph-bell-ringing icon-bell"></i> Notificações</a>
+            <a href="settings.html" class="nav-link"><i class="ph-duotone ph-trophy icon-game"></i> Gamificação</a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <h1>Enviar Notificações</h1>
+        <p style="margin-bottom: 2rem; color: var(--text-light);">Envie mensagens personalizadas para seus clientes.</p>
+
+        <div class="card-modern" style="max-width: 600px;">
+            <form id="notifForm">
+                <div style="display: grid; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label>Destinatário</label>
+                        <select id="targetSelect" name="target" class="input" onchange="toggleEmail()" required>
+                            <option value="all">Todos os Clientes</option>
+                            <option value="email">Cliente Específico (Email)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="emailGroup" style="display: none;">
+                        <label>Email do Cliente</label>
+                        <input type="email" name="email" class="input" placeholder="cliente@exemplo.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Título</label>
+                        <input type="text" name="title" class="input" placeholder="Ex: Promoção Relâmpago!" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mensagem</label>
+                        <textarea name="message" class="input" rows="4" placeholder="Escreva sua mensagem aqui..."
+                            required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Enviar Notificação <i
+                            class="ph-bold ph-paper-plane-right"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../client/js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script>
+        function toggleEmail() {
+            const val = document.getElementById('targetSelect').value;
+            const group = document.getElementById('emailGroup');
+            group.style.display = val === 'email' ? 'block' : 'none';
+            const input = group.querySelector('input');
+            if (val === 'email') input.setAttribute('required', 'true');
+            else input.removeAttribute('required');
+        }
+
+        document.getElementById('notifForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const res = await api.post('/notifications/send', data);
+                alert('Sucesso: ' + res.message);
+                e.target.reset();
+                toggleEmail();
+            } catch (err) {
+                alert('Erro: ' + err.message);
+            }
+        });
+    </script>
+</body>
+
+</html>

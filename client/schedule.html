@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar - Manicure</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container pb-5">
+        <div class="p-4">
+            <!-- Header -->
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                <button onclick="history.back()" class="btn-icon-back" title="Voltar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 12H5"></path>
+                        <path d="M12 19l-7-7 7-7"></path>
+                    </svg>
+                </button>
+                <h1
+                    style="font-size: 1.5rem; margin: 0; color: var(--primary-dark); font-family: 'Playfair Display', serif;">
+                    Agendar Horário</h1>
+            </div>
+
+            <form id="bookingForm" class="fade-in-up">
+                <div class="form-group">
+                    <label class="form-label"
+                        style="font-size: 1rem; color: var(--text); font-weight: 600; margin-bottom: 0.75rem;">Escolha a
+                        Data</label>
+                    <input type="date" id="dateInput" class="form-input" required>
+                </div>
+
+                <div id="slotsContainer" class="hidden" style="margin-top: 2rem;">
+                    <label class="form-label"
+                        style="font-size: 1rem; color: var(--text); font-weight: 600; margin-bottom: 0.75rem;">Horários
+                        Disponíveis</label>
+                    <div id="slotsGrid" class="slot-grid"></div>
+                </div>
+
+                <input type="hidden" id="selectedTime">
+                <input type="hidden" id="serviceId">
+
+                <div class="form-group slide-in-up" style="animation-delay: 0.2s;">
+                    <label class="form-label">
+                        <span style="font-size: 1.1rem; vertical-align: middle; margin-right: 8px;">📝</span>
+                        Alguma observação?
+                    </label>
+                    <textarea id="noteInput" class="form-input"
+                        placeholder="Ex: Gostaria de unhas de gel, tenho alergia a..." rows="4"></textarea>
+                    <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 6px; margin-left: 4px;">
+                        Opcional. Nos ajude a preparar seu atendimento com carinho.</p>
+                </div>
+
+                <button type="submit" id="confirmBtn" class="btn mt-4" disabled>Confirmar Agendamento</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const serviceId = urlParams.get('service');
+            if (!serviceId) { alert('Serviço não selecionado'); window.location.href = 'services.html'; }
+            document.getElementById('serviceId').value = serviceId;
+
+            // Set min date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const dateInput = document.getElementById('dateInput');
+            dateInput.min = new Date().toISOString().split('T')[0];
+            dateInput.value = tomorrow.toISOString().split('T')[0];
+
+            loadSlots(dateInput.value);
+
+            dateInput.addEventListener('change', (e) => loadSlots(e.target.value));
+
+            document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const date = dateInput.value;
+                const time = document.getElementById('selectedTime').value;
+                const note = document.getElementById('noteInput').value;
+
+                if (!time) return alert('Selecione um horário');
+
+                try {
+                    await api.post('/appointments', {
+                        service_id: serviceId,
+                        date,
+                        time,
+                        note
+                    });
+                    alert('Agendamento solicitado! Aguarde a confirmação.');
+                    window.location.href = 'my-appointment.html';
+                } catch (err) {
+                    alert(err.message);
+                }
+            });
+        });
+
+        async function loadSlots(date) {
+            const grid = document.getElementById('slotsGrid');
+            const container = document.getElementById('slotsContainer');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const serviceId = document.getElementById('serviceId').value;
+
+            grid.innerHTML = 'Carregando...';
+            container.classList.remove('hidden');
+            confirmBtn.disabled = true;
+
+            try {
+                const slots = await api.get(`/schedules?date=${date}&service_id=${serviceId}`);
+                grid.innerHTML = '';
+
+                // Deduplicate slots based on time to prevent UI repetition
+                const seenTimes = new Set();
+                const uniqueSlots = slots.filter(slot => {
+                    if (seenTimes.has(slot.time)) return false;
+                    seenTimes.add(slot.time);
+                    return true;
+                });
+
+                if (uniqueSlots.length === 0) {
+                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Nenhum horário disponível nesta data.</p>';
+                    return;
+                }
+
+                // Sort slots by time explicitly to be safe
+                uniqueSlots.sort((a, b) => a.time.localeCompare(b.time));
+
+                uniqueSlots.forEach(slot => {
+                    const el = document.createElement('div');
+                    el.className = `slot ${slot.is_blocked ? 'blocked' : 'available'}`;
+                    el.textContent = slot.time;
+
+                    if (!slot.is_blocked) {
+                        el.onclick = () => {
+                            document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+                            el.classList.add('selected');
+                            document.getElementById('selectedTime').value = slot.time;
+                            confirmBtn.disabled = false;
+                        };
+                    }
+                    grid.appendChild(el);
+                });
+            } catch (e) {
+                console.error(e);
+                grid.innerHTML = 'Erro ao carregar horários.';
+            }
+        }
+    </script>
+</body>
+
+</html>

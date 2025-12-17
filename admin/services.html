@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serviços - Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">Admin Panel</div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link"><i class="ph-duotone ph-squares-four icon-dashboard"></i>
+                Dashboard</a>
+            <a href="financials.html" class="nav-link"><i class="ph-duotone ph-chart-line-up icon-finance"></i>
+                Financeiro</a>
+            <a href="users.html" class="nav-link"><i class="ph-duotone ph-users-three icon-users"></i> Clientes</a>
+            <a href="appointments.html" class="nav-link"><i class="ph-duotone ph-calendar-check icon-appointments"></i>
+                Agendamentos</a>
+            <a href="services.html" class="nav-link active"><i class="ph-duotone ph-sparkle icon-services"></i>
+                Serviços</a>
+            <a href="promotions.html" class="nav-link"><i class="ph-duotone ph-tag icon-promo"></i> Promoções</a>
+            <a href="schedule-settings.html" class="nav-link"><i class="ph-duotone ph-clock icon-time"></i> Horários</a>
+            <a href="notifications-admin.html" class="nav-link"><i class="ph-duotone ph-bell-ringing icon-bell"></i>
+                Notificações</a>
+            <a href="settings.html" class="nav-link"><i class="ph-duotone ph-trophy icon-game"></i> Gamificação</a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <h1>Gerenciar Serviços</h1>
+        <p style="margin-bottom: 2rem; color: var(--text-light);">Cadastre e gerencie os serviços oferecidos no seu
+            estabelecimento.</p>
+
+        <!-- Add Service Form -->
+        <div class="card-modern" style="margin-bottom: 2rem;">
+            <h3
+                style="display: flex; align-items: center; font-size: 1.1rem; color: var(--text-main); margin-bottom: 1.5rem;">
+                <i class="ph-duotone ph-plus-circle"
+                    style="margin-right: 10px; color: var(--primary); font-size: 1.4rem;"></i>
+                Adicionar Novo Serviço
+            </h3>
+            <form id="addServiceForm">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                    <div class="form-group">
+                        <label>Título do Serviço</label>
+                        <input type="text" name="title" class="input" required placeholder="Ex: Corte de Cabelo">
+                    </div>
+                    <div class="form-group">
+                        <label>Preço (R$)</label>
+                        <input type="number" step="0.01" name="price" class="input" required placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Duração (minutos)</label>
+                        <input type="number" name="duration_minutes" class="input" required placeholder="Ex: 30">
+                    </div>
+                    <div class="form-group">
+                        <label>URL da Imagem</label>
+                        <input type="text" name="image" class="input" placeholder="assets/images/...">
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Deixe em branco
+                            para usar o padrão.</p>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Descrição</label>
+                        <textarea name="description" class="input" rows="2"
+                            placeholder="Breve descrição do serviço..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ph-bold ph-check"></i> Salvar Serviço
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-modern">
+            <h3 style="color: var(--text-main); margin-bottom: 1.5rem;">Serviços Ativos</h3>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Duração</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="servicesBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../client/js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadServices();
+
+            document.getElementById('addServiceForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+
+                // Convert types
+                data.price = parseFloat(data.price);
+                data.duration_minutes = parseInt(data.duration_minutes);
+                if (!data.image) data.image = 'assets/service1.jpg'; // default
+
+                try {
+                    await api.post('/services', data);
+                    alert('Serviço criado!');
+                    e.target.reset();
+                    loadServices();
+                } catch (err) {
+                    alert(err.message);
+                }
+            });
+        });
+
+        async function loadServices() {
+            const body = document.getElementById('servicesBody');
+            body.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
+            try {
+                const services = await api.get('/services');
+                if (services.length === 0) {
+                    body.innerHTML = '<tr><td colspan="4">Nenhum serviço ativo.</td></tr>';
+                    return;
+                }
+                body.innerHTML = services.map(s => `
+                    <tr>
+                        <td>${s.title}</td>
+                        <td>R$ ${s.price.toFixed(2)}</td>
+                        <td>${s.duration_minutes} min</td>
+                        <td>
+                            <button onclick="removeService(${s.id})" class="btn-icon" title="Remover" style="color:var(--error);"><i class="ph-bold ph-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function removeService(id) {
+            if (!confirm('Tem certeza que deseja remover este serviço? Ele não aparecerá mais para novos agendamentos.')) return;
+            try {
+                await api.request(`/services/${id}`, 'DELETE');
+                loadServices();
+            } catch (e) { alert(e.message); }
+        }
+    </script>
+</body>
+
+</html>

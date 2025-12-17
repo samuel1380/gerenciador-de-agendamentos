@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promoções - Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">Admin Panel</div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link"><i class="ph-duotone ph-squares-four icon-dashboard"></i>
+                Dashboard</a>
+            <a href="financials.html" class="nav-link"><i class="ph-duotone ph-chart-line-up icon-finance"></i>
+                Financeiro</a>
+            <a href="users.html" class="nav-link"><i class="ph-duotone ph-users-three icon-users"></i> Clientes</a>
+            <a href="appointments.html" class="nav-link"><i class="ph-duotone ph-calendar-check icon-appointments"></i>
+                Agendamentos</a>
+            <a href="services.html" class="nav-link"><i class="ph-duotone ph-sparkle icon-services"></i> Serviços</a>
+            <a href="promotions.html" class="nav-link active"><i class="ph-duotone ph-tag icon-promo"></i> Promoções</a>
+            <a href="schedule-settings.html" class="nav-link"><i class="ph-duotone ph-clock icon-time"></i> Horários</a>
+            <a href="notifications-admin.html" class="nav-link"><i class="ph-duotone ph-bell-ringing icon-bell"></i>
+                Notificações</a>
+            <a href="settings.html" class="nav-link"><i class="ph-duotone ph-trophy icon-game"></i> Gamificação</a>
+        </nav>
+    </div>
+
+    <div class="main">
+        <h1>Gerenciar Promoções</h1>
+        <p style="margin-bottom: 2rem; color: var(--text-light);">Crie e gerencie ofertas especiais para atrair mais
+            clientes.</p>
+
+        <!-- Add Promotion Form -->
+        <div class="card-modern" style="margin-bottom: 2rem;">
+            <h3
+                style="display: flex; align-items: center; font-size: 1.1rem; color: var(--text-main); margin-bottom: 1.5rem;">
+                <i class="ph-duotone ph-sparkle"
+                    style="margin-right: 10px; color: var(--primary); font-size: 1.4rem;"></i>
+                Nova Promoção
+            </h3>
+            <form id="addPromoForm">
+                <div style="display: grid; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label>Título da Promoção</label>
+                        <input type="text" name="title" class="input" required placeholder="Ex: Promoção de Verão"
+                            style="font-weight: 500;">
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Dê um nome
+                            atrativo para sua oferta.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Descrição Detalhada</label>
+                        <textarea name="description" class="input" rows="3"
+                            placeholder="Ex: Ganhe 10% de desconto em qualquer serviço de manicure..."
+                            style="resize: vertical;"></textarea>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Explique as regras
+                            e benefícios claramente.</p>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="ph-bold ph-plus"></i> Criar Promoção
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="card-modern">
+            <h3 style="color: var(--text-main); margin-bottom: 1.5rem;">Promoções Ativas</h3>
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Título</th>
+                            <th>Descrição</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="promoBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="../client/js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPromotions();
+
+            document.getElementById('addPromoForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const data = Object.fromEntries(formData.entries());
+
+                try {
+                    await api.post('/promotions', data);
+                    alert('Promoção criada!');
+                    e.target.reset();
+                    loadPromotions();
+                } catch (err) {
+                    alert(err.message || 'Erro ao criar promoção');
+                }
+            });
+        });
+
+        async function loadPromotions() {
+            const body = document.getElementById('promoBody');
+            body.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
+            try {
+                const promos = await api.get('/promotions');
+                if (promos.length === 0) {
+                    body.innerHTML = '<tr><td colspan="4">Nenhuma promoção cadastrada.</td></tr>';
+                    return;
+                }
+                body.innerHTML = promos.map(p => `
+                    <tr>
+                        <td><strong>${p.title}</strong></td>
+                        <td>${p.description || '-'}</td>
+                        <td>
+                            <span class="status-badge ${p.active ? 'status-active' : 'status-inactive'}" 
+                                  style="cursor:pointer;" 
+                                  onclick="toggleStatus(${p.id})"
+                                  title="Clique para alterar">
+                                ${p.active ? 'Ativa' : 'Inativa'}
+                            </span>
+                        </td>
+                        <td>
+                            <button onclick="deletePromo(${p.id})" class="btn-icon" title="Excluir" style="color:var(--error);"><i class="ph-bold ph-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        async function toggleStatus(id) {
+            try {
+                await api.put(`/promotions/${id}/toggle`, {});
+                loadPromotions();
+            } catch (e) { alert('Erro ao mudar status'); }
+        }
+
+        async function deletePromo(id) {
+            if (!confirm('Tem certeza?')) return;
+            try {
+                await api.request(`/promotions/${id}`, 'DELETE');
+                loadPromotions();
+            } catch (e) { alert('Erro ao deletar'); }
+        }
+    </script>
+</body>
+
+</html>
