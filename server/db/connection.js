@@ -16,6 +16,7 @@ class DBAdapter {
                 password: process.env.TIDB_PASSWORD || process.env.DB_PASSWORD,
                 database: process.env.TIDB_DATABASE || process.env.DB_NAME,
                 port: process.env.TIDB_PORT || process.env.DB_PORT || 4000,
+                dateStrings: true,
                 ssl: {
                     minVersion: 'TLSv1.2',
                     rejectUnauthorized: true

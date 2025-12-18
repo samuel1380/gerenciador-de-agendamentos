@@ -210,13 +210,18 @@ router.get('/stats', (req, res) => {
             stats.today_completed = row.count;
 
             // 3. New Clients Today
-            // We strip time from created_at to compare date, using localtime to handle timezone differences
-            db.get(`SELECT count(*) as count FROM users WHERE date(created_at, 'localtime') = ?`, [today], (err, row) => {
+            // Compatibility: MySQL uses DATE(), SQLite uses date(..., 'localtime')
+            const dateFunc = db.isMysql ? "DATE(created_at)" : "date(created_at, 'localtime')";
+            db.get(`SELECT count(*) as count FROM users WHERE ${dateFunc} = ?`, [today], (err, row) => {
                 if (err) return res.status(500).json({ error: err.message });
                 stats.today_new_users = row.count;
 
                 // 4. Monthly Completed
-                db.get(`SELECT count(*) as count FROM appointments WHERE strftime('%Y-%m', date) = strftime('%Y-%m', 'now') AND status = 'completed'`, (err, row) => {
+                const monthCheck = db.isMysql
+                    ? "DATE_FORMAT(date, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')"
+                    : "strftime('%Y-%m', date) = strftime('%Y-%m', 'now')";
+
+                db.get(`SELECT count(*) as count FROM appointments WHERE ${monthCheck} AND status = 'completed'`, (err, row) => {
                     if (err) return res.status(500).json({ error: err.message });
                     stats.month = row.count;
 
