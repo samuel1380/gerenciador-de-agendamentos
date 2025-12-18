@@ -1,5 +1,3 @@
-const sqlite3 = require('sqlite3').verbose();
-const mysql = require('mysql2');
 const path = require('path');
 require('dotenv').config();
 
@@ -11,6 +9,7 @@ class DBAdapter {
 
         if (this.isMysql) {
             console.log('Connecting to TiDB/MySQL...');
+            const mysql = require('mysql2');
             this.client = mysql.createPool({
                 host: process.env.TIDB_HOST || process.env.DB_HOST,
                 user: process.env.TIDB_USER || process.env.DB_USER,
@@ -41,6 +40,7 @@ class DBAdapter {
         } else {
             const dbPath = path.resolve(__dirname, 'database.sqlite');
             console.log('Using local SQLite database:', dbPath);
+            const sqlite3 = require('sqlite3').verbose();
             this.client = new sqlite3.Database(dbPath, (err) => {
                 if (err) console.error('Error opening SQLite DB ' + dbPath + ': ' + err.message);
                 else {
