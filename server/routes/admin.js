@@ -206,8 +206,8 @@ router.get('/stats', (req, res) => {
         if (err) return res.status(500).json({ error: err.message });
         stats.pending = row.count;
 
-        // 2. Completed Today (Changed from 'accepted' OR 'completed' to just 'completed')
-        db.get(`SELECT count(*) as count FROM appointments WHERE date = ? AND status = 'completed'`, [today], (err, row) => {
+        // 2. Completed/Active Today (Count both accepted and completed)
+        db.get(`SELECT count(*) as count FROM appointments WHERE date = ? AND status IN ('accepted', 'completed')`, [today], (err, row) => {
             if (err) return res.status(500).json({ error: err.message });
             stats.today_completed = row.count;
 
