@@ -190,15 +190,6 @@ router.put('/appointments/:id', (req, res) => {
 // STATS
 router.get('/stats', (req, res) => {
     const db = req.db;
-    // Fix timezone/locale issue: Manually construct YYYY-MM-DD in local time (Brazil)
-    const now = new Date();
-    // Use Brazil time to handle "today" correctly even if server is UTC
-    const brazilTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
-    const year = brazilTime.getFullYear();
-    const month = String(brazilTime.getMonth() + 1).padStart(2, '0');
-    const day = String(brazilTime.getDate()).padStart(2, '0');
-    const today = `${year}-${month}-${day}`;
-
     let stats = {};
 
     // 1. Pending Appointments
@@ -206,24 +197,28 @@ router.get('/stats', (req, res) => {
         if (err) return res.status(500).json({ error: err.message });
         stats.pending = row.count;
 
-        // 2. Completed/Active Today (Count both accepted and completed)
-        db.get(`SELECT count(*) as count FROM appointments WHERE date = ? AND status IN ('accepted', 'completed')`, [today], (err, row) => {
+        // 2. Completed/Active Today (Using SQL Timezone adjustment for Brazil UTC-3)
+        // DATE_SUB(NOW(), INTERVAL 3 HOUR) converts UTC server time to approximate Brazil time
+        db.get(`SELECT count(*) as count FROM appointments WHERE date = DATE(DATE_SUB(NOW(), INTERVAL 3 HOUR)) AND status IN ('accepted', 'completed')`, [], (err, row) => {
             if (err) return res.status(500).json({ error: err.message });
             stats.today_completed = row.count;
 
             // 3. New Clients Today
-            // Compatibility: MySQL uses DATE(), SQLite uses date(..., 'localtime')
-            const dateFunc = db.isMysql ? "DATE(created_at)" : "date(created_at, 'localtime')";
-            db.get(`SELECT count(*) as count FROM users WHERE ${dateFunc} = ?`, [today], (err, row) => {
+            // Compatibility: MySQL uses DATE(), SQLite uses date(..., 'localtime'). We prioritize MySQL/TiDB with timezone fix.
+            const dateQuery = db.isMysql
+                ? "DATE(created_at) = DATE(DATE_SUB(NOW(), INTERVAL 3 HOUR))"
+                : "date(created_at, 'localtime') = date('now', 'localtime')";
+
+            db.get(`SELECT count(*) as count FROM users WHERE ${dateQuery}`, [], (err, row) => {
                 if (err) return res.status(500).json({ error: err.message });
                 stats.today_new_users = row.count;
 
                 // 4. Monthly Completed
-                const monthCheck = db.isMysql
-                    ? "DATE_FORMAT(date, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')"
+                const monthQuery = db.isMysql
+                    ? "DATE_FORMAT(date, '%Y-%m') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 3 HOUR), '%Y-%m')"
                     : "strftime('%Y-%m', date) = strftime('%Y-%m', 'now')";
 
-                db.get(`SELECT count(*) as count FROM appointments WHERE ${monthCheck} AND status = 'completed'`, (err, row) => {
+                db.get(`SELECT count(*) as count FROM appointments WHERE ${monthQuery} AND status = 'completed'`, (err, row) => {
                     if (err) return res.status(500).json({ error: err.message });
                     stats.month = row.count;
 
@@ -380,21 +375,11 @@ router.get('/analytics/quiz', (req, res) => {
 // FINANCIAL STATS
 router.get('/analytics/financials', (req, res) => {
     const db = req.db;
-    // Use Brazil Time for financial stats too
-    const now = new Date();
-    const brazilTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
-    const year = brazilTime.getFullYear();
-    const month = String(brazilTime.getMonth() + 1).padStart(2, '0');
-    const day = String(brazilTime.getDate()).padStart(2, '0');
-
-    // Dates for comparison (YYYY-MM-DD is safer for MySQL DATE columns than ISO string)
-    const startOfMonth = `${year}-${month}-01`;
-    const startOfDay = `${year}-${month}-${day}`;
-
+    // Use SQL-based timezone logic for financials too
     const queries = {
         total: `SELECT SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed'`,
-        month: `SELECT SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed' AND a.date >= ?`,
-        today: `SELECT SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed' AND a.date >= ?`,
+        month: `SELECT SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed' AND DATE_FORMAT(a.date, '%Y-%m') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 3 HOUR), '%Y-%m')`,
+        today: `SELECT SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed' AND a.date = DATE(DATE_SUB(NOW(), INTERVAL 3 HOUR))`,
         by_service: `SELECT s.title, COUNT(*) as count, SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed' GROUP BY s.title ORDER BY total DESC`,
         recent: `SELECT a.date, a.time, s.title, s.price, u.name as user_name FROM appointments a JOIN services s ON a.service_id = s.id JOIN users u ON a.user_id = u.id WHERE a.status = 'completed' ORDER BY a.date DESC, a.time DESC LIMIT 10`
     };
@@ -402,10 +387,10 @@ router.get('/analytics/financials', (req, res) => {
     db.get(queries.total, [], (err, totalRow) => {
         if (err) return res.status(500).json({ error: err.message });
 
-        db.get(queries.month, [startOfMonth], (err, monthRow) => {
+        db.get(queries.month, [], (err, monthRow) => {
             if (err) return res.status(500).json({ error: err.message });
 
-            db.get(queries.today, [startOfDay], (err, todayRow) => {
+            db.get(queries.today, [], (err, todayRow) => {
                 if (err) return res.status(500).json({ error: err.message });
 
                 db.all(queries.by_service, [], (err, serviceRows) => {
