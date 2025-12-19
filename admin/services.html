@@ -135,7 +135,7 @@
                 body.innerHTML = services.map(s => `
                     <tr>
                         <td>${s.title}</td>
-                        <td>R$ ${s.price.toFixed(2)}</td>
+                        <td>R$ ${Number(s.price).toFixed(2)}</td>
                         <td>${s.duration_minutes} min</td>
                         <td>
                             <button onclick="removeService(${s.id})" class="btn-icon" title="Remover" style="color:var(--error);"><i class="ph-bold ph-trash"></i></button>

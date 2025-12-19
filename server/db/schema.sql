@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     xp INT DEFAULT 0,
     avatar VARCHAR(255),
     role VARCHAR(50) DEFAULT 'user',
+    active BOOLEAN DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

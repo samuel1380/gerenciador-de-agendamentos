@@ -56,13 +56,13 @@ function renderUsers(users) {
             </td>
             <td style="font-weight: 600;">R$ ${(u.ltv || 0).toFixed(2)}</td>
             <td><span style="background: var(--bg-body); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">${u.total_appointments}</span></td>
-            <td><span class="badge ${u.active ? 'badge-success' : 'badge-danger'}">${u.active ? 'Ativo' : 'Bloqueado'}</span></td>
+            <td><span class="badge ${(u.active ?? 1) ? 'badge-success' : 'badge-danger'}">${(u.active ?? 1) ? 'Ativo' : 'Bloqueado'}</span></td>
             <td>
                 <button onclick="viewUser(${u.id})" class="btn-icon" title="Ver Detalhes" style="color:var(--info);">
                     <i class="ph-bold ph-eye"></i>
                 </button>
-                <button onclick="toggleUser(${u.id})" class="btn-icon" title="${u.active ? 'Bloquear' : 'Desbloquear'}" style="color:${u.active ? 'var(--error)' : 'var(--success)'};">
-                    <i class="ph-bold ${u.active ? 'ph-prohibit' : 'ph-check-circle'}"></i>
+                <button onclick="toggleUser(${u.id})" class="btn-icon" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}" style="color:${(u.active ?? 1) ? 'var(--error)' : 'var(--success)'};">
+                    <i class="ph-bold ${(u.active ?? 1) ? 'ph-prohibit' : 'ph-check-circle'}"></i>
                 </button>
                 <button onclick="makeAdmin(${u.id})" class="btn-icon" title="Promover a Admin" style="color:var(--warning);">
                     <i class="ph-bold ph-crown"></i>
