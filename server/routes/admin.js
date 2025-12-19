@@ -213,14 +213,26 @@ router.get('/stats', (req, res) => {
                 if (err) return res.status(500).json({ error: err.message });
                 stats.today_new_users = row.count;
 
-                // 4. Monthly Completed
-                const monthQuery = db.isMysql
-                    ? "DATE_FORMAT(date, '%Y-%m') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 3 HOUR), '%Y-%m')"
-                    : "strftime('%Y-%m', date) = strftime('%Y-%m', 'now')";
+                // 4. Monthly Completed & daily calculation in JS to be infallible
+                const brazilNow = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+                const y = brazilNow.getFullYear();
+                const m = String(brazilNow.getMonth() + 1).padStart(2, '0');
+                const d = String(brazilNow.getDate()).padStart(2, '0');
+                const todayStr = `${y}-${m}-${d}`;
+                const monthStr = `${y}-${m}`;
 
-                db.get(`SELECT count(*) as count FROM appointments WHERE ${monthQuery} AND status = 'completed'`, (err, row) => {
+                // Fetch active/completed appointments to filter in memory (Guarantee correct count)
+                // We fetch a bit more (last 60 days) to calculate month/day stats easily
+                db.all(`SELECT date, status FROM appointments WHERE status IN ('accepted', 'completed')`, [], (err, rows) => {
                     if (err) return res.status(500).json({ error: err.message });
-                    stats.month = row.count;
+
+                    // Filter in JS
+                    // Ensure date is string YYYY-MM-DD (take first 10 chars just in case)
+                    const todayCount = rows.filter(r => (r.date + '').substring(0, 10) === todayStr).length;
+                    const monthCount = rows.filter(r => r.status === 'completed' && (r.date + '').substring(0, 7) === monthStr).length;
+
+                    stats.today_completed = todayCount;
+                    stats.month = monthCount;
 
                     res.json(stats);
                 });
