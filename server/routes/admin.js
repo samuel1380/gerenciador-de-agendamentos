@@ -190,11 +190,13 @@ router.put('/appointments/:id', (req, res) => {
 // STATS
 router.get('/stats', (req, res) => {
     const db = req.db;
-    // Fix timezone/locale issue: Manually construct YYYY-MM-DD in local time
+    // Fix timezone/locale issue: Manually construct YYYY-MM-DD in local time (Brazil)
     const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
+    // Use Brazil time to handle "today" correctly even if server is UTC
+    const brazilTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+    const year = brazilTime.getFullYear();
+    const month = String(brazilTime.getMonth() + 1).padStart(2, '0');
+    const day = String(brazilTime.getDate()).padStart(2, '0');
     const today = `${year}-${month}-${day}`;
 
     let stats = {};
@@ -378,9 +380,16 @@ router.get('/analytics/quiz', (req, res) => {
 // FINANCIAL STATS
 router.get('/analytics/financials', (req, res) => {
     const db = req.db;
+    // Use Brazil Time for financial stats too
     const now = new Date();
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-    const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const brazilTime = new Date(now.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+    const year = brazilTime.getFullYear();
+    const month = String(brazilTime.getMonth() + 1).padStart(2, '0');
+    const day = String(brazilTime.getDate()).padStart(2, '0');
+
+    // Dates for comparison (YYYY-MM-DD is safer for MySQL DATE columns than ISO string)
+    const startOfMonth = `${year}-${month}-01`;
+    const startOfDay = `${year}-${month}-${day}`;
 
     const queries = {
         total: `SELECT SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed'`,
