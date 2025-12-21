@@ -776,6 +776,32 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     /* Show Toggle Button */
     #sidebarToggle {
         display: inline-flex !important;
+        margin-right: 1rem;
+        background: transparent;
+        border: none;
+        color: var(--text-main);
+        cursor: pointer;
+    }
+
+    /* Force Vertical Stacking on Mobile */
+    .stats-grid,
+    .grid-stack-mobile,
+    .settings-grid,
+    .filters-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+    }
+
+    .header {
+        flex-direction: row;
+        /* Keep header items (toggle + title) aligned */
+        align-items: center;
+    }
+
+    /* Ensure cards are full width */
+    .card,
+    .stat-card {
+        width: 100% !important;
     }
 }
 

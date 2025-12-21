@@ -30,12 +30,21 @@
             <a href="settings.html" class="nav-link"><i class="ph-duotone ph-trophy icon-game"></i> Gamificação</a>
         </nav>
     </div>
+    <div class="sidebar-overlay"></div>
 
     <div class="main">
         <div class="header" style="margin-bottom: 2rem;">
-            <h1>Gestão de Clientes</h1>
-            <p style="color: var(--text-light); margin-top: 4px;">Visualize o histórico, LTV e gerencie o status dos
-                seus clientes.</p>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button id="sidebarToggle" class="btn-icon" style="display: none; font-size: 1.5rem;">
+                    <i class="ph-duotone ph-list"></i>
+                </button>
+                <div>
+                    <h1>Gestão de Clientes</h1>
+                    <p style="color: var(--text-light); margin-top: 4px;">Visualize o histórico, LTV e gerencie o status
+                        dos
+                        seus clientes.</p>
+                </div>
+            </div>
         </div>
 
         <!-- Filter Bar -->
