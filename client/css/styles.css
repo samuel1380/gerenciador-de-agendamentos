@@ -801,3 +801,49 @@ textarea.form-input {
         transform: translate(25%, -25%) scale(1);
     }
 }
+
+/* --- RESPONSIVENESS (Client App) --- */
+
+/* Tablet & Desktop Tweaks */
+@media (min-width: 640px) {
+
+    /* More slots per row on wider screens */
+    .slot-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+
+    /* Auth card slightly wider */
+    .auth-card {
+        max-width: 420px;
+        padding: 3rem;
+    }
+}
+
+@media (min-width: 1024px) {
+
+    /* Even more slots on Desktop */
+    .slot-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+
+    /* Services List Grid on Desktop - assuming services are wrapped in a distinct way or just direct children */
+    /* If services are just cards in a flow, we can try to grid them if we had a wrapper. 
+       Since we modify CSS only, and HTML structure is linear, we can't easily grid services without a wrapper class.
+       But we can ensure the single column look is centered and limited width or 'masonry' if we had columns.
+       For now, let's keep vertical flow but max-width the cards or grid the container content if manageable.
+    */
+
+    /* Layout: Center content in the large white box */
+    .p-4 {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    /* Profile Grid */
+    .profile-dashboard {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+}

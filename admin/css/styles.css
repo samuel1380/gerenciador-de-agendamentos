@@ -706,3 +706,79 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 /* We will use the HTML approach for consistency, it is cleaner than pseudo-elements for icons */
+
+/* --- RESPONSIVENESS (Desktop & Mobile) --- */
+
+/* 1. Limit Maximum Width for Ultra-Wide Screens */
+.main {
+    max-width: 1600px; /* Prevent overly wide lines on 27"+ monitors */
+    margin: 0 auto; /* Center content */
+    width: 100%;
+}
+
+/* 2. Responsive Grid Breakpoints */
+/* Mobile (Default): 1 col (defined in component CSS) */
+/* Tablet (md): 2 cols */
+@media (min-width: 640px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+/* Desktop (lg): 4 cols */
+@media (min-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* 3. Mobile Sidebar Handling */
+@media (max-width: 768px) {
+    .sidebar {
+        position: fixed;
+        left: -280px; /* Hidden by default on mobile */
+        height: 100%;
+        transition: left 0.3s ease;
+        box-shadow: var(--shadow-xl);
+    }
+    
+    .sidebar.active {
+        left: 0; /* Slide in */
+    }
+
+    .main {
+        margin-left: 0; /* Full width */
+        padding: 1rem; /* Smaller padding on mobile */
+    }
+    
+    /* Overlay when sidebar is open */
+    body.sidebar-open::before {
+        content: '';
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 40;
+    }
+}
+
+/* 4. Table Optimization for Small Screens */
+.table-container {
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border);
+    /* Ensure scroll on small screens */
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch;
+}
+
+/* 5. Chart Containers */
+.chart-container-responsive {
+    position: relative; 
+    width: 100%; 
+    height: 300px;
+}
+@media (max-width: 640px) {
+    .chart-container-responsive {
+        height: 250px;
+    }
+}
