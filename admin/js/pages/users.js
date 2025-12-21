@@ -51,11 +51,11 @@ function renderUsers(users) {
                 <div style="font-size:0.85rem; color: var(--text-secondary);">${u.email}</div>
             </td>
             <td>
-                <div style="font-weight: 500; color: var(--primary);">Nível ${u.level}</div>
-                <small style="color: var(--text-muted);">${u.xp} XP</small>
+                <div style="font-weight: 500; color: var(--primary);">Nível ${u.level || 1}</div>
+                <small style="color: var(--text-muted);">${u.xp || 0} XP</small>
             </td>
-            <td style="font-weight: 600;">R$ ${(u.ltv || 0).toFixed(2)}</td>
-            <td><span style="background: var(--bg-body); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">${u.total_appointments}</span></td>
+            <td style="font-weight: 600;">R$ ${Number(u.ltv || 0).toFixed(2)}</td>
+            <td><span style="background: var(--bg-body); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">${u.total_appointments || 0}</span></td>
             <td><span class="badge ${(u.active ?? 1) ? 'badge-success' : 'badge-danger'}">${(u.active ?? 1) ? 'Ativo' : 'Bloqueado'}</span></td>
             <td>
                 <button onclick="viewUser(${u.id})" class="btn-icon" title="Ver Detalhes" style="color:var(--info);">
@@ -124,16 +124,16 @@ async function viewUser(id) {
 
         content.innerHTML = `
             <div style="display:flex; align-items:center; gap:16px; margin-bottom:1.5rem;">
-                <div style="width:64px; height:64px; background:#f0f0f0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem;">
-                    ${user.avatar ? `<img src="../${user.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` : '👤'}
+                <div style="width:64px; height:64px; background:#f0f0f0; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:2rem; overflow:hidden;">
+                    ${user.avatar ? `<img src="../${user.avatar}" style="width:100%; height:100%; object-fit:cover;">` : '<i class="ph-duotone ph-user"></i>'}
                 </div>
                 <div>
                     <h2 style="margin:0;">${user.name}</h2>
                     <p style="margin:0; color:#666;">${user.phone || 'Sem telefone'}</p>
                 </div>
                 <div style="margin-left:auto; text-align:right;">
-                    <div style="font-weight:bold;">LTV: R$ ${(appointments.reduce((sum, a) => sum + (a.status === 'completed' ? a.price : 0), 0)).toFixed(2)}</div>
-                    <div style="color:#666;">Cadastrado em: ${new Date(user.created_at).toLocaleDateString()}</div>
+                    <div style="font-weight:bold;">LTV: R$ ${(appointments.reduce((sum, a) => sum + (a.status === 'completed' ? Number(a.price) : 0), 0)).toFixed(2)}</div>
+                    <div style="color:#666;">Cadastrado em: ${user.created_at ? new Date(user.created_at).toLocaleDateString() : '-'}</div>
                 </div>
             </div>
 
@@ -144,7 +144,7 @@ async function viewUser(id) {
                         ${appointments.length ? appointments.map(a => `
                             <div style="padding:8px; border-bottom:1px solid #eee; font-size:0.9rem;">
                                 <strong>${a.service_title}</strong> <span style="font-size:0.8rem; float:right;">${new Date(a.date).toLocaleDateString()}</span><br>
-                                <span class="status-${a.status}">${a.status}</span> - R$ ${a.price}
+                                <span class="status-${a.status}">${a.status}</span> - R$ ${Number(a.price).toFixed(2)}
                             </div>
                         `).join('') : '<p>Sem agendamentos.</p>'}
                     </div>
