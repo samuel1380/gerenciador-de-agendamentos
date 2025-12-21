@@ -65,13 +65,26 @@ function renderCharts(appointments) {
     for (let i = 29; i >= 0; i--) {
         const d = new Date(now);
         d.setDate(d.getDate() - i);
-        const dateStr = d.toISOString().split('T')[0];
+
+        // Fix Timezone issue: Don't use toISOString() which converts to UTC.
+        // Use local components (or whatever the browser thinks is "today minus i")
+        // But since we want "Brazil day", ensuring consistency is key.
+        // Actually simplest is: "YYYY-MM-DD" from d.getFullYear(), d.getMonth()...
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const dateStr = `${y}-${m}-${day}`;
 
         // Format for Label (e.g., 10/12)
-        days.push(`${d.getDate()}/${d.getMonth() + 1}`);
+        days.push(`${day}/${m}`);
 
-        // Count appointments for this status
-        const count = appointments.filter(a => a.date === dateStr).length;
+        // Count appointments for this date
+        // Note: appointment.date from API might be "2025-12-19T00:00..." or "2025-12-19"
+        // Let's match the first 10 chars.
+        const count = appointments.filter(a => {
+            const appDateStr = (a.date + '').substring(0, 10);
+            return appDateStr === dateStr && (a.status === 'accepted' || a.status === 'completed'); // Only count active business
+        }).length;
         counts.push(count);
     }
 
