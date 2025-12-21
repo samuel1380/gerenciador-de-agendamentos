@@ -276,9 +276,9 @@ router.post('/settings', (req, res) => {
 // LIST USERS
 router.get('/users', (req, res) => {
     const db = req.db;
-    db.all(`SELECT u.id, u.name, u.email, u.phone, u.level, u.xp, u.created_at,
+    db.all(`SELECT u.id, u.name, u.email, u.phone, u.level, u.xp, u.created_at, u.active,
             (SELECT count(*) FROM appointments WHERE user_id = u.id) as total_appointments,
-            (SELECT sum(s.price) FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.user_id = u.id AND a.status = 'completed') as ltv
+            (SELECT COALESCE(sum(s.price), 0) FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.user_id = u.id AND a.status = 'completed') as ltv
             FROM users u
             WHERE u.role != 'admin'
             ORDER BY u.created_at DESC`, [], (err, rows) => {

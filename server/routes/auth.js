@@ -40,8 +40,6 @@ router.post('/register', async (req, res) => {
                         id: this.lastID,
                         name: name,
                         email: email,
-                        name: name,
-                        email: email,
                         level: 1,
                         xp: 0,
                         role: 'user'
@@ -73,8 +71,6 @@ router.post('/login', (req, res) => {
                 id: user.id,
                 name: user.name,
                 email: user.email,
-                level: user.level || 1,
-                xp: user.xp || 0,
                 level: user.level || 1,
                 xp: user.xp || 0,
                 avatar: user.avatar,
