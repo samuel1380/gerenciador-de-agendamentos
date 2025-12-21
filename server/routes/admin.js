@@ -388,37 +388,48 @@ router.get('/analytics/quiz', (req, res) => {
 router.get('/analytics/financials', (req, res) => {
     const db = req.db;
     // Use SQL-based timezone logic for financials too
-    const queries = {
-        total: `SELECT SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed'`,
-        month: `SELECT SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed' AND DATE_FORMAT(a.date, '%Y-%m') = DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 3 HOUR), '%Y-%m')`,
-        today: `SELECT SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed' AND a.date = DATE(DATE_SUB(NOW(), INTERVAL 3 HOUR))`,
-        by_service: `SELECT s.title, COUNT(*) as count, SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed' GROUP BY s.title ORDER BY total DESC`,
-        recent: `SELECT a.date, a.time, s.title, s.price, u.name as user_name FROM appointments a JOIN services s ON a.service_id = s.id JOIN users u ON a.user_id = u.id WHERE a.status = 'completed' ORDER BY a.date DESC, a.time DESC LIMIT 10`
-    };
-
-    db.get(queries.total, [], (err, totalRow) => {
+    // Use strict JS filtering for financials to match dashboard logic
+    db.all(`SELECT a.date, a.status, s.price 
+            FROM appointments a 
+            JOIN services s ON a.service_id = s.id 
+            WHERE a.status = 'completed'`, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
 
-        db.get(queries.month, [], (err, monthRow) => {
+        const total = rows.reduce((sum, r) => sum + Number(r.price), 0);
+
+        const brazilNow = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+        const y = brazilNow.getFullYear();
+        const m = String(brazilNow.getMonth() + 1).padStart(2, '0');
+        const d = String(brazilNow.getDate()).padStart(2, '0');
+        const todayStr = `${y}-${m}-${d}`;
+        const monthStr = `${y}-${m}`;
+
+        const monthTotal = rows
+            .filter(r => (r.date + '').substring(0, 7) === monthStr)
+            .reduce((sum, r) => sum + Number(r.price), 0);
+
+        const todayTotal = rows
+            .filter(r => (r.date + '').substring(0, 10) === todayStr)
+            .reduce((sum, r) => sum + Number(r.price), 0);
+
+        // Fetch breakdown and recent separately as they are lists, logic is simpler order by
+        const queries = {
+            by_service: `SELECT s.title, COUNT(*) as count, SUM(s.price) as total FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.status = 'completed' GROUP BY s.title ORDER BY total DESC`,
+            recent: `SELECT a.date, a.time, s.title, s.price, u.name as user_name FROM appointments a JOIN services s ON a.service_id = s.id JOIN users u ON a.user_id = u.id WHERE a.status = 'completed' ORDER BY a.date DESC, a.time DESC LIMIT 10`
+        };
+
+        db.all(queries.by_service, [], (err, serviceRows) => {
             if (err) return res.status(500).json({ error: err.message });
 
-            db.get(queries.today, [], (err, todayRow) => {
+            db.all(queries.recent, [], (err, recentRows) => {
                 if (err) return res.status(500).json({ error: err.message });
 
-                db.all(queries.by_service, [], (err, serviceRows) => {
-                    if (err) return res.status(500).json({ error: err.message });
-
-                    db.all(queries.recent, [], (err, recentRows) => {
-                        if (err) return res.status(500).json({ error: err.message });
-
-                        res.json({
-                            total: totalRow.total || 0,
-                            month: monthRow.total || 0,
-                            today: todayRow.total || 0,
-                            by_service: serviceRows,
-                            recent: recentRows
-                        });
-                    });
+                res.json({
+                    total: total || 0,
+                    month: monthTotal || 0,
+                    today: todayTotal || 0,
+                    by_service: serviceRows,
+                    recent: recentRows
                 });
             });
         });
