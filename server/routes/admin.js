@@ -197,66 +197,39 @@ router.get('/stats', (req, res) => {
         if (err) return res.status(500).json({ error: err.message });
         stats.pending = row.count;
 
-        // 2. Completed/Active Today (Using SQL Timezone adjustment for Brazil UTC-3)
-        // DATE_SUB(NOW(), INTERVAL 3 HOUR) converts UTC server time to approximate Brazil time
-        db.get(`SELECT count(*) as count FROM appointments WHERE date = DATE(DATE_SUB(NOW(), INTERVAL 3 HOUR)) AND status IN ('accepted', 'completed')`, [], (err, row) => {
+        // 2. TOTAL Completed/Active (Simplified Request: "Total Concluídos")
+        // No date filter, just total count of active business.
+        db.get(`SELECT count(*) as count FROM appointments WHERE status IN ('accepted', 'completed')`, [], (err, rowApp) => {
             if (err) return res.status(500).json({ error: err.message });
-            stats.today_completed = row.count;
+            stats.today_completed = rowApp.count;
 
-            // 3. New Clients Today
-            // Compatibility: MySQL uses DATE(), SQLite uses date(..., 'localtime'). We prioritize MySQL/TiDB with timezone fix.
-            const dateQuery = db.isMysql
-                ? "DATE(created_at) = DATE(DATE_SUB(NOW(), INTERVAL 3 HOUR))"
-                : "date(created_at, 'localtime') = date('now', 'localtime')";
-
-            db.get(`SELECT count(*) as count FROM users WHERE ${dateQuery}`, [], (err, row) => {
+            // 3. New Clients Month (Simplified Request: "Novos Clientes (Mês)")
+            // Fetch all users and filter in JS to be safe with timezones
+            db.all(`SELECT created_at FROM users WHERE role != 'admin'`, [], (err, users) => {
                 if (err) return res.status(500).json({ error: err.message });
-                stats.today_new_users = row.count;
 
-                // 4. Monthly Completed & daily calculation in JS to be infallible
-                const brazilNow = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
-                const y = brazilNow.getFullYear();
-                const m = String(brazilNow.getMonth() + 1).padStart(2, '0');
-                const d = String(brazilNow.getDate()).padStart(2, '0');
-                const todayStr = `${y}-${m}-${d}`;
-                const monthStr = `${y}-${m}`;
+                const now = new Date();
+                const brazilDate = new Date(now.toLocaleString("en-US", { timeZone: "America/Sao_Paulo" }));
+                const currentMonthStr = `${brazilDate.getFullYear()}-${String(brazilDate.getMonth() + 1).padStart(2, '0')}`;
 
-                // Fetch active/completed appointments to filter in memory (Guarantee correct count)
-                // We fetch a bit more (last 60 days) to calculate month/day stats easily
-                db.all(`SELECT date, status FROM appointments WHERE status IN ('accepted', 'completed')`, [], (err, rows) => {
-                    if (err) return res.status(500).json({ error: err.message });
+                let newClientsMonth = 0;
+                users.forEach(u => {
+                    // Assuming created_at is standard SQL datetime string or ISO
+                    const uStr = (u.created_at || '').substring(0, 7); // 'YYYY-MM'
+                    if (uStr === currentMonthStr) {
+                        newClientsMonth++;
+                    }
+                });
+                stats.today_new_users = newClientsMonth;
 
-                    // Filter in JS with robust Date parsing
-                    // We assume 'date' coming from DB works with new Date() constructor
-                    // and we explicitly convert both Comparison Date (Today) and Appointment Date to Brazil string for matching.
-
-                    const brazilTimeOptions = { timeZone: "America/Sao_Paulo", year: 'numeric', month: '2-digit', day: '2-digit' };
-                    const brazilTotalDateStr = new Date().toLocaleDateString('en-CA', brazilTimeOptions); // Returns YYYY-MM-DD in Brazil Time
-
-                    // We need month str YYYY-MM
-                    const brazilMonthStr = brazilTotalDateStr.substring(0, 7);
-
-                    let todayCount = 0;
+                // 4. Monthly Completed (Keep current month logic for this legacy field if needed by other components, 
+                // but currently dashboard uses 'stats.today_completed' which is now TOTAL)
+                // Let's populate stats.month with actual month count just in case.
+                db.all(`SELECT date FROM appointments WHERE status = 'completed'`, [], (err, monthRows) => {
                     let monthCount = 0;
-
-                    rows.forEach(r => {
-                        // DB Date might be YYYY-MM-DD or ISO.
-                        // We append T12:00:00 to avoid timezone shifts if it's just a date string
-                        // But safest is to read it, assume it is what it is.
-                        // If it's YYYY-MM-DD string:
-                        let dStr = r.date + '';
-
-                        // If the date string matches today's string prefix
-                        if (dStr.startsWith(brazilTotalDateStr)) {
-                            todayCount++;
-                        }
-
-                        if (r.status === 'completed' && dStr.startsWith(brazilMonthStr)) {
-                            monthCount++;
-                        }
+                    monthRows.forEach(r => {
+                        if ((r.date + '').substring(0, 7) === currentMonthStr) monthCount++;
                     });
-
-                    stats.today_completed = todayCount;
                     stats.month = monthCount;
 
                     res.json(stats);
@@ -265,6 +238,7 @@ router.get('/stats', (req, res) => {
         });
     });
 });
+
 
 // GET SETTINGS
 router.get('/settings', (req, res) => {

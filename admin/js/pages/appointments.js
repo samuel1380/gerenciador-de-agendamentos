@@ -165,17 +165,30 @@ function getStatusLabel(status) {
 function getActionButtons(r) {
     if (r.status === 'pending') {
         return `
-            <button onclick="update(${r.id}, 'accepted')" class="btn-icon" title="Aceitar" style="color:var(--success);">✅</button>
-            <button onclick="update(${r.id}, 'rejected')" class="btn-icon" title="Recusar" style="color:var(--error);">❌</button>
+            <button onclick="update(${r.id}, 'accepted')" class="btn-icon" title="Aceitar" style="color:var(--success);">
+                <i class="ph-bold ph-check"></i>
+            </button>
+            <button onclick="update(${r.id}, 'rejected')" class="btn-icon" title="Recusar" style="color:var(--error);">
+                <i class="ph-bold ph-x"></i>
+            </button>
         `;
     }
     if (r.status === 'accepted') {
         return `
-            <button onclick="openEdit(${r.id}, '${r.date}', '${r.time}')" class="btn-icon" title="Reagendar">✏️</button>
-            <button onclick="update(${r.id}, 'completed')" class="btn-icon" title="Concluir" style="color:blue;">🏁</button>
-            <button onclick="update(${r.id}, 'cancelled')" class="btn-icon" title="Cancelar" style="color:var(--error);">🚫</button>
+            <button onclick="openEdit(${r.id}, '${r.date}', '${r.time}')" class="btn-icon" title="Reagendar" style="color:var(--primary);">
+                <i class="ph-bold ph-calendar-pencil"></i>
+            </button>
+            <button onclick="update(${r.id}, 'completed')" class="btn-icon" title="Concluir" style="color:var(--success);">
+                <i class="ph-bold ph-check-circle"></i>
+            </button>
+            <button onclick="update(${r.id}, 'cancelled')" class="btn-icon" title="Cancelar" style="color:var(--error);">
+                <i class="ph-bold ph-prohibit"></i>
+            </button>
         `;
     }
+    // Completed/Cancelled items usually don't need actions or maybe just 'Archive'? For now, show nothing or just view details (if implemented)
+    // User requested specifically for "Accept, Refuse, Reschedule, Complete, Cancel".
+    // Completed items are done.
     return `<span style="color:#aaa;">-</span>`;
 }
 

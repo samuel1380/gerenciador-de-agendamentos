@@ -58,35 +58,43 @@ window.dashboardCharts = {
 
 function renderCharts(appointments) {
     // A. Appointments per Day (Last 30 Days)
-    const days = [];
-    const counts = [];
-    const now = new Date();
+    // A. Appointments History (Data-Driven)
+    // Instead of forcing a 30-day grid which might mismatch timezones, we aggregate the ACTUAL data present.
+    const countsMap = {};
 
-    for (let i = 29; i >= 0; i--) {
-        const d = new Date(now);
-        d.setDate(d.getDate() - i);
+    // Sort appointments by date first to ensure order
+    const sortedApps = appointments
+        .filter(a => a.status === 'accepted' || a.status === 'completed')
+        .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-        // Fix Timezone issue: Don't use toISOString() which converts to UTC.
-        // Use local components (or whatever the browser thinks is "today minus i")
-        // But since we want "Brazil day", ensuring consistency is key.
-        // Actually simplest is: "YYYY-MM-DD" from d.getFullYear(), d.getMonth()...
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        const dateStr = `${y}-${m}-${day}`;
+    sortedApps.forEach(a => {
+        // Extract YYYY-MM-DD safely
+        const dateKey = (a.date + '').substring(0, 10);
+        if (dateKey) {
+            countsMap[dateKey] = (countsMap[dateKey] || 0) + 1;
+        }
+    });
 
-        // Format for Label (e.g., 10/12)
-        days.push(`${day}/${m}`);
-
-        // Count appointments for this date
-        // Note: appointment.date from API might be "2025-12-19T00:00..." or "2025-12-19"
-        // Let's match the first 10 chars.
-        const count = appointments.filter(a => {
-            const appDateStr = (a.date + '').substring(0, 10);
-            return appDateStr === dateStr && (a.status === 'accepted' || a.status === 'completed'); // Only count active business
-        }).length;
-        counts.push(count);
+    // If no data, show at least "Today"
+    if (Object.keys(countsMap).length === 0) {
+        const today = new Date().toISOString().split('T')[0];
+        countsMap[today] = 0;
     }
+
+    const labels = Object.keys(countsMap); // dates are keys, they should be roughly sorted if we iterated sorted array? 
+    // Actually Object.keys order isn't guaranteed perfectly, let's explicit sort.
+    labels.sort();
+
+    // Let's limit to last 30 active days to avoid overcrowding
+    const recentLabels = labels.slice(-30);
+
+    const days = recentLabels.map(dateStr => {
+        // Format YYYY-MM-DD to DD/MM
+        const [y, m, d] = dateStr.split('-');
+        return `${d}/${m}`;
+    });
+
+    const countData = recentLabels.map(date => countsMap[date]);
 
     const ctxApp = document.getElementById('appointmentsChart').getContext('2d');
 
@@ -101,7 +109,7 @@ function renderCharts(appointments) {
             labels: days,
             datasets: [{
                 label: 'Agendamentos',
-                data: counts,
+                data: countData,
                 borderColor: '#ec4899', // Pink
                 backgroundColor: 'rgba(236, 72, 153, 0.1)',
                 borderWidth: 2,
