@@ -28,10 +28,21 @@
             <a href="settings.html" class="nav-link"><i class="ph-duotone ph-trophy icon-game"></i> Gamificação</a>
         </nav>
     </div>
+    <div class="sidebar-overlay"></div>
 
     <div class="main">
-        <h1>Enviar Notificações</h1>
-        <p style="margin-bottom: 2rem; color: var(--text-light);">Envie mensagens personalizadas para seus clientes.</p>
+        <div class="header" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button id="sidebarToggle" class="btn-icon" style="display: none; font-size: 1.5rem;">
+                    <i class="ph-duotone ph-list"></i>
+                </button>
+                <div>
+                    <h1>Enviar Notificações</h1>
+                    <p style="color: var(--text-light); margin-top: 4px;">Envie mensagens personalizadas para seus
+                        clientes.</p>
+                </div>
+            </div>
+        </div>
 
         <div class="card-modern" style="max-width: 600px;">
             <form id="notifForm">

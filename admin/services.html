@@ -29,11 +29,22 @@
             <a href="settings.html" class="nav-link"><i class="ph-duotone ph-trophy icon-game"></i> Gamificação</a>
         </nav>
     </div>
+    <div class="sidebar-overlay"></div>
 
     <div class="main">
-        <h1>Gerenciar Serviços</h1>
-        <p style="margin-bottom: 2rem; color: var(--text-light);">Cadastre e gerencie os serviços oferecidos no seu
-            estabelecimento.</p>
+        <div class="header" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button id="sidebarToggle" class="btn-icon" style="display: none; font-size: 1.5rem;">
+                    <i class="ph-duotone ph-list"></i>
+                </button>
+                <div>
+                    <h1>Gerenciar Serviços</h1>
+                    <p style="color: var(--text-light); margin-top: 4px;">Cadastre e gerencie os serviços oferecidos no
+                        seu
+                        estabelecimento.</p>
+                </div>
+            </div>
+        </div>
 
         <!-- Add Service Form -->
         <div class="card-modern" style="margin-bottom: 2rem;">
@@ -44,7 +55,8 @@
                 Adicionar Novo Serviço
             </h3>
             <form id="addServiceForm">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
                     <div class="form-group">
                         <label>Título do Serviço</label>
                         <input type="text" name="title" class="input" required placeholder="Ex: Corte de Cabelo">
