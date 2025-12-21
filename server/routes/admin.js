@@ -226,10 +226,35 @@ router.get('/stats', (req, res) => {
                 db.all(`SELECT date, status FROM appointments WHERE status IN ('accepted', 'completed')`, [], (err, rows) => {
                     if (err) return res.status(500).json({ error: err.message });
 
-                    // Filter in JS
-                    // Ensure date is string YYYY-MM-DD (take first 10 chars just in case)
-                    const todayCount = rows.filter(r => (r.date + '').substring(0, 10) === todayStr).length;
-                    const monthCount = rows.filter(r => r.status === 'completed' && (r.date + '').substring(0, 7) === monthStr).length;
+                    // Filter in JS with robust Date parsing
+                    // We assume 'date' coming from DB works with new Date() constructor
+                    // and we explicitly convert both Comparison Date (Today) and Appointment Date to Brazil string for matching.
+
+                    const brazilTimeOptions = { timeZone: "America/Sao_Paulo", year: 'numeric', month: '2-digit', day: '2-digit' };
+                    const brazilTotalDateStr = new Date().toLocaleDateString('en-CA', brazilTimeOptions); // Returns YYYY-MM-DD in Brazil Time
+
+                    // We need month str YYYY-MM
+                    const brazilMonthStr = brazilTotalDateStr.substring(0, 7);
+
+                    let todayCount = 0;
+                    let monthCount = 0;
+
+                    rows.forEach(r => {
+                        // DB Date might be YYYY-MM-DD or ISO.
+                        // We append T12:00:00 to avoid timezone shifts if it's just a date string
+                        // But safest is to read it, assume it is what it is.
+                        // If it's YYYY-MM-DD string:
+                        let dStr = r.date + '';
+
+                        // If the date string matches today's string prefix
+                        if (dStr.startsWith(brazilTotalDateStr)) {
+                            todayCount++;
+                        }
+
+                        if (r.status === 'completed' && dStr.startsWith(brazilMonthStr)) {
+                            monthCount++;
+                        }
+                    });
 
                     stats.today_completed = todayCount;
                     stats.month = monthCount;
