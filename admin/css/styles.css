@@ -711,8 +711,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* 1. Limit Maximum Width for Ultra-Wide Screens */
 .main {
-    max-width: 1600px; /* Prevent overly wide lines on 27"+ monitors */
-    margin: 0 auto; /* Center content */
+    max-width: 1600px;
+    /* Prevent overly wide lines on 27"+ monitors */
+    margin: 0 auto;
+    /* Center content */
     width: 100%;
 }
 
@@ -724,6 +726,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         grid-template-columns: repeat(2, 1fr);
     }
 }
+
 /* Desktop (lg): 4 cols */
 @media (min-width: 1024px) {
     .stats-grid {
@@ -735,28 +738,44 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 @media (max-width: 768px) {
     .sidebar {
         position: fixed;
-        left: -280px; /* Hidden by default on mobile */
+        left: -280px;
+        /* Hidden by default on mobile */
         height: 100%;
         transition: left 0.3s ease;
-        box-shadow: var(--shadow-xl);
+        box-shadow: var(--shadow-lg);
     }
-    
+
     .sidebar.active {
-        left: 0; /* Slide in */
+        left: 0;
+        /* Slide in */
     }
 
     .main {
-        margin-left: 0; /* Full width */
-        padding: 1rem; /* Smaller padding on mobile */
+        margin-left: 0;
+        /* Full width */
+        padding: 1rem;
+        /* Smaller padding on mobile */
     }
-    
+
     /* Overlay when sidebar is open */
-    body.sidebar-open::before {
-        content: '';
+    .sidebar-overlay {
         position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        background: rgba(0,0,0,0.5);
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
         z-index: 40;
+        display: none;
+    }
+
+    .sidebar-overlay.active {
+        display: block;
+    }
+
+    /* Show Toggle Button */
+    #sidebarToggle {
+        display: inline-flex !important;
     }
 }
 
@@ -767,18 +786,33 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     box-shadow: var(--shadow-sm);
     border: 1px solid var(--border);
     /* Ensure scroll on small screens */
-    overflow-x: auto; 
+    overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 
 /* 5. Chart Containers */
 .chart-container-responsive {
-    position: relative; 
-    width: 100%; 
+    position: relative;
+    width: 100%;
     height: 300px;
 }
+
 @media (max-width: 640px) {
     .chart-container-responsive {
         height: 250px;
+    }
+}
+
+/* 6. Responsive Grids (General) */
+.grid-stack-mobile {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 1024px) {
+    .grid-stack-mobile {
+        grid-template-columns: 1fr;
+        /* Stack vertically on tablet/mobile */
     }
 }

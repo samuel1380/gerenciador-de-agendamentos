@@ -12,7 +12,7 @@
 
 <body>
     <div class="sidebar">
-        <div class="brand">Admin Panel</div>
+        <div class="brand"><span>Admin</span>Panel</div>
         <nav class="nav-links">
             <a href="index.html" class="nav-link active"><i class="ph-duotone ph-squares-four icon-dashboard"></i>
                 Dashboard</a>
@@ -29,12 +29,18 @@
             <a href="settings.html" class="nav-link"><i class="ph-duotone ph-trophy icon-game"></i> Gamificação</a>
         </nav>
     </div>
+    <div class="sidebar-overlay"></div>
 
     <div class="main">
         <div class="header">
-            <div>
-                <h1>Dashboard</h1>
-                <p class="text-subtitle" style="color:#666; margin-top:4px;">Visão geral do seu negócio</p>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button id="sidebarToggle" class="btn-icon" style="display: none; font-size: 1.5rem;">
+                    <i class="ph-duotone ph-list"></i>
+                </button>
+                <div>
+                    <h1>Dashboard</h1>
+                    <p class="text-subtitle" style="color:#666; margin-top:4px;">Visão geral do seu negócio</p>
+                </div>
             </div>
             <div id="dateDisplay"
                 style="background:white; padding:8px 16px; border-radius:8px; font-weight:500; color:var(--primary-dark); box-shadow:0 1px 2px rgba(0,0,0,0.05);">
@@ -83,18 +89,20 @@
         </div>
 
         <!-- Charts Section -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 2rem;">
+        <div class="grid-stack-mobile" style="margin-bottom: 2rem;">
             <div class="card" style="min-height: 300px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
                     <h3>Agendamentos</h3>
                 </div>
-                <div style="position: relative; height: 250px;">
+                <!-- Use class for responsiveness -->
+                <div class="chart-container-responsive">
                     <canvas id="appointmentsChart"></canvas>
                 </div>
             </div>
             <div class="card" style="min-height: 300px;">
                 <h3>Status dos Agendamentos</h3>
-                <div style="position: relative; height: 200px; margin-top:20px;">
+                <!-- Use class for responsiveness -->
+                <div class="chart-container-responsive" style="height: 200px; margin-top:20px;">
                     <canvas id="statusChart"></canvas>
                 </div>
                 <div id="chartLegend"
@@ -105,14 +113,14 @@
         </div>
 
         <!-- Pending & Actions -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+        <div class="grid-stack-mobile">
             <div class="card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h3>Agendamentos Pendentes</h3>
                     <a href="appointments.html?status=pending"
                         style="font-size:0.8rem; color:var(--primary); text-decoration:none;">Ver todos</a>
                 </div>
-                <div style="overflow-x: auto; margin-top: 1rem;">
+                <div class="table-container">
                     <table class="table" style="width:100%">
                         <thead>
                             <tr style="text-align:left;">

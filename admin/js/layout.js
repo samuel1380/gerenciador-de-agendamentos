@@ -42,4 +42,36 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         nav.appendChild(logoutBtn);
     }
+
+
+    // --- Mobile Sidebar Toggle Logic ---
+    const toggleBtn = document.getElementById('sidebarToggle');
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.sidebar-overlay');
+
+    if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+            if (overlay) overlay.classList.toggle('active');
+        });
+    }
+
+    if (overlay) {
+        overlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        });
+    }
+
+    // Close sidebar when clicking a link on mobile
+    if (nav) {
+        nav.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                    if (overlay) overlay.classList.remove('active');
+                }
+            });
+        });
+    }
 });
