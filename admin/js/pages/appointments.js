@@ -244,8 +244,12 @@ function renderMobileAppointments() {
         paginationHtml = `
             <div class="appointments-mobile-pagination">
                 <div class="appointments-mobile-arrows">
-                    <button class="appointments-page-arrow" data-dir="prev" ${page === 1 ? 'disabled' : ''}>&lt;</button>
-                    <button class="appointments-page-arrow" data-dir="next" ${page === totalPages ? 'disabled' : ''}>&gt;</button>
+                    <button class="appointments-page-arrow" data-dir="prev" ${page === 1 ? 'disabled' : ''}>
+                        <i class="ph-bold ph-caret-left"></i>
+                    </button>
+                    <button class="appointments-page-arrow" data-dir="next" ${page === totalPages ? 'disabled' : ''}>
+                        <i class="ph-bold ph-caret-right"></i>
+                    </button>
                 </div>
                 <div class="appointments-mobile-pages">
                     ${pages.map(p => `
