@@ -126,8 +126,10 @@ async function loadData(isBackground = false) {
                     <div style="font-size:0.8rem; color:#666;">${r.user_phone || ''}</div>
                 </td>
                 <td>${r.service_title}</td>
-                <td>${formatDate(r.date)}</td>
-                <td>${r.time}</td>
+                <td>
+                    <div>${formatDate(r.date)}</div>
+                    <div style="font-size:0.8rem; color:#6b7280;">às ${r.time}</div>
+                </td>
                 <td><span class="badge ${getStatusBadge(r.status)}">${getStatusLabel(r.status)}</span></td>
                 <td>
                     <div style="display:flex; gap:4px;">

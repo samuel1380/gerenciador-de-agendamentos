@@ -873,6 +873,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     -webkit-overflow-scrolling: touch;
 }
 
+@media (max-width: 768px) {
+    .table {
+        white-space: normal;
+    }
+
+    .table thead th:first-child,
+    .table tbody td:first-child {
+        display: none;
+    }
+}
+
 /* 5. Chart Containers */
 .chart-container-responsive {
     position: relative;
