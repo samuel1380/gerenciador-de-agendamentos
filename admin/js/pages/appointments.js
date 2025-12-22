@@ -1,3 +1,9 @@
+const appointmentsMobileState = {
+    page: 1,
+    pageSize: 10,
+    rows: []
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     loadData();
 
@@ -31,6 +37,31 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('editModal');
         if (e.target == modal) modal.style.display = 'none';
     }
+    const mobileList = document.getElementById('appointmentsMobileList');
+    if (mobileList) {
+        mobileList.addEventListener('click', (e) => {
+            const pageBtn = e.target.closest('.appointments-page-btn');
+            const arrowBtn = e.target.closest('.appointments-page-arrow');
+            if (pageBtn) {
+                const page = parseInt(pageBtn.dataset.page, 10);
+                if (!isNaN(page)) {
+                    appointmentsMobileState.page = page;
+                    renderMobileAppointments();
+                }
+            } else if (arrowBtn) {
+                const dir = arrowBtn.dataset.dir;
+                const totalPages = Math.max(1, Math.ceil((appointmentsMobileState.rows || []).length / appointmentsMobileState.pageSize));
+                if (dir === 'prev' && appointmentsMobileState.page > 1) {
+                    appointmentsMobileState.page -= 1;
+                    renderMobileAppointments();
+                } else if (dir === 'next' && appointmentsMobileState.page < totalPages) {
+                    appointmentsMobileState.page += 1;
+                    renderMobileAppointments();
+                }
+            }
+        });
+    }
+
     // Auto-refresh every 5 seconds
     setInterval(() => {
         // Only refresh if no modal is open (to avoid disrupting edits)
@@ -115,6 +146,7 @@ async function loadData(isBackground = false) {
             tbody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum registro encontrado.</td></tr>';
             if (mobileList) mobileList.innerHTML = '<p class="text-center" style="color:#6b7280; padding:1.5rem 0;">Nenhum registro encontrado.</p>';
             window.lastRows = [];
+            appointmentsMobileState.rows = [];
             return;
         }
 
@@ -140,43 +172,91 @@ async function loadData(isBackground = false) {
         `).join('');
 
         if (mobileList) {
-            const isMobile = window.innerWidth <= 768;
-            if (!isMobile) {
-                mobileList.innerHTML = '';
-            } else {
-                mobileList.innerHTML = filteredRows.map(r => `
-                    <div class="appointments-mobile-card">
-                        <div class="appointments-mobile-header">
-                            <div>
-                                <div class="appointments-mobile-id">#${r.id}</div>
-                                <div class="appointments-mobile-client">${r.user_name}</div>
-                                <div class="appointments-mobile-phone">${r.user_phone || ''}</div>
-                            </div>
-                            <div class="appointments-mobile-status">
-                                <span class="badge ${getStatusBadge(r.status)}">${getStatusLabel(r.status)}</span>
-                            </div>
-                        </div>
-                        <div class="appointments-mobile-body">
-                            <div class="appointments-mobile-row">
-                                <span class="appointments-mobile-label">Serviço</span>
-                                <span class="appointments-mobile-value">${r.service_title}</span>
-                            </div>
-                            <div class="appointments-mobile-row">
-                                <span class="appointments-mobile-label">Data</span>
-                                <span class="appointments-mobile-value">${formatDate(r.date)} às ${r.time}</span>
-                            </div>
-                        </div>
-                        <div class="appointments-mobile-actions">
-                            ${getActionButtons(r)}
-                        </div>
-                    </div>
-                `).join('');
+            appointmentsMobileState.rows = filteredRows;
+            if (!isBackground) {
+                appointmentsMobileState.page = 1;
             }
+            renderMobileAppointments();
         }
     } catch (e) {
         console.error(e);
         Toast.error('Erro ao carregar agendamentos');
     }
+}
+
+function renderMobileAppointments() {
+    const mobileList = document.getElementById('appointmentsMobileList');
+    if (!mobileList) return;
+
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) {
+        mobileList.innerHTML = '';
+        return;
+    }
+
+    const rows = appointmentsMobileState.rows || [];
+    if (rows.length === 0) {
+        mobileList.innerHTML = '<p class="text-center" style="color:#6b7280; padding:1.5rem 0;">Nenhum registro encontrado.</p>';
+        return;
+    }
+
+    const pageSize = appointmentsMobileState.pageSize;
+    const totalPages = Math.max(1, Math.ceil(rows.length / pageSize));
+    let page = appointmentsMobileState.page || 1;
+    if (page > totalPages) page = totalPages;
+    if (page < 1) page = 1;
+    appointmentsMobileState.page = page;
+
+    const startIndex = (page - 1) * pageSize;
+    const currentRows = rows.slice(startIndex, startIndex + pageSize);
+
+    const cardsHtml = currentRows.map(r => `
+        <div class="appointments-mobile-card">
+            <div class="appointments-mobile-header">
+                <div>
+                    <div class="appointments-mobile-id">#${r.id}</div>
+                    <div class="appointments-mobile-client">${r.user_name}</div>
+                    <div class="appointments-mobile-phone">${r.user_phone || ''}</div>
+                </div>
+                <div class="appointments-mobile-status">
+                    <span class="badge ${getStatusBadge(r.status)}">${getStatusLabel(r.status)}</span>
+                </div>
+            </div>
+            <div class="appointments-mobile-body">
+                <div class="appointments-mobile-row">
+                    <span class="appointments-mobile-label">Serviço</span>
+                    <span class="appointments-mobile-value">${r.service_title}</span>
+                </div>
+                <div class="appointments-mobile-row">
+                    <span class="appointments-mobile-label">Data</span>
+                    <span class="appointments-mobile-value">${formatDate(r.date)} às ${r.time}</span>
+                </div>
+            </div>
+            <div class="appointments-mobile-actions">
+                ${getActionButtons(r)}
+            </div>
+        </div>
+    `).join('');
+
+    let paginationHtml = '';
+    if (totalPages > 1) {
+        const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+        paginationHtml = `
+            <div class="appointments-mobile-pagination">
+                <div class="appointments-mobile-arrows">
+                    <button class="appointments-page-arrow" data-dir="prev" ${page === 1 ? 'disabled' : ''}>&lt;</button>
+                    <button class="appointments-page-arrow" data-dir="next" ${page === totalPages ? 'disabled' : ''}>&gt;</button>
+                </div>
+                <div class="appointments-mobile-pages">
+                    ${pages.map(p => `
+                        <button class="appointments-page-btn ${p === page ? 'active' : ''}" data-page="${p}">${p}</button>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    mobileList.innerHTML = cardsHtml + paginationHtml;
 }
 
 function getStatusBadge(status) {
