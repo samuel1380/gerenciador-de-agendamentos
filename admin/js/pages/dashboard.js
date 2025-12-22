@@ -81,20 +81,23 @@ function renderCharts(appointments) {
         countsMap[today] = 0;
     }
 
-    const labels = Object.keys(countsMap); // dates are keys, they should be roughly sorted if we iterated sorted array? 
-    // Actually Object.keys order isn't guaranteed perfectly, let's explicit sort.
-    labels.sort();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const start = new Date(today);
+    start.setDate(start.getDate() - 29);
 
-    // Let's limit to last 30 active days to avoid overcrowding
-    const recentLabels = labels.slice(-30);
+    const labels = [];
+    for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
+        const dateKey = d.toISOString().split('T')[0];
+        labels.push(dateKey);
+    }
 
-    const days = recentLabels.map(dateStr => {
-        // Format YYYY-MM-DD to DD/MM
+    const days = labels.map(dateStr => {
         const [y, m, d] = dateStr.split('-');
         return `${d}/${m}`;
     });
 
-    const countData = recentLabels.map(date => countsMap[date]);
+    const countData = labels.map(date => countsMap[date] || 0);
 
     const ctxApp = document.getElementById('appointmentsChart').getContext('2d');
 
