@@ -49,9 +49,8 @@ export class ProfilePage {
         const ph = document.getElementById('avatarPlaceholder');
 
         if (user.avatar) {
-            // Assume API_URL is accessible or window.location logic needed
-            const baseUrl = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
-            // If avatar starts with http, use it. If not, prepend base.
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            const baseUrl = isLocal ? 'http://localhost:3000' : '';
             img.src = user.avatar.startsWith('http') ? user.avatar : `${baseUrl}/${user.avatar}`;
 
             img.style.display = 'block';
@@ -182,11 +181,11 @@ export class ProfilePage {
 
                 const data = await res.json();
 
-                // Update user in local storage
                 const user = JSON.parse(localStorage.getItem('user'));
                 if (user) {
                     user.avatar = data.avatar;
                     localStorage.setItem('user', JSON.stringify(user));
+                    await this.renderUser(user);
                 }
                 Toast.success('Foto atualizada!');
 

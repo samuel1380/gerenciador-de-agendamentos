@@ -153,8 +153,9 @@
 
                 if (user.avatar) {
                     const avatarImg = document.getElementById('userAvatar');
-                    // Check if avatar is full URL or relative path
-                    avatarImg.src = user.avatar.startsWith('http') ? user.avatar : `../${user.avatar}`;
+                    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                    const baseUrl = isLocal ? 'http://localhost:3000' : '';
+                    avatarImg.src = user.avatar.startsWith('http') ? user.avatar : `${baseUrl}/${user.avatar}`;
                     avatarImg.style.display = 'block';
                     document.getElementById('userInitial').style.display = 'none';
                 }
