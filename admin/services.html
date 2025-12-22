@@ -137,44 +137,24 @@
 
         async function loadServices() {
             const body = document.getElementById('servicesBody');
-            body.innerHTML = `
-        <tr>
-            <td colspan="4" class="text-center" style="padding: 3rem;">
-                <i class="ph-bold ph-spinner ph-spin" style="font-size: 2rem; color: var(--primary);"></i>
-                <p style="margin-top: 1rem; color: var(--text-secondary);">Carregando serviços...</p>
-            </td>
-        </tr>`;
-
+            body.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
             try {
                 const services = await api.get('/services');
                 if (services.length === 0) {
-                    body.innerHTML = `
-                <tr>
-                    <td colspan="4" class="text-center" style="padding: 3rem; color: var(--text-secondary);">
-                        <i class="ph-duotone ph-sparkle" style="font-size: 3rem;"></i>
-                        <p style="margin-top: 1rem;">Nenhum serviço ativo.</p>
-                    </td>
-                </tr>`;
+                    body.innerHTML = '<tr><td colspan="4">Nenhum serviço ativo.</td></tr>';
                     return;
                 }
                 body.innerHTML = services.map(s => `
-            <tr style="border-left: 4px solid var(--primary);">
-                <td data-label="Nome"><strong>${s.title}</strong></td>
-                <td data-label="Preço">R$ ${Number(s.price).toFixed(2)}</td>
-                <td data-label="Duração">${s.duration_minutes} min</td>
-                <td data-label="Ações">
-                    <div style="display:flex; justify-content:flex-end;">
-                        <button onclick="removeService(${s.id})" class="btn-icon" title="Remover" style="color:var(--error);">
-                            <i class="ph-bold ph-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-            } catch (e) {
-                console.error(e);
-                body.innerHTML = '<tr><td colspan="4" class="text-error text-center">Erro ao carregar serviços.</td></tr>';
-            }
+                    <tr>
+                        <td>${s.title}</td>
+                        <td>R$ ${Number(s.price).toFixed(2)}</td>
+                        <td>${s.duration_minutes} min</td>
+                        <td>
+                            <button onclick="removeService(${s.id})" class="btn-icon" title="Remover" style="color:var(--error);"><i class="ph-bold ph-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (e) { console.error(e); }
         }
 
         async function removeService(id) {

@@ -51,15 +51,7 @@ function debounce(func, timeout = 300) {
 
 async function loadData(isBackground = false) {
     const tbody = document.getElementById('tableBody');
-    if (!isBackground) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="7" class="text-center" style="padding: 3rem;">
-                    <i class="ph-bold ph-spinner ph-spin" style="font-size: 2rem; color: var(--primary);"></i>
-                    <p style="margin-top: 1rem; color: var(--text-secondary);">Carregando agendamentos...</p>
-                </td>
-            </tr>`;
-    }
+    if (!isBackground) tbody.innerHTML = '<tr><td colspan="7" class="text-center">Carregando...</td></tr>';
 
     const status = document.getElementById('statusFilter').value;
     const sort = document.getElementById('sortFilter').value;
@@ -73,6 +65,12 @@ async function loadData(isBackground = false) {
         if (sort) url += `&sort=${sort}`;
         if (startDate) url += `&startDate=${startDate}`;
         if (endDate) url += `&endDate=${endDate}`;
+        // Search is client-side filter or needs backend impl. Implementing Client-side for name/phone if backend doesn't support SEARCH query yet.
+        // Backend doesn't support 'search' param in SQL yet, effectively. Admin route doesn't have LIKE %search%.
+        // Assuming user wants filtering on loaded results or we add it to backend.
+        // Let's filter client side for Search for now to be safe, or add backend search.
+        // Adding backend search involves joining user tables which we did. 
+        // Let's stick to filters provided by API.
 
         const rows = await api.get(url);
 
@@ -96,44 +94,43 @@ async function loadData(isBackground = false) {
             if (sort === 'oldest') {
                 return dateA - dateB;
             } else if (sort === 'upcoming') {
+                // Determine if future or past
                 const now = new Date();
                 const isAFuture = dateA >= now;
                 const isBFuture = dateB >= now;
-                if (isAFuture && !isBFuture) return -1;
+
+                if (isAFuture && !isBFuture) return -1; // Future first
                 if (!isAFuture && isBFuture) return 1;
+
+                // If both future or both past, sort ASC (closest to now for future, oldest for past)
                 return dateA - dateB;
             } else {
+                // Recent (Default) - Newest first
                 return dateB - dateA;
             }
         });
 
         if (filteredRows.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center" style="padding: 3rem;">
-                        <i class="ph-duotone ph-calendar-x" style="font-size: 3rem; color: var(--text-light);"></i>
-                        <p style="margin-top: 1rem; color: var(--text-secondary);">Nenhum agendamento encontrado.</p>
-                    </td>
-                </tr>`;
+            tbody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum registro encontrado.</td></tr>';
             window.lastRows = [];
             return;
         }
 
-        window.lastRows = filteredRows;
+        window.lastRows = filteredRows; // Store for CSV export
 
         tbody.innerHTML = filteredRows.map(r => `
-            <tr class="card-mobile-${r.status}">
-                <td data-label="ID">#${r.id}</td>
-                <td data-label="Cliente">
+            <tr>
+                <td>#${r.id}</td>
+                <td>
                     <div style="font-weight:600;">${r.user_name}</div>
                     <div style="font-size:0.8rem; color:#666;">${r.user_phone || ''}</div>
                 </td>
-                <td data-label="Serviço">${r.service_title}</td>
-                <td data-label="Data">${formatDate(r.date)}</td>
-                <td data-label="Hora">${r.time}</td>
-                <td data-label="Status"><span class="badge ${getStatusBadge(r.status)}">${getStatusLabel(r.status)}</span></td>
-                <td data-label="Ações">
-                    <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content: flex-end;">
+                <td>${r.service_title}</td>
+                <td>${formatDate(r.date)}</td>
+                <td>${r.time}</td>
+                <td><span class="badge ${getStatusBadge(r.status)}">${getStatusLabel(r.status)}</span></td>
+                <td>
+                    <div style="display:flex; gap:4px;">
                         ${getActionButtons(r)}
                     </div>
                 </td>
@@ -141,7 +138,7 @@ async function loadData(isBackground = false) {
         `).join('');
     } catch (e) {
         console.error(e);
-        if (!isBackground) Toast.error('Erro ao carregar agendamentos');
+        Toast.error('Erro ao carregar agendamentos');
     }
 }
 
