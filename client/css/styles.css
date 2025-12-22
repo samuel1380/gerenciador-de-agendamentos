@@ -419,6 +419,21 @@ textarea.form-input {
     box-shadow: 0 2px 4px -1px rgba(232, 180, 184, 0.4);
 }
 
+.btn-admin-panel {
+    margin-top: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+.btn-admin-panel span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
 /* Glassmorphism Bottom Nav */
 .bottom-nav {
     position: fixed;

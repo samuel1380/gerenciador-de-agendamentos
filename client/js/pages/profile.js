@@ -35,6 +35,11 @@ export class ProfilePage {
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => this.logout());
         }
+
+        const adminBtn = document.getElementById('adminPanelButton');
+        if (adminBtn && user && user.role === 'admin') {
+            adminBtn.style.display = 'block';
+        }
     }
 
     async renderUser(user) {

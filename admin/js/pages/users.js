@@ -63,10 +63,10 @@ function renderUsers(users) {
                 <button onclick="viewUser(${u.id})" class="btn-icon" title="Ver Detalhes" style="color:var(--info);">
                     <i class="ph-bold ph-eye"></i>
                 </button>
-                <button onclick="toggleUser(${u.id})" class="btn-icon" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}" style="color:${(u.active ?? 1) ? 'var(--error)' : 'var(--success)'};">
+                <button ${u.role === 'admin' ? 'disabled' : ''} onclick="toggleUser(${u.id})" class="btn-icon" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}" style="color:${(u.active ?? 1) ? 'var(--error)' : 'var(--success)'}; ${u.role === 'admin' ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
                     <i class="ph-bold ${(u.active ?? 1) ? 'ph-prohibit' : 'ph-check-circle'}"></i>
                 </button>
-                <button onclick="makeAdmin(${u.id})" class="btn-icon" title="Promover a Admin" style="color:var(--warning);">
+                <button ${u.role === 'admin' ? 'disabled' : ''} onclick="makeAdmin(${u.id})" class="btn-icon" title="Promover a Admin" style="color:var(--warning); ${u.role === 'admin' ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
                     <i class="ph-bold ph-crown"></i>
                 </button>
             </td>
@@ -107,10 +107,10 @@ function renderUsers(users) {
                         <button onclick="viewUser(${u.id})" class="btn-icon" title="Ver Detalhes" style="color:var(--info);">
                             <i class="ph-bold ph-eye"></i>
                         </button>
-                        <button onclick="toggleUser(${u.id})" class="btn-icon" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}" style="color:${(u.active ?? 1) ? 'var(--error)' : 'var(--success)'};">
+                        <button ${u.role === 'admin' ? 'disabled' : ''} onclick="toggleUser(${u.id})" class="btn-icon" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}" style="color:${(u.active ?? 1) ? 'var(--error)' : 'var(--success)'}; ${u.role === 'admin' ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
                             <i class="ph-bold ${(u.active ?? 1) ? 'ph-prohibit' : 'ph-check-circle'}"></i>
                         </button>
-                        <button onclick="makeAdmin(${u.id})" class="btn-icon" title="Promover a Admin" style="color:var(--warning);">
+                        <button ${u.role === 'admin' ? 'disabled' : ''} onclick="makeAdmin(${u.id})" class="btn-icon" title="Promover a Admin" style="color:var(--warning); ${u.role === 'admin' ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
                             <i class="ph-bold ph-crown"></i>
                         </button>
                     </div>

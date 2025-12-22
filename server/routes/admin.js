@@ -276,11 +276,10 @@ router.post('/settings', (req, res) => {
 // LIST USERS
 router.get('/users', (req, res) => {
     const db = req.db;
-    db.all(`SELECT u.id, u.name, u.email, u.phone, u.level, u.xp, u.created_at, u.active,
+    db.all(`SELECT u.id, u.name, u.email, u.phone, u.level, u.xp, u.created_at, u.active, u.role,
             (SELECT count(*) FROM appointments WHERE user_id = u.id) as total_appointments,
             (SELECT COALESCE(sum(s.price), 0) FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.user_id = u.id AND a.status = 'completed') as ltv
             FROM users u
-            WHERE u.role != 'admin'
             ORDER BY u.created_at DESC`, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
@@ -320,8 +319,9 @@ router.put('/users/:id/toggle', (req, res) => {
     const db = req.db;
     const { id } = req.params;
 
-    db.get(`SELECT active FROM users WHERE id = ?`, [id], (err, row) => {
+    db.get(`SELECT active, role FROM users WHERE id = ?`, [id], (err, row) => {
         if (err || !row) return res.status(404).json({ error: 'User not found' });
+        if (row.role === 'admin') return res.status(403).json({ error: 'Não é permitido bloquear uma conta admin.' });
 
         const newStatus = row.active ? 0 : 1;
         db.run(`UPDATE users SET active = ? WHERE id = ?`, [newStatus, id], (err) => {
@@ -336,10 +336,15 @@ router.put('/users/:id/promote', (req, res) => {
     const db = req.db;
     const { id } = req.params;
 
-    db.run(`UPDATE users SET role = 'admin' WHERE id = ?`, [id], function (err) {
+    db.get(`SELECT role FROM users WHERE id = ?`, [id], (err, row) => {
         if (err) return res.status(500).json({ error: err.message });
-        if (this.changes === 0) return res.status(404).json({ error: 'User not found' });
-        res.json({ message: 'User promoted to admin successfully' });
+        if (!row) return res.status(404).json({ error: 'User not found' });
+        if (row.role === 'admin') return res.status(400).json({ error: 'Usuário já é administrador.' });
+
+        db.run(`UPDATE users SET role = 'admin' WHERE id = ?`, [id], function (err) {
+            if (err) return res.status(500).json({ error: err.message });
+            res.json({ message: 'User promoted to admin successfully' });
+        });
     });
 });
 
