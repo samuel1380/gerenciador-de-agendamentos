@@ -124,31 +124,49 @@
 
         async function loadPromotions() {
             const body = document.getElementById('promoBody');
-            body.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
+            body.innerHTML = `
+        <tr>
+            <td colspan="4" class="text-center" style="padding: 3rem;">
+                <i class="ph-bold ph-spinner ph-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                <p style="margin-top: 1rem; color: var(--text-secondary);">Carregando promoções...</p>
+            </td>
+        </tr>`;
+
             try {
                 const promos = await api.get('/promotions');
                 if (promos.length === 0) {
-                    body.innerHTML = '<tr><td colspan="4">Nenhuma promoção cadastrada.</td></tr>';
+                    body.innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center" style="padding: 3rem; color: var(--text-secondary);">
+                        <i class="ph-duotone ph-tag" style="font-size: 3rem;"></i>
+                        <p style="margin-top: 1rem;">Nenhuma promoção cadastrada.</p>
+                    </td>
+                </tr>`;
                     return;
                 }
                 body.innerHTML = promos.map(p => `
-                    <tr>
-                        <td><strong>${p.title}</strong></td>
-                        <td>${p.description || '-'}</td>
-                        <td>
-                            <span class="status-badge ${p.active ? 'status-active' : 'status-inactive'}" 
-                                  style="cursor:pointer;" 
-                                  onclick="toggleStatus(${p.id})"
-                                  title="Clique para alterar">
-                                ${p.active ? 'Ativa' : 'Inativa'}
-                            </span>
-                        </td>
-                        <td>
-                            <button onclick="deletePromo(${p.id})" class="btn-icon" title="Excluir" style="color:var(--error);"><i class="ph-bold ph-trash"></i></button>
-                        </td>
-                    </tr>
-                `).join('');
-            } catch (e) { console.error(e); }
+            <tr class="${p.active ? 'card-mobile-confirmed' : 'card-mobile-cancelled'}">
+                <td data-label="Título"><strong>${p.title}</strong></td>
+                <td data-label="Descrição">${p.description || '-'}</td>
+                <td data-label="Status">
+                    <span class="status-badge ${p.active ? 'status-active' : 'status-inactive'}" 
+                          style="cursor:pointer;" 
+                          onclick="toggleStatus(${p.id})"
+                          title="Clique para alterar">
+                        ${p.active ? 'Ativa' : 'Inativa'}
+                    </span>
+                </td>
+                <td data-label="Ações">
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button onclick="deletePromo(${p.id})" class="btn-icon" title="Excluir" style="color:var(--error);"><i class="ph-bold ph-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+            } catch (e) {
+                console.error(e);
+                body.innerHTML = '<tr><td colspan="4" class="text-error text-center">Erro ao carregar promoções.</td></tr>';
+            }
         }
 
         async function toggleStatus(id) {

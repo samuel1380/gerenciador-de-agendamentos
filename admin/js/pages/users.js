@@ -24,7 +24,13 @@ let allUsers = [];
 
 async function loadUsers() {
     const list = document.getElementById('usersList');
-    list.innerHTML = '<tr><td colspan="6" class="text-center">Carregando...</td></tr>';
+    list.innerHTML = `
+        <tr>
+            <td colspan="6" class="text-center" style="padding: 3rem;">
+                <i class="ph-bold ph-spinner ph-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                <p style="margin-top: 1rem; color: var(--text-secondary);">Carregando clientes...</p>
+            </td>
+        </tr>`;
 
     try {
         const users = await api.get('/admin/users');
@@ -40,33 +46,41 @@ function renderUsers(users) {
     const list = document.getElementById('usersList');
 
     if (users.length === 0) {
-        list.innerHTML = '<tr><td colspan="6" class="text-center" style="padding: 2rem; color: var(--text-secondary);">Nenhum cliente encontrado.</td></tr>';
+        list.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center" style="padding: 3rem;">
+                    <i class="ph-duotone ph-users-three" style="font-size: 3rem; color: var(--text-light);"></i>
+                    <p style="margin-top: 1rem; color: var(--text-secondary);">Nenhum cliente encontrado.</p>
+                </td>
+            </tr>`;
         return;
     }
 
     list.innerHTML = users.map(u => `
-        <tr class="${u.active ? '' : 'user-banned'}" style="transition: background 0.2s;">
-            <td>
+        <tr class="${(u.active ?? 1) ? 'card-mobile-confirmed' : 'card-mobile-cancelled'}" style="transition: background 0.2s;">
+            <td data-label="Cliente">
                 <div style="font-weight:600; color: var(--text-main);">${u.name}</div>
                 <div style="font-size:0.85rem; color: var(--text-secondary);">${u.email}</div>
             </td>
-            <td>
+            <td data-label="Nível / XP">
                 <div style="font-weight: 500; color: var(--primary);">Nível ${u.level || 1}</div>
                 <small style="color: var(--text-muted);">${u.xp || 0} XP</small>
             </td>
-            <td style="font-weight: 600;">R$ ${Number(u.ltv || 0).toFixed(2)}</td>
-            <td><span style="background: var(--bg-body); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">${u.total_appointments || 0}</span></td>
-            <td><span class="badge ${(u.active ?? 1) ? 'badge-success' : 'badge-danger'}">${(u.active ?? 1) ? 'Ativo' : 'Bloqueado'}</span></td>
-            <td>
-                <button onclick="viewUser(${u.id})" class="btn-icon" title="Ver Detalhes" style="color:var(--info);">
-                    <i class="ph-bold ph-eye"></i>
-                </button>
-                <button onclick="toggleUser(${u.id})" class="btn-icon" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}" style="color:${(u.active ?? 1) ? 'var(--error)' : 'var(--success)'};">
-                    <i class="ph-bold ${(u.active ?? 1) ? 'ph-prohibit' : 'ph-check-circle'}"></i>
-                </button>
-                <button onclick="makeAdmin(${u.id})" class="btn-icon" title="Promover a Admin" style="color:var(--warning);">
-                    <i class="ph-bold ph-crown"></i>
-                </button>
+            <td data-label="LTV" style="font-weight: 600;">R$ ${Number(u.ltv || 0).toFixed(2)}</td>
+            <td data-label="Agendamentos"><span style="background: var(--bg-body); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">${u.total_appointments || 0}</span></td>
+            <td data-label="Status"><span class="badge ${(u.active ?? 1) ? 'badge-success' : 'badge-danger'}">${(u.active ?? 1) ? 'Ativo' : 'Bloqueado'}</span></td>
+            <td data-label="Ações">
+                <div style="display:flex; gap:10px; justify-content: flex-end;">
+                    <button onclick="viewUser(${u.id})" class="btn-icon" title="Ver Detalhes" style="color:var(--info);">
+                        <i class="ph-bold ph-eye"></i>
+                    </button>
+                    <button onclick="toggleUser(${u.id})" class="btn-icon" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}" style="color:${(u.active ?? 1) ? 'var(--error)' : 'var(--success)'};">
+                        <i class="ph-bold ${(u.active ?? 1) ? 'ph-prohibit' : 'ph-check-circle'}"></i>
+                    </button>
+                    <button onclick="makeAdmin(${u.id})" class="btn-icon" title="Promover a Admin" style="color:var(--warning);">
+                        <i class="ph-bold ph-crown"></i>
+                    </button>
+                </div>
             </td>
         </tr>
     `).join('');
