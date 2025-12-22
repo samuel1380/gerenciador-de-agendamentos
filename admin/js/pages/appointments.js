@@ -51,6 +51,7 @@ function debounce(func, timeout = 300) {
 
 async function loadData(isBackground = false) {
     const tbody = document.getElementById('tableBody');
+    const mobileList = document.getElementById('appointmentsMobileList');
     if (!isBackground) tbody.innerHTML = '<tr><td colspan="7" class="text-center">Carregando...</td></tr>';
 
     const status = document.getElementById('statusFilter').value;
@@ -112,11 +113,12 @@ async function loadData(isBackground = false) {
 
         if (filteredRows.length === 0) {
             tbody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum registro encontrado.</td></tr>';
+            if (mobileList) mobileList.innerHTML = '<p class="text-center" style="color:#6b7280; padding:1.5rem 0;">Nenhum registro encontrado.</p>';
             window.lastRows = [];
             return;
         }
 
-        window.lastRows = filteredRows; // Store for CSV export
+        window.lastRows = filteredRows;
 
         tbody.innerHTML = filteredRows.map(r => `
             <tr>
@@ -126,10 +128,8 @@ async function loadData(isBackground = false) {
                     <div style="font-size:0.8rem; color:#666;">${r.user_phone || ''}</div>
                 </td>
                 <td>${r.service_title}</td>
-                <td>
-                    <div>${formatDate(r.date)}</div>
-                    <div style="font-size:0.8rem; color:#6b7280;">às ${r.time}</div>
-                </td>
+                <td>${formatDate(r.date)}</td>
+                <td>${r.time}</td>
                 <td><span class="badge ${getStatusBadge(r.status)}">${getStatusLabel(r.status)}</span></td>
                 <td>
                     <div style="display:flex; gap:4px;">
@@ -138,6 +138,41 @@ async function loadData(isBackground = false) {
                 </td>
             </tr>
         `).join('');
+
+        if (mobileList) {
+            const isMobile = window.innerWidth <= 768;
+            if (!isMobile) {
+                mobileList.innerHTML = '';
+            } else {
+                mobileList.innerHTML = filteredRows.map(r => `
+                    <div class="appointments-mobile-card">
+                        <div class="appointments-mobile-header">
+                            <div>
+                                <div class="appointments-mobile-id">#${r.id}</div>
+                                <div class="appointments-mobile-client">${r.user_name}</div>
+                                <div class="appointments-mobile-phone">${r.user_phone || ''}</div>
+                            </div>
+                            <div class="appointments-mobile-status">
+                                <span class="badge ${getStatusBadge(r.status)}">${getStatusLabel(r.status)}</span>
+                            </div>
+                        </div>
+                        <div class="appointments-mobile-body">
+                            <div class="appointments-mobile-row">
+                                <span class="appointments-mobile-label">Serviço</span>
+                                <span class="appointments-mobile-value">${r.service_title}</span>
+                            </div>
+                            <div class="appointments-mobile-row">
+                                <span class="appointments-mobile-label">Data</span>
+                                <span class="appointments-mobile-value">${formatDate(r.date)} às ${r.time}</span>
+                            </div>
+                        </div>
+                        <div class="appointments-mobile-actions">
+                            ${getActionButtons(r)}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
     } catch (e) {
         console.error(e);
         Toast.error('Erro ao carregar agendamentos');

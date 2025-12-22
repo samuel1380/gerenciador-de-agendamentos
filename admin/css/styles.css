@@ -860,6 +860,162 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         padding: 0.75rem 0.9rem;
         font-size: 0.8rem;
     }
+
+    .appointments-card-mobile {
+        display: block;
+        margin-top: 1rem;
+    }
+
+    .appointments-card .table-container {
+        display: none;
+    }
+
+    .appointments-mobile-card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 0.9rem 1rem;
+        margin-bottom: 0.75rem;
+        background: var(--bg-surface);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .appointments-mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .appointments-mobile-id {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin-bottom: 2px;
+    }
+
+    .appointments-mobile-client {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--text-main);
+    }
+
+    .appointments-mobile-phone {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .appointments-mobile-status {
+        flex-shrink: 0;
+    }
+
+    .appointments-mobile-body {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        margin-top: 0.25rem;
+    }
+
+    .appointments-mobile-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .appointments-mobile-label {
+        color: var(--text-muted);
+    }
+
+    .appointments-mobile-value {
+        color: var(--text-secondary);
+        text-align: right;
+    }
+
+    .appointments-mobile-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.35rem;
+        margin-top: 0.35rem;
+    }
+
+    .users-card-mobile {
+        display: block;
+        margin-top: 1rem;
+    }
+
+    .users-card .table-container {
+        display: none;
+    }
+
+    .users-mobile-card {
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 0.9rem 1rem;
+        margin-bottom: 0.75rem;
+        background: var(--bg-surface);
+        box-shadow: var(--shadow-sm);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .users-mobile-card-banned {
+        opacity: 0.75;
+    }
+
+    .users-mobile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .users-mobile-name {
+        font-weight: 600;
+        font-size: 0.95rem;
+        color: var(--text-main);
+    }
+
+    .users-mobile-email {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .users-mobile-status {
+        flex-shrink: 0;
+    }
+
+    .users-mobile-body {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        margin-top: 0.25rem;
+    }
+
+    .users-mobile-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .users-mobile-label {
+        color: var(--text-muted);
+    }
+
+    .users-mobile-value {
+        color: var(--text-secondary);
+        text-align: right;
+    }
+
+    .users-mobile-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.35rem;
+        margin-top: 0.35rem;
+    }
 }
 
 /* 4. Table Optimization for Small Screens */
@@ -876,11 +1032,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 @media (max-width: 768px) {
     .table {
         white-space: normal;
-    }
-
-    .table thead th:first-child,
-    .table tbody td:first-child {
-        display: none;
     }
 }
 

@@ -38,9 +38,11 @@ async function loadUsers() {
 
 function renderUsers(users) {
     const list = document.getElementById('usersList');
+    const mobileList = document.getElementById('usersMobileList');
 
     if (users.length === 0) {
         list.innerHTML = '<tr><td colspan="6" class="text-center" style="padding: 2rem; color: var(--text-secondary);">Nenhum cliente encontrado.</td></tr>';
+        if (mobileList) mobileList.innerHTML = '<p class="text-center" style="color:#6b7280; padding:1.5rem 0;">Nenhum cliente encontrado.</p>';
         return;
     }
 
@@ -70,6 +72,52 @@ function renderUsers(users) {
             </td>
         </tr>
     `).join('');
+
+    if (mobileList) {
+        const isMobile = window.innerWidth <= 768;
+        if (!isMobile) {
+            mobileList.innerHTML = '';
+        } else {
+            mobileList.innerHTML = users.map(u => `
+                <div class="users-mobile-card ${u.active ? '' : 'users-mobile-card-banned'}">
+                    <div class="users-mobile-header">
+                        <div>
+                            <div class="users-mobile-name">${u.name}</div>
+                            <div class="users-mobile-email">${u.email}</div>
+                        </div>
+                        <div class="users-mobile-status">
+                            <span class="badge ${(u.active ?? 1) ? 'badge-success' : 'badge-danger'}">${(u.active ?? 1) ? 'Ativo' : 'Bloqueado'}</span>
+                        </div>
+                    </div>
+                    <div class="users-mobile-body">
+                        <div class="users-mobile-row">
+                            <span class="users-mobile-label">Nível</span>
+                            <span class="users-mobile-value">Nível ${u.level || 1} • ${u.xp || 0} XP</span>
+                        </div>
+                        <div class="users-mobile-row">
+                            <span class="users-mobile-label">LTV</span>
+                            <span class="users-mobile-value">R$ ${Number(u.ltv || 0).toFixed(2)}</span>
+                        </div>
+                        <div class="users-mobile-row">
+                            <span class="users-mobile-label">Agendamentos</span>
+                            <span class="users-mobile-value">${u.total_appointments || 0}</span>
+                        </div>
+                    </div>
+                    <div class="users-mobile-actions">
+                        <button onclick="viewUser(${u.id})" class="btn-icon" title="Ver Detalhes" style="color:var(--info);">
+                            <i class="ph-bold ph-eye"></i>
+                        </button>
+                        <button onclick="toggleUser(${u.id})" class="btn-icon" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}" style="color:${(u.active ?? 1) ? 'var(--error)' : 'var(--success)'};">
+                            <i class="ph-bold ${(u.active ?? 1) ? 'ph-prohibit' : 'ph-check-circle'}"></i>
+                        </button>
+                        <button onclick="makeAdmin(${u.id})" class="btn-icon" title="Promover a Admin" style="color:var(--warning);">
+                            <i class="ph-bold ph-crown"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
 }
 
 window.filterUsers = function () {
