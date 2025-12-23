@@ -615,119 +615,240 @@ textarea.form-input {
 
 /* --- THEMES --- */
 
-/* 1. Barber Shop (Dark/Gold - Premium) */
 body.theme-barber {
     --primary: #D4AF37;
-    /* Gold */
     --primary-dark: #B5902B;
-    /* Darker Gold */
-    --primary-light: #2A2A2A;
-    /* Dark gray for light accents */
-
-    --accent: #1E1E1E;
+    --primary-light: #3A3A3A;
+    --accent: #1F2933;
     --accent-dark: #000000;
-
-    --text: #F0F0F0;
-    /* White text */
-    --text-light: #AAAAAA;
-    /* Gray text */
-    --text-muted: #666666;
-
-    --bg: #121212;
-    /* Dark Background */
-    --bg-card: #1E1E1E;
-    /* Dark Card */
-    --white: #1E1E1E;
-    /* Override white to be dark for cards that use white var */
-
-    --gray-50: #1a1a1a;
-    --gray-100: #252525;
-    --gray-200: #333333;
-    --gray-300: #444444;
-
+    --text: #F9FAFB;
+    --text-light: #9CA3AF;
+    --text-muted: #6B7280;
+    --bg: #050816;
+    --bg-card: #111827;
+    --white: #111827;
+    --gray-50: #111827;
+    --gray-100: #1F2933;
+    --gray-200: #374151;
+    --gray-300: #4B5563;
     --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+    --shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
+    --shadow-lg: 0 18px 45px rgba(0, 0, 0, 0.75);
 }
 
 body.theme-barber .container {
     background: var(--bg);
-    /* Ensure container matches dark theme */
 }
 
-/* Fix icons for barber */
+body.theme-barber .bottom-nav {
+    background: rgba(15, 23, 42, 0.96);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+body.theme-barber .nav-item {
+    color: var(--text-light);
+}
+
+body.theme-barber .nav-item:hover {
+    background: rgba(31, 41, 55, 0.9);
+    color: var(--primary);
+}
+
+body.theme-barber .nav-item.active {
+    background: rgba(55, 65, 81, 0.9);
+    color: var(--primary);
+    box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.9);
+}
+
 body.theme-barber .ph-duotone {
     color: var(--primary);
 }
 
-/* 2. Hair Salon (Modern Gold/Black/White) */
+body.theme-barber .auth-page-body {
+    background: radial-gradient(circle at top, #111827 0%, #020617 40%, #000000 100%);
+}
+
 body.theme-hair {
     --primary: #D4AF37;
     --primary-dark: #C5A028;
-    --primary-light: #FFF9E6;
-
-    --text: #1a1a1a;
-    --bg: #FFFFFF;
+    --primary-light: #FFF7DF;
+    --accent: #F6E6B4;
+    --accent-dark: #8B6A1B;
+    --text: #111827;
+    --text-light: #6B7280;
+    --text-muted: #9CA3AF;
+    --bg: #F9FAFB;
     --bg-card: #FFFFFF;
-    /* Clean luxury look */
+    --white: #FFFFFF;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --shadow-sm: 0 4px 12px rgba(148, 163, 184, 0.25);
+    --shadow: 0 10px 30px rgba(148, 163, 184, 0.35);
+    --shadow-lg: 0 16px 45px rgba(148, 163, 184, 0.5);
 }
 
-/* 3. Spa (Green/Nature) */
+body.theme-hair .bottom-nav {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 15px 40px rgba(148, 163, 184, 0.3);
+    border: 1px solid rgba(209, 213, 219, 0.9);
+}
+
+body.theme-hair .nav-item:hover {
+    background: rgba(249, 250, 251, 0.9);
+    color: var(--primary);
+}
+
+body.theme-hair .nav-item.active {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    box-shadow: inset 0 0 0 1px rgba(234, 179, 8, 0.25);
+}
+
+body.theme-hair .auth-page-body {
+    background: linear-gradient(135deg, #FDFCFB 0%, #E4E9F2 100%);
+}
+
 body.theme-spa {
-    --primary: #5F9EA0;
-    /* Cadet Blue/Green */
-    --primary-dark: #2F4F4F;
-    --primary-light: #E0F7FA;
-    --bg: #F0FFF4;
-    --text: #2F4F4F;
+    --primary: #22C55E;
+    --primary-dark: #047857;
+    --primary-light: #DCFCE7;
+    --accent: #A7F3D0;
+    --accent-dark: #065F46;
+    --text: #064E3B;
+    --text-light: #6B7280;
+    --text-muted: #94A3AF;
+    --bg: #ECFDF5;
+    --bg-card: #FFFFFF;
+    --white: #FFFFFF;
+    --gray-50: #F9FAFB;
+    --gray-100: #E5F9F0;
+    --gray-200: #C4F1DE;
+    --gray-300: #9AE6B4;
+    --shadow-sm: 0 4px 12px rgba(34, 197, 94, 0.18);
+    --shadow: 0 10px 30px rgba(16, 185, 129, 0.25);
+    --shadow-lg: 0 16px 45px rgba(20, 184, 166, 0.35);
 }
 
-/* 4. Tattoo (Bold Red/Black) */
+body.theme-spa .bottom-nav {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.22);
+    border: 1px solid rgba(187, 247, 208, 0.9);
+}
+
+body.theme-spa .nav-item:hover {
+    background: rgba(209, 250, 229, 0.9);
+    color: var(--primary-dark);
+}
+
+body.theme-spa .nav-item.active {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.22);
+}
+
+body.theme-spa .auth-page-body {
+    background: linear-gradient(135deg, #ECFDF5 0%, #E0F2FE 100%);
+}
+
 body.theme-tattoo {
     --primary: #D32F2F;
-    /* Red */
     --primary-dark: #B71C1C;
     --primary-light: #FFEBEE;
-
-    --bg: #000000;
-    --bg-card: #111111;
-    --text: #E0E0E0;
-    --text-light: #9E9E9E;
-    --white: #111111;
-
-    --shadow-sm: 0 4px 12px rgba(211, 47, 47, 0.1);
+    --accent: #7F1D1D;
+    --accent-dark: #450A0A;
+    --text: #E5E7EB;
+    --text-light: #9CA3AF;
+    --text-muted: #6B7280;
+    --bg: #020617;
+    --bg-card: #111827;
+    --white: #111827;
+    --gray-50: #020617;
+    --gray-100: #111827;
+    --gray-200: #1F2937;
+    --gray-300: #374151;
+    --shadow-sm: 0 4px 12px rgba(239, 68, 68, 0.25);
+    --shadow: 0 10px 30px rgba(239, 68, 68, 0.35);
+    --shadow-lg: 0 18px 45px rgba(239, 68, 68, 0.5);
 }
 
 body.theme-tattoo .container {
-    background: #000;
+    background: #000000;
 }
 
-/* 5. Health (Blue/Clinical) */
+body.theme-tattoo .bottom-nav {
+    background: rgba(15, 23, 42, 0.96);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(55, 65, 81, 0.9);
+}
+
+body.theme-tattoo .nav-item {
+    color: var(--text-light);
+}
+
+body.theme-tattoo .nav-item:hover {
+    background: rgba(31, 41, 55, 0.9);
+    color: var(--primary);
+}
+
+body.theme-tattoo .nav-item.active {
+    background: rgba(55, 65, 81, 0.9);
+    color: var(--primary);
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.9);
+}
+
+body.theme-tattoo .auth-page-body {
+    background: radial-gradient(circle at top, #111827 0%, #020617 40%, #000000 100%);
+}
+
 body.theme-health {
     --primary: #0288D1;
     --primary-dark: #01579B;
     --primary-light: #E1F5FE;
-    --bg: #FAFAFA;
+    --accent: #BAE6FD;
+    --accent-dark: #0369A1;
+    --text: #0F172A;
+    --text-light: #64748B;
+    --text-muted: #94A3AF;
+    --bg: #F3F4F6;
+    --bg-card: #FFFFFF;
+    --white: #FFFFFF;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --shadow-sm: 0 4px 12px rgba(37, 99, 235, 0.18);
+    --shadow: 0 10px 30px rgba(37, 99, 235, 0.28);
+    --shadow-lg: 0 18px 45px rgba(37, 99, 235, 0.4);
 }
 
-/* --- THEME SPECIFIC OVERRIDES --- */
-/* Handle elements that might be hardcoded white */
+body.theme-health .bottom-nav {
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 15px 40px rgba(148, 163, 184, 0.28);
+    border: 1px solid rgba(209, 213, 219, 0.9);
+}
+
+body.theme-health .nav-item:hover {
+    background: rgba(219, 234, 254, 0.9);
+    color: var(--primary-dark);
+}
+
+body.theme-health .nav-item.active {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.25);
+}
+
+body.theme-health .auth-page-body {
+    background: linear-gradient(135deg, #EFF6FF 0%, #E0F2FE 100%);
+}
+
 body[class*="theme-barber"] .card,
-body[class*="theme-tattoo"] .card,
-body[class*="theme-barber"] .bottom-nav,
-body[class*="theme-tattoo"] .bottom-nav {
+body[class*="theme-tattoo"] .card {
     background-color: var(--bg-card) !important;
     border-color: var(--gray-200);
-}
-
-body[class*="theme-barber"] a.nav-item.active,
-body[class*="theme-tattoo"] a.nav-item.active {
-    color: var(--primary);
-}
-
-body[class*="theme-barber"] a.nav-item,
-body[class*="theme-tattoo"] a.nav-item {
-    color: var(--text-light);
 }
 
 /* Input Fields on Dark Themes */
