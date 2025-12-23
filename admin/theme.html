@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tema do App - Admin</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        .theme-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .theme-card {
+            background: #fff;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .theme-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-card.active {
+            border-color: var(--primary);
+            background: #fdfdfd;
+        }
+
+        .theme-card.active::after {
+            content: '✅ Ativo';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--success-bg);
+            color: var(--success);
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .theme-preview {
+            height: 120px;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            font-size: 1.2rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Theme Previews Colors */
+        .preview-nail {
+            background: linear-gradient(135deg, #FF69B4, #FFB6C1);
+        }
+
+        .preview-barber {
+            background: linear-gradient(135deg, #1a1a1a, #333);
+        }
+
+        .preview-hair {
+            background: linear-gradient(135deg, #d4af37, #f5f5f5);
+            color: #333;
+            text-shadow: none;
+        }
+
+        .preview-spa {
+            background: linear-gradient(135deg, #8FBC8F, #E0FFFF);
+            color: #2E8B57;
+            text-shadow: none;
+        }
+
+        .preview-tattoo {
+            background: linear-gradient(135deg, #000000, #4a0404);
+        }
+
+        .preview-health {
+            background: linear-gradient(135deg, #007bff, #e3f2fd);
+            color: #0056b3;
+            text-shadow: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="brand">Admin Panel</div>
+        <nav class="nav-links">
+            <a href="index.html" class="nav-link"><i class="ph-duotone ph-squares-four icon-dashboard"></i>
+                Dashboard</a>
+            <a href="financials.html" class="nav-link"><i class="ph-duotone ph-chart-line-up icon-finance"></i>
+                Financeiro</a>
+            <a href="users.html" class="nav-link"><i class="ph-duotone ph-users-three icon-users"></i> Clientes</a>
+            <a href="appointments.html" class="nav-link"><i class="ph-duotone ph-calendar-check icon-appointments"></i>
+                Agendamentos</a>
+            <a href="services.html" class="nav-link"><i class="ph-duotone ph-sparkle icon-services"></i> Serviços</a>
+            <a href="promotions.html" class="nav-link"><i class="ph-duotone ph-tag icon-promo"></i> Promoções</a>
+            <a href="schedule-settings.html" class="nav-link"><i class="ph-duotone ph-clock icon-time"></i> Horários</a>
+            <a href="notifications-admin.html" class="nav-link"><i class="ph-duotone ph-bell-ringing icon-bell"></i>
+                Notificações</a>
+            <a href="settings.html" class="nav-link"><i class="ph-duotone ph-trophy icon-game"></i> Gamificação</a>
+            <a href="theme.html" class="nav-link active"><i class="ph-duotone ph-paint-brush icon-theme"></i>
+                Aparência</a>
+        </nav>
+    </div>
+    <div class="sidebar-overlay"></div>
+
+    <div class="main">
+        <div class="header" style="margin-bottom: 2rem;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button id="sidebarToggle" class="btn-icon" style="display: none; font-size: 1.5rem;">
+                    <i class="ph-duotone ph-list"></i>
+                </button>
+                <div>
+                    <h1>Aparência do Aplicativo</h1>
+                    <p style="color: var(--text-light); margin-top: 4px;">Escolha o tema que mais combina com o seu
+                        negócio.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-modern">
+            <h3 style="margin-bottom: 1.5rem; color: var(--text-main);">Selecione um Tema</h3>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Isso alterará as cores e o estilo visual do
+                aplicativo para todos os seus clientes.</p>
+
+            <div class="theme-grid" id="themeGrid">
+                <!-- Nail Salon (Default) -->
+                <div class="theme-card active" onclick="selectTheme('nail', this)">
+                    <div class="theme-preview preview-nail">
+                        <i class="ph-duotone ph-hand-soap" style="font-size: 2rem; margin-right: 8px;"></i> Manicure
+                    </div>
+                    <h4>Esmalteria / Unhas</h4>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">Tons de rosa, delicado e feminino.
+                    </p>
+                </div>
+
+                <!-- Barber Shop -->
+                <div class="theme-card" onclick="selectTheme('barber', this)">
+                    <div class="theme-preview preview-barber">
+                        <i class="ph-duotone ph-scissors" style="font-size: 2rem; margin-right: 8px;"></i> Barbearia
+                    </div>
+                    <h4>Barbearia Clássica</h4>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">Escuro, madeira, couro e tons
+                        sóbrios.</p>
+                </div>
+
+                <!-- Hair Salon -->
+                <div class="theme-card" onclick="selectTheme('hair', this)">
+                    <div class="theme-preview preview-hair">
+                        <i class="ph-duotone ph-sparkle" style="font-size: 2rem; margin-right: 8px;"></i> Cabeleireiro
+                    </div>
+                    <h4>Salão Gold</h4>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">Elegante, branco, dourado e
+                        minimalista.</p>
+                </div>
+
+                <!-- Spa -->
+                <div class="theme-card" onclick="selectTheme('spa', this)">
+                    <div class="theme-preview preview-spa">
+                        <i class="ph-duotone ph-plant" style="font-size: 2rem; margin-right: 8px;"></i> Spa & Relax
+                    </div>
+                    <h4>Spa & Estética</h4>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">Verde água, tons pastéis e
+                        relaxantes.</p>
+                </div>
+
+                <!-- Tattoo -->
+                <div class="theme-card" onclick="selectTheme('tattoo', this)">
+                    <div class="theme-preview preview-tattoo">
+                        <i class="ph-duotone ph-pen-nib" style="font-size: 2rem; margin-right: 8px;"></i> Tattoo
+                    </div>
+                    <h4>Estúdio Tattoo</h4>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">Preto intenso, vermelho escuro e
+                        ousado.</p>
+                </div>
+
+                <!-- Health -->
+                <div class="theme-card" onclick="selectTheme('health', this)">
+                    <div class="theme-preview preview-health">
+                        <i class="ph-duotone ph-heartbeat" style="font-size: 2rem; margin-right: 8px;"></i> Clínica
+                    </div>
+                    <h4>Saúde & Clínica</h4>
+                    <p style="font-size: 0.85rem; color: #666; margin-top: 0.5rem;">Azul profissional, limpo e
+                        confiável.</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+                <button onclick="saveTheme()" class="btn btn-primary" style="padding: 0.8rem 2rem;">
+                    <i class="ph-bold ph-check"></i> Salvar Tema
+                </button>
+            </div>
+            <div id="statusMessage" style="margin-top: 1rem; display: none;" class="alert"></div>
+        </div>
+    </div>
+
+    <script src="../client/js/api.js"></script>
+    <script src="js/layout.js"></script>
+    <script>
+        let currentTheme = 'nail';
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load current setting
+            try {
+                const settings = await api.get('/admin/settings');
+                if (settings && settings.client_theme) {
+                    currentTheme = settings.client_theme;
+                    updateUI(currentTheme);
+                }
+            } catch (e) {
+                console.log('Using default theme');
+            }
+        });
+
+        function selectTheme(themeId, cardElement) {
+            currentTheme = themeId;
+            updateUI(themeId);
+        }
+
+        function updateUI(activeThemeId) {
+            document.querySelectorAll('.theme-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            // Find the card that corresponds to the theme (simplified logic)
+            // Ideally we iterate and check onclick attribute, or add data-theme to cards
+            // Let's add data-theme to cards for easier selection
+            const cards = document.querySelectorAll('.theme-card');
+            // Manual mapping for now based on index or just click logic
+            // Let's re-select based on the onclick content string mathcing
+
+            // Better: Add data-theme to HTML in the tool above (I can't edit it now inside Javascript block easily without rewriting HTML)
+            // I will use a simple mapping or just loop.
+            document.querySelectorAll('.theme-card').forEach(card => {
+                if (card.getAttribute('onclick').includes(`'${activeThemeId}'`)) {
+                    card.classList.add('active');
+                }
+            });
+        }
+
+        async function saveTheme() {
+            try {
+                await api.post('/admin/settings', { client_theme: currentTheme });
+                showMessage('Tema atualizado com sucesso!', 'success');
+            } catch (err) {
+                showMessage('Erro ao salvar tema: ' + err.message, 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            const msg = document.getElementById('statusMessage');
+            msg.textContent = text;
+            msg.className = `alert alert-${type}`;
+            msg.style.display = 'block';
+            setTimeout(() => msg.style.display = 'none', 3000);
+        }
+    </script>
+</body>
+
+</html>

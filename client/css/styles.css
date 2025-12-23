@@ -1,94 +1,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap');
 
 :root {
+    /* "Chic Nail Spa" Palette */
     --primary: #E08D9D;
+    /* Soft Dusty Rose */
     --primary-dark: #AC4B5F;
+    /* Deep Rose / Burgundy */
     --primary-light: #FCEEF1;
+    /* Very Pale Pink */
+
     --accent: #E5C1CD;
+    /* Light Mauve */
     --accent-dark: #8E4050;
+    /* Darker Burgundy for text */
+
     --text: #4A2C32;
+    /* DArk warm brown/burgundy text */
     --text-light: #8C7B80;
+    /* Muted warm gray */
     --text-muted: #B3A5A8;
+
     --bg: #FDF9F9;
+    /* Almost white with pink tint */
     --bg-card: #FFFFFF;
     --white: #FFFFFF;
+
     --success: #A6D0C2;
+    /* Sage Green (Soft) */
     --error: #E5989B;
+    /* Soft Red */
     --warning: #ECD0A5;
+    /* Champagne Gold */
+
     --gray-50: #FAFAFA;
     --gray-100: #F4EFF0;
+    /* Warm gray */
     --gray-200: #E6DEE0;
     --gray-300: #D1C5C8;
+
     --shadow-sm: 0 4px 12px rgba(172, 75, 95, 0.08);
+    /* Pinkish shadow */
     --shadow: 0 8px 24px rgba(172, 75, 95, 0.12);
     --shadow-lg: 0 12px 32px rgba(172, 75, 95, 0.15);
+
     --radius: 20px;
+    /* Softer curves */
     --radius-sm: 14px;
     --radius-lg: 32px;
-}
-
-body.theme-nails {
-    --primary: #E08D9D;
-    --primary-dark: #AC4B5F;
-    --primary-light: #FCEEF1;
-    --accent: #E5C1CD;
-    --accent-dark: #8E4050;
-    --text: #4A2C32;
-    --text-light: #8C7B80;
-    --text-muted: #B3A5A8;
-    --bg: #FDF9F9;
-    --bg-card: #FFFFFF;
-    --success: #A6D0C2;
-    --error: #E5989B;
-    --warning: #ECD0A5;
-}
-
-body.theme-barbershop {
-    --primary: #111827;
-    --primary-dark: #020617;
-    --primary-light: #1f2937;
-    --accent: #FBBF24;
-    --accent-dark: #B45309;
-    --text: #E5E7EB;
-    --text-light: #9CA3AF;
-    --text-muted: #6B7280;
-    --bg: #020617;
-    --bg-card: #0B1120;
-    --success: #22C55E;
-    --error: #F97373;
-    --warning: #FACC15;
-}
-
-body.theme-hair_salon {
-    --primary: #7C3AED;
-    --primary-dark: #4C1D95;
-    --primary-light: #EDE9FE;
-    --accent: #F472B6;
-    --accent-dark: #9D174D;
-    --text: #312E81;
-    --text-light: #6D28D9;
-    --text-muted: #A5B4FC;
-    --bg: #F5F3FF;
-    --bg-card: #FFFFFF;
-    --success: #4ADE80;
-    --error: #FB7185;
-    --warning: #FBBF24;
-}
-
-body.theme-spa {
-    --primary: #0F766E;
-    --primary-dark: #115E59;
-    --primary-light: #CCFBF1;
-    --accent: #22C55E;
-    --accent-dark: #166534;
-    --text: #064E3B;
-    --text-light: #0F766E;
-    --text-muted: #6EE7B7;
-    --bg: #ECFEFF;
-    --bg-card: #FFFFFF;
-    --success: #22C55E;
-    --error: #F97373;
-    --warning: #FACC15;
 }
 
 * {
@@ -654,6 +612,70 @@ textarea.form-input {
 .quiz-option:active {
     transform: scale(0.98);
 }
+
+/* --- THEMES --- */
+
+/* 1. Barber Shop (Dark, Wood, Leather) */
+body.theme-barber {
+    --primary: #9e7f52;
+    /* Gold/Bronze */
+    --primary-hover: #bfa172;
+    --bg-gradient-start: #1a1a1a;
+    --bg-gradient-end: #000000;
+    --text-color: #f0f0f0;
+    --card-bg: #2d2d2d;
+    --border-color: #444;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+}
+
+body.theme-barber .navbar,
+body.theme-barber .bottom-nav {
+    background: #222;
+    border-color: #444;
+}
+
+/* 2. Hair Salon (Elegant, White/Gold or Black/Gold) */
+body.theme-hair {
+    --primary: #D4AF37;
+    /* Gold */
+    --primary-hover: #F4CF57;
+    --bg-gradient-start: #ffffff;
+    --bg-gradient-end: #f8f9fa;
+    --text-color: #333;
+    --card-bg: #ffffff;
+    /* Keep light mode base but change accents */
+}
+
+/* 3. Spa (Green, Relax) */
+body.theme-spa {
+    --primary: #2E8B57;
+    /* SeaGreen */
+    --primary-hover: #3CB371;
+    --bg-gradient-start: #F0FFF4;
+    --bg-gradient-end: #E6FFFA;
+}
+
+/* 4. Tattoo (Dark, Aggressive) */
+body.theme-tattoo {
+    --primary: #8B0000;
+    /* Deep Red */
+    --primary-hover: #FF0000;
+    --bg-gradient-start: #0f0f0f;
+    --bg-gradient-end: #1a0505;
+    --text-color: #ddd;
+    --card-bg: #222;
+    --border-color: #333;
+}
+
+/* 5. Health (Blue, Trust) */
+body.theme-health {
+    --primary: #007bff;
+    --primary-hover: #0056b3;
+    --bg-gradient-start: #f0f8ff;
+    --bg-gradient-end: #e3f2fd;
+}
+
+/* --- END THEMES --- */
 
 /* Result Animation */
 @keyframes popIn {

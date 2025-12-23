@@ -48,6 +48,10 @@ db.serialize(() => {
         active BOOLEAN DEFAULT 1,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`, ignoreErr);
+    db.run(`CREATE TABLE IF NOT EXISTS settings(
+        key TEXT PRIMARY KEY,
+        value TEXT
+    )`, ignoreErr);
 });
 
 // Static Files
@@ -57,6 +61,14 @@ app.use('/client', express.static(path.join(__dirname, 'client')));
 app.use('/admin', express.static(path.join(__dirname, 'admin')));
 
 // Routes
+// Public Settings Route (Theme)
+app.get('/api/settings/public', (req, res) => {
+    req.db.get("SELECT value FROM settings WHERE key = 'client_theme'", [], (err, row) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ client_theme: row ? row.value : 'nail' });
+    });
+});
+
 app.use('/api/auth', require('./server/routes/auth'));
 app.use('/api/services', require('./server/routes/services'));
 app.use('/api/schedules', require('./server/routes/schedules'));
