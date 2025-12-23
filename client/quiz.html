@@ -7,18 +7,21 @@
     <title>Quiz de Estilo - Manicure</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 
 <body>
     <div class="container pb-5">
         <div class="p-4">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                <button onclick="history.back()" class="btn-outline"
-                    style="width: auto; padding: 0.5rem 1rem; border:none; box-shadow:none;">
-                    <span style="font-size: 1.2rem;">←</span>
+                <button onclick="history.back()"
+                    style="background: transparent; border: none; cursor: pointer; color: var(--text); padding: 0.5rem; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background 0.3s;">
+                    <i class="ph-bold ph-arrow-left" style="font-size: 1.5rem;"></i>
                 </button>
-                <span style="font-size: 0.9rem; color: var(--text-light); font-weight: 600;">Quiz de Estilo</span>
-                <div style="width: 24px;"></div> <!-- Spacer -->
+                <span
+                    style="font-size: 1.1rem; color: var(--text); font-weight: 600; font-family: 'Playfair Display', serif;">Quiz
+                    de Estilo</span>
+                <div style="width: 40px;"></div> <!-- Spacer -->
             </div>
 
             <!-- Progress Bar -->

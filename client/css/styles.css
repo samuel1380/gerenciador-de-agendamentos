@@ -89,7 +89,19 @@ body {
     }
 }
 
-/* Utilities */
+/* Home Header - Adaptive Background */
+.home-header {
+    background: var(--bg-card);
+    /* Falls back to white on default, dark on themes */
+    border-bottom-left-radius: 32px;
+    border-bottom-right-radius: 32px;
+    box-shadow: var(--shadow-sm);
+    padding-bottom: 2rem;
+    transition: background 0.3s ease;
+    /* Optional: Subtle gradient mix if desired, but solid bg-card is safest for text contrast */
+    background: linear-gradient(135deg, var(--bg-card), var(--gray-50));
+}
+
 .p-4 {
     padding: 1.5rem;
 }
@@ -648,7 +660,7 @@ body.theme-barber {
 }
 
 body.theme-barber .container {
-    background: var(--bg);
+    background: var(--bg) !important;
 }
 
 body.theme-barber .bottom-nav {
