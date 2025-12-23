@@ -615,67 +615,130 @@ textarea.form-input {
 
 /* --- THEMES --- */
 
-/* 1. Barber Shop (Dark, Wood, Leather) */
+/* 1. Barber Shop (Dark/Gold - Premium) */
 body.theme-barber {
-    --primary: #9e7f52;
-    /* Gold/Bronze */
-    --primary-hover: #bfa172;
-    --bg-gradient-start: #1a1a1a;
-    --bg-gradient-end: #000000;
-    --text-color: #f0f0f0;
-    --card-bg: #2d2d2d;
-    --border-color: #444;
-    --shadow-color: rgba(0, 0, 0, 0.5);
-}
-
-body.theme-barber .navbar,
-body.theme-barber .bottom-nav {
-    background: #222;
-    border-color: #444;
-}
-
-/* 2. Hair Salon (Elegant, White/Gold or Black/Gold) */
-body.theme-hair {
     --primary: #D4AF37;
     /* Gold */
-    --primary-hover: #F4CF57;
-    --bg-gradient-start: #ffffff;
-    --bg-gradient-end: #f8f9fa;
-    --text-color: #333;
-    --card-bg: #ffffff;
-    /* Keep light mode base but change accents */
+    --primary-dark: #B5902B;
+    /* Darker Gold */
+    --primary-light: #2A2A2A;
+    /* Dark gray for light accents */
+
+    --accent: #1E1E1E;
+    --accent-dark: #000000;
+
+    --text: #F0F0F0;
+    /* White text */
+    --text-light: #AAAAAA;
+    /* Gray text */
+    --text-muted: #666666;
+
+    --bg: #121212;
+    /* Dark Background */
+    --bg-card: #1E1E1E;
+    /* Dark Card */
+    --white: #1E1E1E;
+    /* Override white to be dark for cards that use white var */
+
+    --gray-50: #1a1a1a;
+    --gray-100: #252525;
+    --gray-200: #333333;
+    --gray-300: #444444;
+
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
 }
 
-/* 3. Spa (Green, Relax) */
+body.theme-barber .container {
+    background: var(--bg);
+    /* Ensure container matches dark theme */
+}
+
+/* Fix icons for barber */
+body.theme-barber .ph-duotone {
+    color: var(--primary);
+}
+
+/* 2. Hair Salon (Modern Gold/Black/White) */
+body.theme-hair {
+    --primary: #D4AF37;
+    --primary-dark: #C5A028;
+    --primary-light: #FFF9E6;
+
+    --text: #1a1a1a;
+    --bg: #FFFFFF;
+    --bg-card: #FFFFFF;
+    /* Clean luxury look */
+}
+
+/* 3. Spa (Green/Nature) */
 body.theme-spa {
-    --primary: #2E8B57;
-    /* SeaGreen */
-    --primary-hover: #3CB371;
-    --bg-gradient-start: #F0FFF4;
-    --bg-gradient-end: #E6FFFA;
+    --primary: #5F9EA0;
+    /* Cadet Blue/Green */
+    --primary-dark: #2F4F4F;
+    --primary-light: #E0F7FA;
+    --bg: #F0FFF4;
+    --text: #2F4F4F;
 }
 
-/* 4. Tattoo (Dark, Aggressive) */
+/* 4. Tattoo (Bold Red/Black) */
 body.theme-tattoo {
-    --primary: #8B0000;
-    /* Deep Red */
-    --primary-hover: #FF0000;
-    --bg-gradient-start: #0f0f0f;
-    --bg-gradient-end: #1a0505;
-    --text-color: #ddd;
-    --card-bg: #222;
-    --border-color: #333;
+    --primary: #D32F2F;
+    /* Red */
+    --primary-dark: #B71C1C;
+    --primary-light: #FFEBEE;
+
+    --bg: #000000;
+    --bg-card: #111111;
+    --text: #E0E0E0;
+    --text-light: #9E9E9E;
+    --white: #111111;
+
+    --shadow-sm: 0 4px 12px rgba(211, 47, 47, 0.1);
 }
 
-/* 5. Health (Blue, Trust) */
+body.theme-tattoo .container {
+    background: #000;
+}
+
+/* 5. Health (Blue/Clinical) */
 body.theme-health {
-    --primary: #007bff;
-    --primary-hover: #0056b3;
-    --bg-gradient-start: #f0f8ff;
-    --bg-gradient-end: #e3f2fd;
+    --primary: #0288D1;
+    --primary-dark: #01579B;
+    --primary-light: #E1F5FE;
+    --bg: #FAFAFA;
 }
 
-/* --- END THEMES --- */
+/* --- THEME SPECIFIC OVERRIDES --- */
+/* Handle elements that might be hardcoded white */
+body[class*="theme-barber"] .card,
+body[class*="theme-tattoo"] .card,
+body[class*="theme-barber"] .bottom-nav,
+body[class*="theme-tattoo"] .bottom-nav {
+    background-color: var(--bg-card) !important;
+    border-color: var(--gray-200);
+}
+
+body[class*="theme-barber"] a.nav-item.active,
+body[class*="theme-tattoo"] a.nav-item.active {
+    color: var(--primary);
+}
+
+body[class*="theme-barber"] a.nav-item,
+body[class*="theme-tattoo"] a.nav-item {
+    color: var(--text-light);
+}
+
+/* Input Fields on Dark Themes */
+body[class*="theme-barber"] .form-input,
+body[class*="theme-barber"] .input,
+body[class*="theme-tattoo"] .form-input {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #fff;
+}
+
 
 /* Result Animation */
 @keyframes popIn {
