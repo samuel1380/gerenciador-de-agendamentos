@@ -5,24 +5,55 @@ if ('serviceWorker' in navigator) {
         .catch(err => console.error('SW Error', err));
 }
 
-// Request Permission Function (Must be triggered by user gesture)
+// Utility to convert VAPID key
+function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
+// Request Permission & Subscribe to Push
 async function requestNotificationPermission() {
     const result = await Notification.requestPermission();
     if (result === 'granted') {
-        // Hide the banner if it exists
         const banners = document.querySelectorAll('.notif-permission-banner');
         banners.forEach(b => b.remove());
 
-        // Try to trigger a test notification
+        // 1. Get Public Key and Subscribe
+        try {
+            const config = await api.get('/push/config');
+            if (config.publicKey) {
+                const reg = await navigator.serviceWorker.ready;
+                const subscription = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlBase64ToUint8Array(config.publicKey)
+                });
+
+                // 2. Send subscription to server
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                await api.post('/push/subscribe', {
+                    subscription: subscription,
+                    userId: user.id
+                });
+
+                console.log('Push Subscribed!');
+            }
+        } catch (e) {
+            console.error('Push Subscription Failed', e);
+        }
+
+        // Test Local Notification
         new Notification("Notificações Ativadas!", {
             body: "Você será avisado sobre seus agendamentos.",
             icon: "https://cdn-icons-png.flaticon.com/512/3652/3652191.png"
         });
-
-        // Here we would normally subscribe to pushManager and send VAPID to server
-        // navigator.serviceWorker.ready.then(reg => {
-        //     reg.pushManager.subscribe(...)
-        // })
     }
 }
 
@@ -66,49 +97,63 @@ function checkPermissionStatus() {
 }
 
 // Polling for notifications (and simulating push if permission granted)
-let lastCount = -1;
+let knownNotificationIds = new Set();
+let isFirstLoad = true;
 
 async function checkNotifications() {
     try {
         const notifs = await api.get('/notifications');
         const unreadList = notifs.filter(n => !n.read);
-        const unread = unreadList.length;
+
+        // Sort by ID descending (newest first)
+        unreadList.sort((a, b) => b.id - a.id);
+
+        const unreadCount = unreadList.length;
 
         const badge = document.getElementById('notifBadge');
         if (badge) {
-            badge.textContent = unread;
-            if (unread > 0) badge.classList.remove('hidden');
+            badge.textContent = unreadCount;
+            if (unreadCount > 0) badge.classList.remove('hidden');
             else badge.classList.add('hidden');
         }
 
-        // TRIGGER LOCAL NOTIFICATION IF NEW UNREAD DETECTED
-        // On first load, lastCount is -1, so we don't spam.
-        // We only notify if count Increased
-        if (lastCount !== -1 && unread > lastCount && Notification.permission === 'granted') {
-            const latest = unreadList[0]; // Assuming newest first
-            if (latest) {
-                // If on mobile/SW supported, try SW notification, else normal
-                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                    navigator.serviceWorker.ready.then(reg => {
-                        reg.showNotification('Novo Aviso', {
-                            body: latest.message,
-                            icon: 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png',
-                            tag: 'notif-' + Date.now() // unique tag
+        // Detect NEW notifications by ID
+        const currentIds = new Set(unreadList.map(n => n.id));
+
+        if (!isFirstLoad && Notification.permission === 'granted') {
+            // Find IDs that are in currentIds but NOT in knownNotificationIds
+            const newIds = [...currentIds].filter(id => !knownNotificationIds.has(id));
+
+            // Trigger notification for each new message
+            newIds.forEach(id => {
+                const notif = unreadList.find(n => n.id === id);
+                if (notif) {
+                    // If on mobile/SW supported, try SW notification for better behavior
+                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                        navigator.serviceWorker.ready.then(reg => {
+                            reg.showNotification('Nova Mensagem', {
+                                body: notif.message,
+                                icon: 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png',
+                                tag: 'notif-' + notif.id // ensure no duplicate stacking
+                            });
                         });
-                    });
-                } else {
-                    new Notification('Novo Aviso', {
-                        body: latest.message,
-                        icon: 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png'
-                    });
+                    } else {
+                        new Notification('Nova Mensagem', {
+                            body: notif.message,
+                            icon: 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png'
+                        });
+                    }
                 }
-            }
+            });
         }
 
-        lastCount = unread;
+        // Update known list
+        knownNotificationIds = currentIds;
+        isFirstLoad = false;
 
     } catch (e) {
         // Silent fail
+        console.error(e);
     }
 }
 

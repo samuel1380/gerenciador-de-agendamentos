@@ -58,6 +58,15 @@ db.serialize(() => {
         value TEXT
     )`;
     db.run(settingsTableSql, ignoreErr);
+
+    // Push Subscriptions
+    db.run(`CREATE TABLE IF NOT EXISTS push_subscriptions (
+        id INTEGER PRIMARY KEY ${autoInc},
+        user_id INT,
+        endpoint TEXT NOT NULL,
+        keys TEXT NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )`, ignoreErr);
 });
 
 // Static Files
@@ -81,6 +90,7 @@ app.use('/api/schedules', require('./server/routes/schedules'));
 app.use('/api/appointments', require('./server/routes/appointments'));
 app.use('/api/admin', require('./server/routes/admin'));
 app.use('/api/notifications', require('./server/routes/notifications'));
+app.use('/api/push', require('./server/routes/push'));
 app.use('/api/quiz', require('./server/routes/quiz'));
 app.use('/api/promotions', require('./server/routes/promotions'));
 
