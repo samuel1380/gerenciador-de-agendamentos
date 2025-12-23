@@ -100,9 +100,9 @@ router.put('/appointments/:id/status', (req, res) => {
 
                     // If COMPLETED, award XP
                     if (status === 'completed') {
-                        db.get(`SELECT value FROM settings WHERE key = 'appointment_xp_reward'`, (err, xpRow) => {
+                        db.get("SELECT value FROM settings WHERE `key` = 'appointment_xp_reward'", (err, xpRow) => {
                             const xpGain = xpRow ? parseInt(xpRow.value) : 100;
-                            db.get(`SELECT value FROM settings WHERE key = 'xp_per_level'`, (err, levelRow) => {
+                            db.get("SELECT value FROM settings WHERE `key` = 'xp_per_level'", (err, levelRow) => {
                                 const xpPerLevel = levelRow ? parseInt(levelRow.value) : 200;
 
                                 db.get(`SELECT level, xp FROM users WHERE id = ?`, [row.user_id], (err, user) => {
@@ -243,7 +243,7 @@ router.get('/stats', (req, res) => {
 // GET SETTINGS
 router.get('/settings', (req, res) => {
     const db = req.db;
-    db.all(`SELECT key, value FROM settings`, [], (err, rows) => {
+    db.all("SELECT `key`, value FROM settings", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
 
         const settings = {};
@@ -259,7 +259,7 @@ router.post('/settings', (req, res) => {
     const db = req.db;
     const settings = req.body;
 
-    const stmt = db.prepare(`INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)`);
+    const stmt = db.prepare("INSERT OR REPLACE INTO settings (`key`, value) VALUES (?, ?)");
 
     Object.entries(settings).forEach(([key, value]) => {
         stmt.run(key, value.toString());

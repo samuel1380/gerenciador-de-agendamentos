@@ -11,13 +11,13 @@ router.post('/result', authenticateToken, (req, res) => {
     const today = new Date().toISOString().split('T')[0];
 
     // Get settings for quiz limits and XP
-    db.get(`SELECT value FROM settings WHERE key = 'quiz_daily_limit'`, (err, limitRow) => {
+    db.get("SELECT value FROM settings WHERE `key` = 'quiz_daily_limit'", (err, limitRow) => {
         const dailyLimit = limitRow ? parseInt(limitRow.value) : 3;
 
-        db.get(`SELECT value FROM settings WHERE key = 'quiz_xp_reward'`, (err, xpRow) => {
+        db.get("SELECT value FROM settings WHERE `key` = 'quiz_xp_reward'", (err, xpRow) => {
             const xpGain = xpRow ? parseInt(xpRow.value) : 50;
 
-            db.get(`SELECT value FROM settings WHERE key = 'xp_per_level'`, (err, levelRow) => {
+            db.get("SELECT value FROM settings WHERE `key` = 'xp_per_level'", (err, levelRow) => {
                 let xpPerLevel = levelRow ? parseInt(levelRow.value) : 200;
                 if (!xpPerLevel || isNaN(xpPerLevel) || xpPerLevel < 1) xpPerLevel = 200;
 

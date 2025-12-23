@@ -43,7 +43,7 @@ router.delete('/:id', authenticateToken, isAdmin, (req, res) => {
 // Public Settings Endpoint for client
 router.get('/config', (req, res) => {
     const db = req.db;
-    db.all(`SELECT key, value FROM settings WHERE key IN ('xp_per_level', 'quiz_xp_reward')`, [], (err, rows) => {
+    db.all("SELECT `key`, value FROM settings WHERE `key` IN ('xp_per_level', 'quiz_xp_reward')", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         const config = {};
         rows.forEach(r => config[r.key] = parseInt(r.value));

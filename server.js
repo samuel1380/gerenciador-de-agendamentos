@@ -69,7 +69,7 @@ app.use('/admin', express.static(path.join(__dirname, 'admin')));
 // Routes
 // Public Settings Route (Theme)
 app.get('/api/settings/public', (req, res) => {
-    req.db.get("SELECT value FROM settings WHERE key = 'client_theme'", [], (err, row) => {
+    req.db.get("SELECT value FROM settings WHERE `key` = 'client_theme'", [], (err, row) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ client_theme: row ? row.value : 'nail' });
     });
