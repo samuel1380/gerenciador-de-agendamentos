@@ -1,27 +1,47 @@
 (async function () {
     try {
-        // Apply saved theme from local storage instantly to prevent flash
+        // Apply saved theme from local storage instantly
         const localTheme = localStorage.getItem('client_theme');
-        if (localTheme) {
-            document.body.classList.add('theme-' + localTheme);
-        }
+        const localColors = localStorage.getItem('client_theme_colors');
 
-        // Use global api object if available
+        if (localTheme) document.body.classList.add('theme-' + localTheme);
+        if (localColors) applyCustomColors(JSON.parse(localColors));
+
         if (typeof api !== 'undefined') {
             const data = await api.get('/settings/public');
-            if (data.client_theme) {
-                if (localTheme !== data.client_theme) {
-                    // Remove old theme classes
-                    document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
-                    document.body.classList.add('theme-' + data.client_theme);
-                    localStorage.setItem('client_theme', data.client_theme);
-                }
+
+            // Sync Theme
+            if (data.client_theme && localTheme !== data.client_theme) {
+                document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
+                document.body.classList.add('theme-' + data.client_theme);
+                localStorage.setItem('client_theme', data.client_theme);
             }
-        } else {
-            console.warn('Theme: api object not found, skipping fetch.');
+
+            // Sync Colors
+            if (data.client_theme_colors) {
+                localStorage.setItem('client_theme_colors', data.client_theme_colors);
+                applyCustomColors(JSON.parse(data.client_theme_colors));
+            } else {
+                localStorage.removeItem('client_theme_colors');
+                removeCustomColors();
+            }
         }
     } catch (e) {
-        // Silent fail on theme load to not disturb UX
-        console.log('Theme sync skipped');
+        // Silent fail
+    }
+
+    function applyCustomColors(colors) {
+        if (!colors) return;
+        const root = document.documentElement;
+        if (colors.primary) root.style.setProperty('--primary', colors.primary);
+        // Simple logic to generate variations if not provided
+        // In a real app we might use a color lib, here we trust the admin/default fallback
+        if (colors.bg) root.style.setProperty('--bg', colors.bg);
+    }
+
+    function removeCustomColors() {
+        const root = document.documentElement;
+        root.style.removeProperty('--primary');
+        root.style.removeProperty('--bg');
     }
 })();

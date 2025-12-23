@@ -11,9 +11,119 @@
         /* Page Layout & Grid */
         .theme-page-layout {
             display: grid;
-            grid-template-columns: 1fr 340px;
+            grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
             gap: 2rem;
             align-items: flex-start;
+        }
+
+        .theme-main-column {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .theme-customization-card {
+            background: var(--bg-surface);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            padding: 1.75rem 1.75rem 1.5rem 1.75rem;
+        }
+
+        .theme-customization-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.9rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .theme-customization-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-light);
+            color: var(--primary);
+            flex-shrink: 0;
+            font-size: 1.2rem;
+        }
+
+        .theme-customization-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .theme-customization-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .theme-customization-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.75rem;
+        }
+
+        .color-control {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .color-control-label {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .color-control-body {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .color-swatch {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            padding: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-body);
+            flex-shrink: 0;
+        }
+
+        .color-swatch input[type="color"] {
+            width: 100%;
+            height: 100%;
+            border-radius: 12px;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .color-hex {
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .color-hint {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .theme-customization-actions {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: flex-end;
         }
 
         @media (max-width: 1100px) {
@@ -36,7 +146,6 @@
 
             .theme-sidebar {
                 position: static !important;
-                /* Override sticky */
             }
         }
 
@@ -439,6 +548,14 @@
             .theme-page-layout {
                 margin-bottom: 100px;
             }
+
+            .theme-customization-actions {
+                justify-content: stretch;
+            }
+
+            .theme-customization-actions .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -480,8 +597,7 @@
         </div>
 
         <div class="theme-page-layout">
-            <!-- Left: Theme Selection -->
-            <div>
+            <div class="theme-main-column">
                 <div style="margin-bottom: 2rem;">
                     <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Selecione um tema</h3>
                     <p style="color: var(--text-secondary);">
@@ -569,48 +685,94 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="theme-customization-card">
+                    <div class="theme-customization-header">
+                        <div class="theme-customization-icon">
+                            <i class="ph-duotone ph-palette"></i>
+                        </div>
+                        <div>
+                            <h3 class="theme-customization-title">Personalizar Cores</h3>
+                            <p class="theme-customization-description">
+                                Deseja ajustar as cores mantendo a lógica do tema escolhido?
+                                Personalize abaixo para usar a identidade visual exata da sua marca.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="theme-customization-grid">
+                        <div class="color-control">
+                            <span class="color-control-label">Cor Principal (Marca)</span>
+                            <div class="color-control-body">
+                                <div class="color-swatch">
+                                    <input type="color" id="primaryColorInput"
+                                        onchange="updatePreviewColor(this.value, 'primary')">
+                                </div>
+                                <span id="primaryColorHex" class="color-hex">#------</span>
+                            </div>
+                            <p class="color-hint">Botões, destaques e ícones.</p>
+                        </div>
+
+                        <div class="color-control">
+                            <span class="color-control-label">Cor de Fundo (Opcional)</span>
+                            <div class="color-control-body">
+                                <div class="color-swatch">
+                                    <input type="color" id="bgColorInput"
+                                        onchange="updatePreviewColor(this.value, 'bg')">
+                                </div>
+                                <span id="bgColorHex" class="color-hex">Padrão</span>
+                            </div>
+                            <p class="color-hint">Só altere se quiser fugir do padrão do tema.</p>
+                        </div>
+                    </div>
+
+                    <div class="theme-customization-actions">
+                        <button class="btn" onclick="resetColors()">
+                            Restaurar Cores do Tema
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Right: Preview Sidebar -->
             <div class="theme-preview-sidebar theme-sidebar">
-                <div style="text-align: center; margin-bottom: 2rem;">
-                    <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">Pré-visualização do aplicativo</h3>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); padding: 0 1rem; line-height: 1.4;">
-                        Use esta área para entender rapidamente como o app do cliente irá se comportar com o tema
-                        escolhido.
-                    </p>
-                </div>
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">Pré-visualização do aplicativo</h3>
+                <p style="font-size: 0.85rem; color: var(--text-muted); padding: 0 1rem; line-height: 1.4;">
+                    Use esta área para entender rapidamente como o app do cliente irá se comportar com o tema
+                    escolhido.
+                </p>
+            </div>
 
-                <div class="phone-mockup">
-                    <div class="phone-screen" id="previewScreen">
-                        <div class="phone-notch"></div>
-                        <div class="mockup-header">
-                            <div class="mockup-avatar"></div>
-                            <div class="mockup-title-line"></div>
-                            <div class="mockup-subtitle-line"></div>
+            <div class="phone-mockup">
+                <div class="phone-screen" id="previewScreen">
+                    <div class="phone-notch"></div>
+                    <div class="mockup-header">
+                        <div class="mockup-avatar"></div>
+                        <div class="mockup-title-line"></div>
+                        <div class="mockup-subtitle-line"></div>
+                    </div>
+                    <div class="mockup-body">
+                        <div class="mockup-card">
+                            <div class="mockup-card-img"></div>
+                            <div class="mockup-card-lines">
+                                <div class="mockup-line" style="width: 70%;"></div>
+                                <div class="mockup-line" style="width: 40%;"></div>
+                            </div>
                         </div>
-                        <div class="mockup-body">
-                            <div class="mockup-card">
-                                <div class="mockup-card-img"></div>
-                                <div class="mockup-card-lines">
-                                    <div class="mockup-line" style="width: 70%;"></div>
-                                    <div class="mockup-line" style="width: 40%;"></div>
-                                </div>
+                        <div class="mockup-card">
+                            <div class="mockup-card-img"></div>
+                            <div class="mockup-card-lines">
+                                <div class="mockup-line" style="width: 60%;"></div>
+                                <div class="mockup-line" style="width: 50%;"></div>
                             </div>
-                            <div class="mockup-card">
-                                <div class="mockup-card-img"></div>
-                                <div class="mockup-card-lines">
-                                    <div class="mockup-line" style="width: 60%;"></div>
-                                    <div class="mockup-line" style="width: 50%;"></div>
-                                </div>
-                            </div>
+                        </div>
 
-                            <button class="mockup-btn">Agendar Horário</button>
-                        </div>
+                        <button class="mockup-btn">Agendar Horário</button>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
     <!-- Fixed Bottom Bar -->
@@ -636,14 +798,30 @@
     <script src="js/layout.js"></script>
     <script>
         let currentTheme = 'nail';
+        let customColors = {};
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                // Try to get existing setting
-                // Note: The API path might need adjustment if not real
-                const settings = await api.get('/admin/settings');
-                if (settings && settings.client_theme) {
+                // Fetch ALL Public Settings (now includes colors)
+                const settings = await api.get('/settings/public');
+
+                if (settings.client_theme) {
                     currentTheme = settings.client_theme;
+                }
+
+                if (settings.client_theme_colors) {
+                    try {
+                        customColors = JSON.parse(settings.client_theme_colors);
+                        // Populate Inputs
+                        if (customColors.primary) {
+                            document.getElementById('primaryColorInput').value = customColors.primary;
+                            document.getElementById('primaryColorHex').textContent = customColors.primary;
+                        }
+                        if (customColors.bg) {
+                            document.getElementById('bgColorInput').value = customColors.bg;
+                            document.getElementById('bgColorHex').textContent = customColors.bg;
+                        }
+                    } catch (e) { }
                 }
             } catch (e) {
                 console.warn('Could not load settings', e);
@@ -655,6 +833,22 @@
         function selectTheme(themeId) {
             currentTheme = themeId;
             updateUI(themeId);
+        }
+
+        function updatePreviewColor(val, type) {
+            customColors[type] = val;
+            if (type === 'primary') document.getElementById('primaryColorHex').textContent = val;
+            if (type === 'bg') document.getElementById('bgColorHex').textContent = val;
+            updateUI(currentTheme);
+        }
+
+        function resetColors() {
+            customColors = {};
+            document.getElementById('primaryColorInput').value = "#000000"; // Reset visual
+            document.getElementById('primaryColorHex').textContent = "Padrão";
+            document.getElementById('bgColorInput').value = "#ffffff";
+            document.getElementById('bgColorHex').textContent = "Padrão";
+            updateUI(currentTheme);
         }
 
         function updateUI(activeThemeId) {
@@ -670,7 +864,46 @@
             // Update Phone Preview
             const preview = document.getElementById('previewScreen');
             if (preview) {
+                // Reset Base Class
                 preview.className = 'phone-screen preview-theme-' + activeThemeId;
+
+                // Apply Custom Colors Override
+                if (customColors.primary) {
+                    preview.style.setProperty('--primary', customColors.primary);
+                    // Hack to make preview buttons use this var if they aren't already
+                    // The CSS for preview uses specific colors (e.g. #d97706), so we MUST set inline styles on elements to override or use JS
+                    // Since the preview CSS (lines 322+) uses static colors, we need to manually inject styles or use CSS vars in the preview CSS.
+                    // Let's manually override the specific elements in the preview for immediate feedback.
+
+                    const header = preview.querySelector('.mockup-header');
+                    const btn = preview.querySelector('.mockup-btn');
+
+                    if (header) {
+                        // Some themes use black header (Barber), some use primary. 
+                        // Barber: Primary is Gold. Header is Black.
+                        // Most others: Header is Primary.
+                        if (activeThemeId !== 'barber' && activeThemeId !== 'tattoo' && activeThemeId !== 'nail') {
+                            // Standard behavior
+                            header.style.background = customColors.primary;
+                        }
+                        // Nail gradient? Barber gradient?
+                        // Ideally we just set the button which is always primary.
+                    }
+                    if (btn) {
+                        btn.style.background = customColors.primary;
+                        if (activeThemeId === 'barber') {
+                            btn.style.borderColor = customColors.primary;
+                            btn.style.color = customColors.primary;
+                            btn.style.background = '#111';
+                        }
+                    }
+                } else {
+                    // Reset inline styles
+                    const header = preview.querySelector('.mockup-header');
+                    const btn = preview.querySelector('.mockup-btn');
+                    if (header) header.style = '';
+                    if (btn) btn.style = '';
+                }
             }
         }
 
@@ -681,10 +914,15 @@
                 statusMsg.style.color = 'var(--text-muted)';
                 statusMsg.textContent = 'Salvando...';
 
-                await api.post('/admin/settings', { client_theme: currentTheme });
+                const payload = {
+                    client_theme: currentTheme,
+                    client_theme_colors: JSON.stringify(customColors)
+                };
+
+                await api.post('/admin/settings', payload);
 
                 statusMsg.style.color = 'var(--success)';
-                statusMsg.textContent = 'Tema atualizado com sucesso!';
+                statusMsg.textContent = 'Tema e cores atualizados com sucesso!';
 
                 setTimeout(() => {
                     statusMsg.style.display = 'none';
@@ -693,12 +931,6 @@
                 statusMsg.style.color = 'var(--error)';
                 statusMsg.textContent = 'Erro ao salvar tema.';
                 console.error(err);
-
-                // Fallback UI for demo if API fails
-                setTimeout(() => {
-                    statusMsg.style.color = 'var(--success)';
-                    statusMsg.textContent = 'Tema atualizado (Simulação do Admin)!';
-                }, 1000);
             }
         }
     </script>

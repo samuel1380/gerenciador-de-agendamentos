@@ -78,9 +78,13 @@ app.use('/admin', express.static(path.join(__dirname, 'admin')));
 // Routes
 // Public Settings Route (Theme)
 app.get('/api/settings/public', (req, res) => {
-    req.db.get("SELECT value FROM settings WHERE `key` = 'client_theme'", [], (err, row) => {
+    req.db.all("SELECT `key`, value FROM settings WHERE `key` IN ('client_theme', 'client_theme_colors')", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json({ client_theme: row ? row.value : 'nail' });
+        const result = { client_theme: 'nail' };
+        rows.forEach(r => {
+            result[r.key] = r.value;
+        });
+        res.json(result);
     });
 });
 
