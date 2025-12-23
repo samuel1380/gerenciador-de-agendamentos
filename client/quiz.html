@@ -61,76 +61,280 @@
     <script src="js/api.js"></script>
     <script src="js/theme.js"></script>
     <script>
-        const questions = [
-            {
-                text: "Qual sua cor favorita para unhas?",
-                options: [
-                    { text: "Nude, Rosê ou Branco Transparente", score: 1 },
-                    { text: "Vermelho, Vinho ou Preto", score: 2 },
-                    { text: "Neon, Glitter ou Multicolorido", score: 3 },
-                    { text: "Tons Pastéis (Lavanda, Menta, Bebê)", score: 2 }
-                ]
+        // Quiz Data for All Themes
+        const quizData = {
+            nail: {
+                title: "Quiz de Estilo - Manicure",
+                questions: [
+                    {
+                        text: "Qual sua cor favorita para unhas?",
+                        options: [
+                            { text: "Nude, Rosê ou Branco Transparente", score: 1 },
+                            { text: "Vermelho, Vinho ou Preto", score: 2 },
+                            { text: "Neon, Glitter ou Multicolorido", score: 3 },
+                            { text: "Tons Pastéis (Lavanda, Menta, Bebê)", score: 2 }
+                        ]
+                    },
+                    {
+                        text: "Qual tamanho de unha você costuma usar?",
+                        options: [
+                            { text: "Curta e Prática", score: 1 },
+                            { text: "Média (passando a ponta do dedo)", score: 2 },
+                            { text: "Longa e Poderosa", score: 3 },
+                            { text: "Extra Longa (Stiletto/Bailarina)", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Qual formato você prefere?",
+                        options: [
+                            { text: "Quadrada ou Quadrada com cantos arredondados", score: 1 },
+                            { text: "Redonda ou Oval", score: 1 },
+                            { text: "Almond (Amendoada)", score: 2 },
+                            { text: "Stiletto ou Bailarina", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Como é a sua rotina diária?",
+                        options: [
+                            { text: "Muitas tarefas manuais", score: 1 },
+                            { text: "Equilibrada", score: 2 },
+                            { text: "Tranquila, evito impactos", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "O que você acha de Nail Art?",
+                        options: [
+                            { text: "Prefiro sem nada", score: 1 },
+                            { text: "Uma filha única", score: 2 },
+                            { text: "Pedrarias simples", score: 3 },
+                            { text: "Desenhos elaborados!", score: 4 }
+                        ]
+                    }
+                ],
+                getResult: (score) => {
+                    if (score <= 6) return { title: "Clássica & Elegante", desc: "Tons discretos e atemporais. Recomendamos a Manicure Tradicional." };
+                    if (score <= 11) return { title: "Moderna & Chic", desc: "Gosta de moda sem exageros. Recomendamos Esmaltação em Gel." };
+                    return { title: "Ousada & Criativa", desc: "Você adora chamar atenção! Recomendamos Alongamento de Fibra." };
+                }
             },
-            {
-                text: "Qual tamanho de unha você costuma usar?",
-                options: [
-                    { text: "Curta e Prática", score: 1 },
-                    { text: "Média (passando a ponta do dedo)", score: 2 },
-                    { text: "Longa e Poderosa", score: 3 },
-                    { text: "Extra Longa (Stiletto/Bailarina)", score: 3 }
-                ]
+            barber: {
+                title: "Quiz de Estilo - Barbearia",
+                questions: [
+                    {
+                        text: "Qual é o seu estilo de barba atual?",
+                        options: [
+                            { text: "Cara limpa (sem barba)", score: 1 },
+                            { text: "Barba por fazer / rala", score: 2 },
+                            { text: "Barba cheia / lenhador", score: 3 },
+                            { text: "Bigode ou Cavanhaque", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Como você prefere o corte de cabelo?",
+                        options: [
+                            { text: "Militar / Máquina total", score: 1 },
+                            { text: "Degradê (Fade) na régua", score: 3 },
+                            { text: "Clássico com tesoura", score: 2 },
+                            { text: "Longo / Surfista", score: 2 }
+                        ]
+                    },
+                    {
+                        text: "Você usa produtos para cabelo/barba?",
+                        options: [
+                            { text: "Não, só shampoo básico", score: 1 },
+                            { text: "Às vezes uma pomada", score: 2 },
+                            { text: "Sim, óleo, balm e pomada sempre", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Qual impressão você quer passar?",
+                        options: [
+                            { text: "Sério e Profissional", score: 1 },
+                            { text: "Estiloso e Moderno", score: 3 },
+                            { text: "Despojado e Natural", score: 2 }
+                        ]
+                    }
+                ],
+                getResult: (score) => {
+                    if (score <= 5) return { title: "Visual Executivo", desc: "Corte prático e alinhado. Recomendamos Corte Clássico + Barba Simples." };
+                    if (score <= 8) return { title: "Estilo Casual", desc: "Visual natural mas bem cuidado. Recomendamos Corte na Tesoura." };
+                    return { title: "Visual Moderno", desc: "Degradês e acabamento impecável. Recomendamos Corte Fade + Barboterapia." };
+                }
             },
-            {
-                text: "Qual formato você prefere?",
-                options: [
-                    { text: "Quadrada ou Quadrada com cantos arredondados", score: 1 },
-                    { text: "Redonda ou Oval", score: 1 },
-                    { text: "Almond (Amendoada)", score: 2 },
-                    { text: "Stiletto ou Bailarina", score: 3 }
-                ]
+            hair: {
+                title: "Diagnóstico Capilar - Salão Gold",
+                questions: [
+                    {
+                        text: "Qual o comprimento do seu cabelo?",
+                        options: [
+                            { text: "Curto (acima do ombro)", score: 1 },
+                            { text: "Médio (no ombro)", score: 2 },
+                            { text: "Longo (no meio das costas)", score: 3 },
+                            { text: "Extra longo", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "O que mais te incomoda hoje?",
+                        options: [
+                            { text: "Frizz e volume excessivo", score: 3 },
+                            { text: "Pontas duplas e ressecamento", score: 2 },
+                            { text: "Cor desbotada / Raiz crescida", score: 2 },
+                            { text: "Falta de corte / Sem formato", score: 1 }
+                        ]
+                    },
+                    {
+                        text: "Você tem química nos fios?",
+                        options: [
+                            { text: "Cabelo virgem (natural)", score: 1 },
+                            { text: "Apenas coloração/mechas", score: 2 },
+                            { text: "Alisamento/Progressiva", score: 3 },
+                            { text: "Coloração e Alisamento", score: 4 }
+                        ]
+                    },
+                    {
+                        text: "Qual seu objetivo principal?",
+                        options: [
+                            { text: "Mudar radicalmente a cor", score: 3 },
+                            { text: "Hidratar e recuperar a saúde", score: 2 },
+                            { text: "Apenas cortar as pontinhas", score: 1 }
+                        ]
+                    }
+                ],
+                getResult: (score) => {
+                    if (score <= 5) return { title: "Renovação Leve", desc: "Manutenção necessária. Recomendamos Corte Bordado + Nutrição." };
+                    if (score <= 9) return { title: "Tratamento Profundo", desc: "Seus fios precisam de vida. Recomendamos Cronograma Capilar ou Botox." };
+                    return { title: "Transformação Total", desc: "Hora de mudar! Recomendamos Mechas ou Coloração Global." };
+                }
             },
-            {
-                text: "Como é a sua rotina diária?",
-                options: [
-                    { text: "Muitas tarefas manuais (casa, artesanato, digitação intensa)", score: 1 },
-                    { text: "Equilibrada, uso as mãos mas com cuidado", score: 2 },
-                    { text: "Tranquila, evito impactos nas unhas", score: 3 }
-                ]
+            spa: {
+                title: "Quiz de Bem-Estar - Spa",
+                questions: [
+                    {
+                        text: "Qual seu nível de estresse hoje? (1-10)",
+                        options: [
+                            { text: "Baixo (1-3) - Só quero relaxar", score: 1 },
+                            { text: "Médio (4-7) - Cansada da rotina", score: 2 },
+                            { text: "Alto (8-10) - Preciso de socorro!", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Onde você sente mais tensão?",
+                        options: [
+                            { text: "Pés e Perna", score: 1 },
+                            { text: "Pescoço e Ombros", score: 2 },
+                            { text: "Costas inteira (Lombar)", score: 2 },
+                            { text: "Corpo todo / Mente cheia", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Qual tipo de toque você prefere?",
+                        options: [
+                            { text: "Toque leve e suave", score: 1 },
+                            { text: "Pressão média", score: 2 },
+                            { text: "Toque firme e profundo", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Qual seu objetivo?",
+                        options: [
+                            { text: "Estética (Reduzir medidas)", score: 1 },
+                            { text: "Relaxamento profundo", score: 3 },
+                            { text: "Dores musculares", score: 2 }
+                        ]
+                    }
+                ],
+                getResult: (score) => {
+                    if (score <= 5) return { title: "Momento Zen", desc: "Para relaxar a mente. Recomendamos Massagem Relaxante com Aromaterapia." };
+                    if (score <= 8) return { title: "Alívio Muscular", desc: "Foco nas tensões. Recomendamos Massagem Deep Tissue ou Pedras Quentes." };
+                    return { title: "Detox Total", desc: "Renovação completa. Recomendamos o Ritual Day Spa (3h)." };
+                }
             },
-            {
-                text: "O que você acha de Nail Art (decoração)?",
-                options: [
-                    { text: "Prefiro sem nada, apenas esmalte liso", score: 1 },
-                    { text: "Uma filha única ou francesinha discreta", score: 2 },
-                    { text: "Pedrarias simples ou glitter encapsulado", score: 3 },
-                    { text: "Desenhos elaborados, 3D e muito brilho!", score: 4 }
-                ]
+            tattoo: {
+                title: "Consultoria Tattoo - Estúdio",
+                questions: [
+                    {
+                        text: "É a sua primeira tatuagem?",
+                        options: [
+                            { text: "Sim, é a primeira", score: 1 },
+                            { text: "Tenho algumas pequenas", score: 2 },
+                            { text: "Já sou tela viva (várias)", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Qual estilo você curte?",
+                        options: [
+                            { text: "Traços finos (Fine line) / Escrita", score: 1 },
+                            { text: "Old School / Tradicional", score: 2 },
+                            { text: "Realismo / Blackwork pesado", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Qual tamanho você imagina?",
+                        options: [
+                            { text: "Pequena (até 7cm)", score: 1 },
+                            { text: "Média (palma da mão)", score: 2 },
+                            { text: "Grande (fechamento)", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Local do corpo?",
+                        options: [
+                            { text: "Braço / Antebraço", score: 1 },
+                            { text: "Costela / Pescoço (áreas sensíveis)", score: 3 },
+                            { text: "Perna / Coxa", score: 1 }
+                        ]
+                    }
+                ],
+                getResult: (score) => {
+                    if (score <= 5) return { title: "Tattoo Delicada", desc: "Ideal para começar. Recomendamos Flash Tattoo ou Fine Line minimalista." };
+                    if (score <= 8) return { title: "Projeto Personalizado", desc: "Arte exclusiva. Recomendamos agendar criação de arte Sketch/Blackwork." };
+                    return { title: "Projeto Grande", desc: "Para quem aguenta! Recomendamos sessão de Fechamento ou Realismo." };
+                }
             },
-            {
-                text: "Qual acabamento você mais gosta?",
-                options: [
-                    { text: "Extra Brilho (Verniz)", score: 2 },
-                    { text: "Fosco (Matte)", score: 3 },
-                    { text: "Cintilante ou Perolado", score: 1 }
-                ]
-            },
-            {
-                text: "Com que frequência você faz as unhas?",
-                options: [
-                    { text: "Toda semana religiosamente", score: 2 },
-                    { text: "A cada 15 dias (manutenção)", score: 2 },
-                    { text: "Apenas em ocasiões especiais", score: 1 }
-                ]
-            },
-            {
-                text: "Você costuma usar anéis e pulseiras?",
-                options: [
-                    { text: "Raramente uso acessórios", score: 1 },
-                    { text: "Uso peças delicadas e finas", score: 2 },
-                    { text: "Adoro anéis grandes e mix de acessórios", score: 3 }
-                ]
+            health: {
+                title: "Pré-Avaliação - Saúde",
+                questions: [
+                    {
+                        text: "Qual o motivo da consulta?",
+                        options: [
+                            { text: "Check-up de rotina", score: 1 },
+                            { text: "Dor ou desconforto específico", score: 3 },
+                            { text: "Procedimento estético", score: 2 }
+                        ]
+                    },
+                    {
+                        text: "Há quanto tempo sente necessidade?",
+                        options: [
+                            { text: "Poucos dias / Decidi agora", score: 1 },
+                            { text: "Algumas semanas", score: 2 },
+                            { text: "Meses / Crônico", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Qual sua disponibilidade?",
+                        options: [
+                            { text: "Horário comercial", score: 1 },
+                            { text: "Início da manhã", score: 2 },
+                            { text: "Final do dia/Noite", score: 2 }
+                        ]
+                    }
+                ],
+                getResult: (score) => {
+                    if (score <= 4) return { title: "Consulta de Rotina", desc: "Prevenção é o melhor remédio. Agende um Check-up Geral." };
+                    if (score <= 7) return { title: "Avaliação Estética", desc: "Vamos cuidar de você. Agende uma Avaliação Facial/Corporal." };
+                    return { title: "Atendimento Prioritário", desc: "Não adie sua saúde. Recomendamos agendar o horário mais próximo." };
+                }
             }
-        ];
+        };
+
+        const activeTheme = localStorage.getItem('client_theme') || 'nail';
+        const currentData = quizData[activeTheme] || quizData['nail'];
+        const questions = currentData.questions;
+
+        // Set Title
+        document.title = currentData.title;
+        const pageTitle = document.querySelector('.p-4 span');
+        if (pageTitle) pageTitle.textContent = currentData.title;
 
         let currentQ = 0;
         let totalScore = 0;
@@ -182,22 +386,10 @@
             const resBox = document.getElementById('resultBox');
             resBox.classList.remove('hidden');
 
-            let title = "";
-            let desc = "";
+            const result = currentData.getResult(totalScore);
 
-            if (totalScore <= 4) {
-                title = "Clássica & Elegante";
-                desc = "Você prefere tons discretos e atemporais. Recomendamos a Manicure Completa com esmaltação tradicional.";
-            } else if (totalScore <= 7) {
-                title = "Moderna & Chic";
-                desc = "Você gosta de estar na moda mas sem exageros. Que tal experimentar um tom vibrante ou uma leve nail art?";
-            } else {
-                title = "Ousada & Criativa";
-                desc = "Você adora chamar atenção! Unhas decoradas, alongamentos e formatos ousados são sua cara.";
-            }
-
-            document.getElementById('resultTitle').textContent = title;
-            document.getElementById('resultDesc').textContent = desc;
+            document.getElementById('resultTitle').textContent = result.title;
+            document.getElementById('resultDesc').textContent = result.desc;
         }
 
         async function saveAndRedirect() {
@@ -214,38 +406,29 @@
                         localStorage.setItem('user', JSON.stringify(currentUser));
                     }
 
-                    // Show XP gain alert
-                    // The instruction provided an estimated XP calculation, but it's safer to rely on the server's message if available.
-                    // If the server provides a specific message (e.g., "Level Up!"), use that.
                     if (response.message) {
                         alert(response.message);
                     } else {
-                        // Fallback if no specific message, or combine with XP gain
                         alert(`🎉 Quiz Concluído!\n\nVocê ganhou XP!\nConfira seu novo progresso no perfil.`);
                     }
 
                     window.location.href = 'profile.html';
                 } catch (error) {
-                    // If 429 (Too Many Requests), show specific limit message
-                    if (error.message && error.message.includes('429')) { // Check error.message for 429
+                    if (error.message && error.message.includes('429')) {
                         alert('⚠️ Você atingiu o limite diário de Quizzes!\n\nTente novamente amanhã para ganhar mais XP.');
                         window.location.href = 'profile.html';
                         return;
                     }
 
-                    // If it's a regular error but we have the response object from api.js error throw
                     if (error.response && error.response.status === 429) {
                         alert('⚠️ Limite diário de quizzes atingido!');
-                        window.location.href = 'profile.html'; // Redirect to profile for 429 from response
+                        window.location.href = 'profile.html';
                         return;
                     } else {
                         console.error('Erro ao salvar quiz:', error);
-                        // Show specific server error if available
-                        const msg = error.message || 'Erro ao salvar resultado. Tente novamente.';
-                        alert(`Erro: ${msg}`);
+                        // Just redirect if it fails lightly, unless critical
+                        window.location.href = 'services.html';
                     }
-                    // If it's any other error, we still redirect to services.html
-                    window.location.href = 'services.html';
                 }
             } else {
                 alert('Crie uma conta para salvar seu resultado! Redirecionando para cadastro...');

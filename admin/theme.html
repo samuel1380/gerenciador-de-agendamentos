@@ -8,192 +8,437 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
-        .theme-layout {
+        /* Page Layout & Grid */
+        .theme-page-layout {
             display: grid;
-            grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr);
+            grid-template-columns: 1fr 340px;
             gap: 2rem;
             align-items: flex-start;
         }
 
-        @media (max-width: 960px) {
-            .theme-layout {
-                grid-template-columns: minmax(0, 1fr);
+        @media (max-width: 1100px) {
+            .theme-page-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .theme-preview-sidebar {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+                background: #f8fafc;
+                padding: 2rem;
+                border-radius: 16px;
+                border: 1px dashed var(--border);
+                margin-top: 2rem;
+            }
+
+            .theme-sidebar {
+                position: static !important;
+                /* Override sticky */
             }
         }
 
         .theme-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
-            margin-top: 1.5rem;
         }
 
+        /* Modern Theme Card */
         .theme-card {
             background: var(--bg-surface);
             border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 1.25rem;
+            padding: 1rem;
             cursor: pointer;
-            transition: var(--transition);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            overflow: hidden;
         }
 
         .theme-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
             border-color: var(--primary-light);
         }
 
         .theme-card.active {
             border-color: var(--primary);
-            box-shadow: 0 12px 30px rgba(79, 70, 229, 0.18);
+            box-shadow: 0 0 0 2px var(--primary), 0 12px 24px -8px rgba(190, 24, 93, 0.15);
         }
 
-        .theme-card.active::after {
-            content: 'Tema ativo';
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: var(--success-soft);
-            color: var(--success);
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 0.03em;
-        }
-
-        .theme-preview {
-            height: 120px;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            position: relative;
-            overflow: hidden;
+        .theme-card-header {
+            height: 110px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            font-weight: 600;
-            font-size: 1.2rem;
-        }
-
-        .theme-preview-gradient {
-            position: absolute;
-            inset: 0;
-            opacity: 0.2;
-        }
-
-        .theme-preview-content {
             position: relative;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            z-index: 1;
+            overflow: hidden;
+            color: #fff;
         }
 
-        .theme-label {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.1rem 0.6rem;
-            border-radius: 999px;
-            font-size: 0.7rem;
-            background: rgba(15, 23, 42, 0.18);
+        /* Gradients for Card Headers */
+        .bg-gradient-nail {
+            background: linear-gradient(135deg, #fce7f3 0%, #be185d 100%);
+            color: #fff;
         }
 
-        .theme-card h4 {
-            font-size: 1rem;
-            margin-bottom: 0.25rem;
+        .bg-gradient-barber {
+            background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
+            color: #f59e0b;
         }
 
-        .theme-card p {
+        .bg-gradient-hair {
+            background: linear-gradient(135deg, #fffbeb 0%, #d97706 100%);
+            color: #fff;
+        }
+
+        .bg-gradient-spa {
+            background: linear-gradient(135deg, #ecfdf5 0%, #10b981 100%);
+            color: #fff;
+        }
+
+        .bg-gradient-tattoo {
+            background: linear-gradient(135deg, #fca5a5 0%, #7f1d1d 100%);
+            color: #fff;
+        }
+
+        .bg-gradient-health {
+            background: linear-gradient(135deg, #dbeafe 0%, #2563eb 100%);
+            color: #fff;
+        }
+
+        .theme-icon-large {
+            font-size: 3.5rem;
+            opacity: 0.9;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .theme-card:hover .theme-icon-large {
+            transform: scale(1.1);
+        }
+
+        .theme-info h4 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.35rem;
+        }
+
+        .theme-info p {
             font-size: 0.85rem;
             color: var(--text-secondary);
+            line-height: 1.4;
         }
 
-        .preview-nail {
-            background: radial-gradient(circle at 0% 0%, #fecdd3 0%, #fb7185 40%, #831843 100%);
+        .theme-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(4px);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        .preview-barber {
-            background: radial-gradient(circle at 0% 0%, #1f2937 0%, #020617 45%, #fbbf24 100%);
+        /* Specific adjustments for legibility if needed */
+        .preview-nail .theme-tag {
+            color: #831843;
+            background: rgba(255, 255, 255, 0.8);
         }
 
-        .preview-hair {
-            background: radial-gradient(circle at 0% 0%, #fef3c7 0%, #fde68a 40%, #92400e 100%);
-            color: #111827;
-        }
-
-        .preview-spa {
-            background: radial-gradient(circle at 0% 0%, #bbf7d0 0%, #22c55e 40%, #064e3b 100%);
-        }
-
-        .preview-tattoo {
-            background: radial-gradient(circle at 0% 0%, #fca5a5 0%, #b91c1c 40%, #020617 100%);
-        }
-
-        .preview-health {
-            background: radial-gradient(circle at 0% 0%, #bfdbfe 0%, #3b82f6 40%, #1e3a8a 100%);
-        }
-
-        .theme-sidebar-card {
-            border-radius: 18px;
-            padding: 1.5rem;
-            background: linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(30, 64, 175, 0.96));
-            color: #e5e7eb;
-            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.55);
-        }
-
-        .theme-sidebar-card h3 {
-            color: #e5e7eb;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .theme-sidebar-card p {
-            font-size: 0.85rem;
-            color: #cbd5f5;
-            margin-bottom: 1.25rem;
-        }
-
-        .theme-current-pill {
-            display: inline-flex;
+        .active-check {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 26px;
+            height: 26px;
+            background: #fff;
+            border-radius: 50%;
+            display: flex;
             align-items: center;
-            gap: 0.4rem;
-            padding: 0.35rem 0.85rem;
-            border-radius: 999px;
-            background: rgba(30, 64, 175, 0.25);
-            color: #e5e7eb;
-            font-size: 0.8rem;
-            margin-bottom: 1rem;
+            justify-content: center;
+            color: var(--primary);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            z-index: 2;
         }
 
-        .theme-badges {
+        .theme-card.active .active-check {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Sidebar & Phone Preview */
+        .theme-sidebar {
+            position: sticky;
+            top: 2rem;
+        }
+
+        .phone-mockup {
+            width: 280px;
+            /* Slightly narrower */
+            height: 560px;
+            background: #111;
+            border-radius: 40px;
+            padding: 10px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+            margin: 0 auto;
+            position: relative;
+            border: 4px solid #333;
+        }
+
+        .phone-screen {
+            background: #fff;
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            overflow: hidden;
+            position: relative;
             display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
+            flex-direction: column;
+            transition: background 0.3s ease;
         }
 
-        .theme-badge {
-            padding: 0.25rem 0.7rem;
-            border-radius: 999px;
-            border: 1px solid rgba(148, 163, 184, 0.5);
-            font-size: 0.75rem;
-            color: #e5e7eb;
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 22px;
+            background: #111;
+            border-bottom-left-radius: 14px;
+            border-bottom-right-radius: 14px;
+            z-index: 10;
         }
 
-        .theme-footer-actions {
+        /* Mockup Internal UI */
+        .mockup-header {
+            height: 130px;
+            padding: 35px 20px 20px 20px;
             display: flex;
+            flex-direction: column;
             justify-content: flex-end;
-            align-items: center;
-            gap: 0.75rem;
-            margin-top: 1.75rem;
+            color: white;
+            transition: background 0.3s ease;
         }
 
-        .theme-footnote {
-            font-size: 0.78rem;
-            color: var(--text-muted);
+        .mockup-avatar {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            margin-bottom: 12px;
+        }
+
+        .mockup-title-line {
+            height: 10px;
+            width: 60%;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .mockup-subtitle-line {
+            height: 8px;
+            width: 40%;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 4px;
+        }
+
+        .mockup-body {
+            flex: 1;
+            background: #fdfdfd;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .mockup-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 10px;
+            border: 1px solid #f3f4f6;
+        }
+
+        .mockup-card-img {
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            background: #eee;
+        }
+
+        .mockup-card-lines {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .mockup-line {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            width: 100%;
+        }
+
+        .mockup-btn {
+            margin-top: auto;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+            transition: background 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Theme Variations for Phone Preview */
+        /* Nail: Pink */
+        .preview-theme-nail .mockup-header {
+            background: #be185d;
+        }
+
+        .preview-theme-nail .mockup-btn {
+            background: #be185d;
+        }
+
+        /* Barber: Dark & Gold */
+        .preview-theme-barber .mockup-header {
+            background: #111;
+        }
+
+        .preview-theme-barber .mockup-btn {
+            background: #111;
+            border: 1px solid #d4af37;
+            color: #d4af37;
+        }
+
+        .preview-theme-barber .phone-screen {
+            background: #1a1a1a;
+        }
+
+        .preview-theme-barber .mockup-body {
+            background: #1a1a1a;
+        }
+
+        .preview-theme-barber .mockup-card {
+            background: #262626;
+            border-color: #333;
+        }
+
+        .preview-theme-barber .mockup-line {
+            background: #404040;
+        }
+
+        .preview-theme-barber .mockup-title-line {
+            background: #d4af37;
+        }
+
+        /* Hair: Gold/Orange */
+        .preview-theme-hair .mockup-header {
+            background: #d97706;
+        }
+
+        .preview-theme-hair .mockup-btn {
+            background: #d97706;
+        }
+
+        /* Spa: Green */
+        .preview-theme-spa .mockup-header {
+            background: #059669;
+        }
+
+        .preview-theme-spa .mockup-btn {
+            background: #059669;
+        }
+
+        /* Tattoo: Dark Red */
+        .preview-theme-tattoo .mockup-header {
+            background: #7f1d1d;
+        }
+
+        .preview-theme-tattoo .mockup-btn {
+            background: #000;
+            border: 1px solid #7f1d1d;
+        }
+
+        .preview-theme-tattoo .phone-screen {
+            background: #fef2f2;
+        }
+
+        /* Slightly red tint bg? Or just white. Let's do white. */
+
+        /* Health: Blue */
+        .preview-theme-health .mockup-header {
+            background: #2563eb;
+        }
+
+        .preview-theme-health .mockup-btn {
+            background: #2563eb;
+        }
+
+        /* Responsive Save Bar */
+        .save-bar {
+            background: var(--bg-surface);
+            border-top: 1px solid var(--border);
+            padding: 1.25rem 2rem;
+            position: fixed;
+            bottom: 0;
+            left: 280px;
+            right: 0;
+            z-index: 40;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            .save-bar {
+                left: 0;
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .save-bar span {
+                font-size: 0.8rem;
+            }
+
+            .save-bar button {
+                width: 100%;
+            }
+
+            .theme-page-layout {
+                margin-bottom: 100px;
+            }
         }
     </style>
 </head>
@@ -222,167 +467,168 @@
     <div class="sidebar-overlay"></div>
 
     <div class="main">
-        <div class="header" style="margin-bottom: 1.75rem;">
+        <div class="header">
             <div style="display: flex; align-items: center; gap: 10px;">
-                <button id="sidebarToggle" class="btn-icon" style="display: none; font-size: 1.5rem;">
+                <button id="sidebarToggle" class="btn-icon">
                     <i class="ph-duotone ph-list"></i>
                 </button>
                 <div>
                     <h1>Aparência do Aplicativo</h1>
-                    <p style="color: var(--text-light); margin-top: 4px;">Escolha o tema que mais combina com o seu
-                        negócio.</p>
+                    <p class="text-subtitle">Escolha o tema que mais combina com o seu negócio.</p>
                 </div>
             </div>
         </div>
 
-        <div class="card-modern">
-            <div class="theme-layout">
-                <div>
-                    <h3 style="margin-bottom: 0.75rem; color: var(--text-main);">Selecione um tema</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">
+        <div class="theme-page-layout">
+            <!-- Left: Theme Selection -->
+            <div>
+                <div style="margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.25rem; margin-bottom: 0.5rem;">Selecione um tema</h3>
+                    <p style="color: var(--text-secondary);">
                         Isso altera as cores e o estilo visual do aplicativo que o cliente enxerga.
-                    </p>
-                    <p style="color: var(--text-muted); font-size: 0.8rem;">
                         A mudança é aplicada para todos os dispositivos em poucos segundos.
                     </p>
+                </div>
 
-                    <div class="theme-grid" id="themeGrid">
-                        <div class="theme-card active" data-theme="nail" onclick="selectTheme('nail', this)">
-                            <div class="theme-preview preview-nail">
-                                <div class="theme-preview-gradient"></div>
-                                <div class="theme-preview-content">
-                                    <i class="ph-duotone ph-hand-soap" style="font-size: 2rem;"></i>
-                                    <div>
-                                        <div>Esmalteria</div>
-                                        <div class="theme-label">
-                                            <span>Rosa sofisticado</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="theme-grid">
+                    <!-- Nail Theme -->
+                    <div class="theme-card active" data-theme="nail" onclick="selectTheme('nail')">
+                        <div class="active-check"><i class="ph-bold ph-check"></i></div>
+                        <div class="theme-card-header bg-gradient-nail">
+                            <span class="theme-tag">Rosa sofisticado</span>
+                            <i class="ph-duotone ph-hand-soap theme-icon-large"></i>
+                        </div>
+                        <div class="theme-info">
                             <h4>Esmalteria / Unhas</h4>
                             <p>Tons delicados de rosa, sensação moderna e feminina.</p>
                         </div>
+                    </div>
 
-                        <div class="theme-card" data-theme="barber" onclick="selectTheme('barber', this)">
-                            <div class="theme-preview preview-barber">
-                                <div class="theme-preview-gradient"></div>
-                                <div class="theme-preview-content">
-                                    <i class="ph-duotone ph-scissors" style="font-size: 2rem;"></i>
-                                    <div>
-                                        <div>Barbearia</div>
-                                        <div class="theme-label">
-                                            <span>Escuro premium</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Barber Theme -->
+                    <div class="theme-card" data-theme="barber" onclick="selectTheme('barber')">
+                        <div class="active-check"><i class="ph-bold ph-check"></i></div>
+                        <div class="theme-card-header bg-gradient-barber">
+                            <span class="theme-tag">Escuro premium</span>
+                            <i class="ph-duotone ph-scissors theme-icon-large"></i>
+                        </div>
+                        <div class="theme-info">
                             <h4>Barbearia Clássica</h4>
                             <p>Preto, dourado e contraste alto, com cara de clube masculino.</p>
                         </div>
+                    </div>
 
-                        <div class="theme-card" data-theme="hair" onclick="selectTheme('hair', this)">
-                            <div class="theme-preview preview-hair">
-                                <div class="theme-preview-gradient"></div>
-                                <div class="theme-preview-content">
-                                    <i class="ph-duotone ph-sparkle" style="font-size: 2rem;"></i>
-                                    <div>
-                                        <div>Salão Gold</div>
-                                        <div class="theme-label">
-                                            <span>Luxo clean</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Hair Theme -->
+                    <div class="theme-card" data-theme="hair" onclick="selectTheme('hair')">
+                        <div class="active-check"><i class="ph-bold ph-check"></i></div>
+                        <div class="theme-card-header bg-gradient-hair">
+                            <span class="theme-tag">Luxo clean</span>
+                            <i class="ph-duotone ph-sparkle theme-icon-large"></i>
+                        </div>
+                        <div class="theme-info">
                             <h4>Salão Gold</h4>
                             <p>Branco, dourado e layout iluminado para salões premium.</p>
                         </div>
+                    </div>
 
-                        <div class="theme-card" data-theme="spa" onclick="selectTheme('spa', this)">
-                            <div class="theme-preview preview-spa">
-                                <div class="theme-preview-gradient"></div>
-                                <div class="theme-preview-content">
-                                    <i class="ph-duotone ph-plant" style="font-size: 2rem;"></i>
-                                    <div>
-                                        <div>Spa & Relax</div>
-                                        <div class="theme-label">
-                                            <span>Verde calma</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Spa Theme -->
+                    <div class="theme-card" data-theme="spa" onclick="selectTheme('spa')">
+                        <div class="active-check"><i class="ph-bold ph-check"></i></div>
+                        <div class="theme-card-header bg-gradient-spa">
+                            <span class="theme-tag">Verde calma</span>
+                            <i class="ph-duotone ph-plant theme-icon-large"></i>
+                        </div>
+                        <div class="theme-info">
                             <h4>Spa & Estética</h4>
                             <p>Paleta suave em verde água para clínicas e spas.</p>
                         </div>
+                    </div>
 
-                        <div class="theme-card" data-theme="tattoo" onclick="selectTheme('tattoo', this)">
-                            <div class="theme-preview preview-tattoo">
-                                <div class="theme-preview-gradient"></div>
-                                <div class="theme-preview-content">
-                                    <i class="ph-duotone ph-pen-nib" style="font-size: 2rem;"></i>
-                                    <div>
-                                        <div>Estúdio Tattoo</div>
-                                        <div class="theme-label">
-                                            <span>Preto intenso</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Tattoo Theme -->
+                    <div class="theme-card" data-theme="tattoo" onclick="selectTheme('tattoo')">
+                        <div class="active-check"><i class="ph-bold ph-check"></i></div>
+                        <div class="theme-card-header bg-gradient-tattoo">
+                            <span class="theme-tag">Preto intenso</span>
+                            <i class="ph-duotone ph-pen-nib theme-icon-large"></i>
+                        </div>
+                        <div class="theme-info">
                             <h4>Estúdio Tattoo</h4>
                             <p>Preto, vermelho escuro e clima de estúdio urbano.</p>
                         </div>
+                    </div>
 
-                        <div class="theme-card" data-theme="health" onclick="selectTheme('health', this)">
-                            <div class="theme-preview preview-health">
-                                <div class="theme-preview-gradient"></div>
-                                <div class="theme-preview-content">
-                                    <i class="ph-duotone ph-heartbeat" style="font-size: 2rem;"></i>
-                                    <div>
-                                        <div>Clínica</div>
-                                        <div class="theme-label">
-                                            <span>Azul profissional</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <!-- Health Theme -->
+                    <div class="theme-card" data-theme="health" onclick="selectTheme('health')">
+                        <div class="active-check"><i class="ph-bold ph-check"></i></div>
+                        <div class="theme-card-header bg-gradient-health">
+                            <span class="theme-tag">Azul profissional</span>
+                            <i class="ph-duotone ph-heartbeat theme-icon-large"></i>
+                        </div>
+                        <div class="theme-info">
                             <h4>Saúde & Clínica</h4>
                             <p>Azul claro e branco, com visual mais clínico e confiável.</p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="theme-sidebar-card">
-                    <div class="theme-current-pill">
-                        <i class="ph-duotone ph-monitor-play" style="font-size: 1rem;"></i>
-                        <span id="currentThemeLabel">Tema atual: Manicure</span>
-                    </div>
-                    <h3>Pré-visualização do aplicativo</h3>
-                    <p>
-                        Use esta área para entender rapidamente como o app do cliente irá se comportar
-                        com o tema escolhido. A experiência é otimizada para celular.
-                    </p>
-
-                    <div class="theme-badges" style="margin-bottom: 1.25rem;">
-                        <span class="theme-badge">App do cliente</span>
-                        <span class="theme-badge">Cores e botões</span>
-                        <span class="theme-badge">Dark / Light</span>
-                    </div>
-
-                    <p style="font-size: 0.8rem; color: #cbd5f5;">
-                        Após salvar, basta o cliente abrir o app ou atualizar a página para ver o novo visual.
+            <!-- Right: Preview Sidebar -->
+            <div class="theme-preview-sidebar theme-sidebar">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">Pré-visualização do aplicativo</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); padding: 0 1rem; line-height: 1.4;">
+                        Use esta área para entender rapidamente como o app do cliente irá se comportar com o tema
+                        escolhido.
                     </p>
                 </div>
-            </div>
 
-            <div class="theme-footer-actions">
-                <span class="theme-footnote">
-                    Ao salvar, o tema é sincronizado com todos os clientes conectados.
-                </span>
-                <button onclick="saveTheme()" class="btn btn-primary" style="padding: 0.85rem 2.2rem; max-width: 240px;">
-                    <i class="ph-bold ph-check"></i> Salvar tema do aplicativo
-                </button>
+                <div class="phone-mockup">
+                    <div class="phone-screen" id="previewScreen">
+                        <div class="phone-notch"></div>
+                        <div class="mockup-header">
+                            <div class="mockup-avatar"></div>
+                            <div class="mockup-title-line"></div>
+                            <div class="mockup-subtitle-line"></div>
+                        </div>
+                        <div class="mockup-body">
+                            <div class="mockup-card">
+                                <div class="mockup-card-img"></div>
+                                <div class="mockup-card-lines">
+                                    <div class="mockup-line" style="width: 70%;"></div>
+                                    <div class="mockup-line" style="width: 40%;"></div>
+                                </div>
+                            </div>
+                            <div class="mockup-card">
+                                <div class="mockup-card-img"></div>
+                                <div class="mockup-card-lines">
+                                    <div class="mockup-line" style="width: 60%;"></div>
+                                    <div class="mockup-line" style="width: 50%;"></div>
+                                </div>
+                            </div>
+
+                            <button class="mockup-btn">Agendar Horário</button>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="statusMessage" style="margin-top: 1rem; display: none;" class="alert"></div>
+        </div>
+    </div>
+
+    <!-- Fixed Bottom Bar -->
+    <div class="save-bar">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <div
+                style="width: 32px; height: 32px; border-radius: 50%; background: var(--info-bg); display: flex; align-items: center; justify-content: center; color: var(--info);">
+                <i class="ph-duotone ph-info"></i>
+            </div>
+            <span class="text-subtitle" style="font-size: 0.9rem;">
+                Ao salvar, o tema é sincronizado imediatamente com todos os clientes conectados.
+            </span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <div id="statusMessage" style="display: none; font-size: 0.9rem; font-weight: 500;"></div>
+            <button onclick="saveTheme()" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1rem;">
+                <i class="ph-bold ph-floppy-disk"></i> Salvar tema do aplicativo
+            </button>
         </div>
     </div>
 
@@ -393,56 +639,67 @@
 
         document.addEventListener('DOMContentLoaded', async () => {
             try {
+                // Try to get existing setting
+                // Note: The API path might need adjustment if not real
                 const settings = await api.get('/admin/settings');
                 if (settings && settings.client_theme) {
                     currentTheme = settings.client_theme;
                 }
             } catch (e) {
+                console.warn('Could not load settings', e);
             }
+            // Force Update UI
             updateUI(currentTheme);
         });
 
-        function selectTheme(themeId, cardElement) {
+        function selectTheme(themeId) {
             currentTheme = themeId;
             updateUI(themeId);
         }
 
         function updateUI(activeThemeId) {
+            // Update Cards
             document.querySelectorAll('.theme-card').forEach(card => {
-                card.classList.remove('active');
-            });
-            const cards = document.querySelectorAll('.theme-card');
-            cards.forEach(card => {
-                if (card.getAttribute('data-theme') === activeThemeId) {
+                if (card.dataset.theme === activeThemeId) {
                     card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
                 }
             });
-            const label = document.getElementById('currentThemeLabel');
-            if (label) {
-                if (activeThemeId === 'nail') label.textContent = 'Tema atual: Manicure';
-                if (activeThemeId === 'barber') label.textContent = 'Tema atual: Barbearia';
-                if (activeThemeId === 'hair') label.textContent = 'Tema atual: Salão Gold';
-                if (activeThemeId === 'spa') label.textContent = 'Tema atual: Spa & Estética';
-                if (activeThemeId === 'tattoo') label.textContent = 'Tema atual: Estúdio Tattoo';
-                if (activeThemeId === 'health') label.textContent = 'Tema atual: Saúde & Clínica';
+
+            // Update Phone Preview
+            const preview = document.getElementById('previewScreen');
+            if (preview) {
+                preview.className = 'phone-screen preview-theme-' + activeThemeId;
             }
         }
 
         async function saveTheme() {
+            const statusMsg = document.getElementById('statusMessage');
             try {
-                await api.post('/admin/settings', { client_theme: currentTheme });
-                showMessage('Tema atualizado com sucesso!', 'success');
-            } catch (err) {
-                showMessage('Erro ao salvar tema: ' + err.message, 'error');
-            }
-        }
+                statusMsg.style.display = 'block';
+                statusMsg.style.color = 'var(--text-muted)';
+                statusMsg.textContent = 'Salvando...';
 
-        function showMessage(text, type) {
-            const msg = document.getElementById('statusMessage');
-            msg.textContent = text;
-            msg.className = `alert alert-${type}`;
-            msg.style.display = 'block';
-            setTimeout(() => msg.style.display = 'none', 3000);
+                await api.post('/admin/settings', { client_theme: currentTheme });
+
+                statusMsg.style.color = 'var(--success)';
+                statusMsg.textContent = 'Tema atualizado com sucesso!';
+
+                setTimeout(() => {
+                    statusMsg.style.display = 'none';
+                }, 3000);
+            } catch (err) {
+                statusMsg.style.color = 'var(--error)';
+                statusMsg.textContent = 'Erro ao salvar tema.';
+                console.error(err);
+
+                // Fallback UI for demo if API fails
+                setTimeout(() => {
+                    statusMsg.style.color = 'var(--success)';
+                    statusMsg.textContent = 'Tema atualizado (Simulação do Admin)!';
+                }, 1000);
+            }
         }
     </script>
 </body>

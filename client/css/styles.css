@@ -613,27 +613,38 @@ textarea.form-input {
     transform: scale(0.98);
 }
 
-/* --- THEMES --- */
+/* --- THEMES (Enhanced Visuals) --- */
 
+/* 1. Barbearia (Premium Dark & Gold) */
 body.theme-barber {
-    --primary: #D4AF37;
-    --primary-dark: #B5902B;
-    --primary-light: #3A3A3A;
-    --accent: #1F2933;
+    --primary: #C5A028;
+    /* Classic Gold */
+    --primary-dark: #A17F1A;
+    --primary-light: #2A2518;
+    /* Dark Gold Tint */
+    --accent: #1F2937;
     --accent-dark: #000000;
-    --text: #F9FAFB;
+
+    --text: #F3F4F6;
     --text-light: #9CA3AF;
     --text-muted: #6B7280;
-    --bg: #050816;
+
+    --bg: #0B0F19;
+    /* Deep Rich Blue-Black */
     --bg-card: #111827;
+    /* Gray 900 */
+
     --white: #111827;
     --gray-50: #111827;
-    --gray-100: #1F2933;
+    --gray-100: #1F2937;
+    /* Gray 800 */
     --gray-200: #374151;
+    /* Gray 700 */
     --gray-300: #4B5563;
-    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
-    --shadow-lg: 0 18px 45px rgba(0, 0, 0, 0.75);
+
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.6);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
 }
 
 body.theme-barber .container {
@@ -641,137 +652,150 @@ body.theme-barber .container {
 }
 
 body.theme-barber .bottom-nav {
-    background: rgba(15, 23, 42, 0.96);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
-    border: 1px solid rgba(55, 65, 81, 0.9);
-}
-
-body.theme-barber .nav-item {
-    color: var(--text-light);
+    background: rgba(17, 24, 39, 0.95);
+    border-color: #374151;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
 }
 
 body.theme-barber .nav-item:hover {
-    background: rgba(31, 41, 55, 0.9);
+    background: rgba(255, 255, 255, 0.05);
     color: var(--primary);
 }
 
 body.theme-barber .nav-item.active {
-    background: rgba(55, 65, 81, 0.9);
+    background: rgba(197, 160, 40, 0.15);
     color: var(--primary);
-    box-shadow: inset 0 0 0 1px rgba(17, 24, 39, 0.9);
+}
+
+body.theme-barber .auth-page-body {
+    background: radial-gradient(circle at top, #1F2937 0%, #0B0F19 100%);
 }
 
 body.theme-barber .ph-duotone {
     color: var(--primary);
 }
 
-body.theme-barber .auth-page-body {
-    background: radial-gradient(circle at top, #111827 0%, #020617 40%, #000000 100%);
-}
 
+/* 2. Salão Gold (Luxo Clean) */
 body.theme-hair {
-    --primary: #D4AF37;
-    --primary-dark: #C5A028;
-    --primary-light: #FFF7DF;
-    --accent: #F6E6B4;
-    --accent-dark: #8B6A1B;
-    --text: #111827;
-    --text-light: #6B7280;
-    --text-muted: #9CA3AF;
-    --bg: #F9FAFB;
+    --primary: #D97706;
+    /* Amber 600 */
+    --primary-dark: #B45309;
+    --primary-light: #FFFBEB;
+    /* Amber 50 */
+    --accent: #FDE68A;
+    --accent-dark: #92400E;
+
+    --text: #1C1917;
+    /* Stone 900 */
+    --text-light: #57534E;
+    --text-muted: #A8A29E;
+
+    --bg: #FAFAF9;
+    /* Stone 50 */
     --bg-card: #FFFFFF;
+
     --white: #FFFFFF;
-    --gray-50: #F9FAFB;
-    --gray-100: #F3F4F6;
-    --gray-200: #E5E7EB;
-    --gray-300: #D1D5DB;
-    --shadow-sm: 0 4px 12px rgba(148, 163, 184, 0.25);
-    --shadow: 0 10px 30px rgba(148, 163, 184, 0.35);
-    --shadow-lg: 0 16px 45px rgba(148, 163, 184, 0.5);
+    --gray-50: #FAFAF9;
+    --gray-100: #F5F5F4;
+    --gray-200: #E7E5E4;
+    /* Stone 200 */
+    --gray-300: #D6D3D1;
+
+    --shadow-sm: 0 4px 6px -1px rgba(217, 119, 6, 0.1);
+    --shadow: 0 10px 25px -5px rgba(217, 119, 6, 0.15);
+    --shadow-lg: 0 20px 25px -5px rgba(217, 119, 6, 0.2);
 }
 
 body.theme-hair .bottom-nav {
-    background: rgba(255, 255, 255, 0.98);
-    box-shadow: 0 15px 40px rgba(148, 163, 184, 0.3);
-    border: 1px solid rgba(209, 213, 219, 0.9);
-}
-
-body.theme-hair .nav-item:hover {
-    background: rgba(249, 250, 251, 0.9);
-    color: var(--primary);
+    border-color: #E7E5E4;
 }
 
 body.theme-hair .nav-item.active {
-    background: var(--primary-light);
-    color: var(--primary-dark);
-    box-shadow: inset 0 0 0 1px rgba(234, 179, 8, 0.25);
+    background: #FFFBEB;
+    color: #B45309;
 }
 
 body.theme-hair .auth-page-body {
-    background: linear-gradient(135deg, #FDFCFB 0%, #E4E9F2 100%);
+    background: linear-gradient(135deg, #FFFBEB 0%, #FFFFFF 100%);
 }
 
+
+/* 3. Spa & Relax (Verde Calma) */
 body.theme-spa {
-    --primary: #22C55E;
+    --primary: #059669;
+    /* Emerald 600 */
     --primary-dark: #047857;
-    --primary-light: #DCFCE7;
+    --primary-light: #ECFDF5;
+    /* Emerald 50 */
     --accent: #A7F3D0;
-    --accent-dark: #065F46;
+    --accent-dark: #064E3B;
+
     --text: #064E3B;
-    --text-light: #6B7280;
-    --text-muted: #94A3AF;
-    --bg: #ECFDF5;
+    /* Emerald 900 */
+    --text-light: #374151;
+    /* Gray 700 */
+    --text-muted: #9CA3AF;
+
+    --bg: #F0FDF4;
+    /* Emerald 50 tint */
     --bg-card: #FFFFFF;
+
     --white: #FFFFFF;
     --gray-50: #F9FAFB;
-    --gray-100: #E5F9F0;
-    --gray-200: #C4F1DE;
-    --gray-300: #9AE6B4;
-    --shadow-sm: 0 4px 12px rgba(34, 197, 94, 0.18);
-    --shadow: 0 10px 30px rgba(16, 185, 129, 0.25);
-    --shadow-lg: 0 16px 45px rgba(20, 184, 166, 0.35);
+    --gray-100: #F0FDF4;
+    --gray-200: #D1FAE5;
+    /* Soft Green border */
+    --gray-300: #A7F3D0;
+
+    --shadow-sm: 0 4px 6px -1px rgba(5, 150, 105, 0.1);
+    --shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.15);
+    --shadow-lg: 0 20px 25px -5px rgba(5, 150, 105, 0.2);
 }
 
 body.theme-spa .bottom-nav {
-    background: rgba(255, 255, 255, 0.98);
-    box-shadow: 0 15px 40px rgba(16, 185, 129, 0.22);
-    border: 1px solid rgba(187, 247, 208, 0.9);
-}
-
-body.theme-spa .nav-item:hover {
-    background: rgba(209, 250, 229, 0.9);
-    color: var(--primary-dark);
+    border-color: #D1FAE5;
 }
 
 body.theme-spa .nav-item.active {
-    background: var(--primary-light);
-    color: var(--primary-dark);
-    box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.22);
+    background: #ECFDF5;
+    color: #047857;
 }
 
 body.theme-spa .auth-page-body {
-    background: linear-gradient(135deg, #ECFDF5 0%, #E0F2FE 100%);
+    background: linear-gradient(135deg, #ECFDF5 0%, #FFFFFF 100%);
 }
 
+
+/* 4. Estúdio Tattoo (Preto Intenso) */
 body.theme-tattoo {
-    --primary: #D32F2F;
-    --primary-dark: #B71C1C;
-    --primary-light: #FFEBEE;
-    --accent: #7F1D1D;
-    --accent-dark: #450A0A;
-    --text: #E5E7EB;
+    --primary: #EF4444;
+    /* Red 500 */
+    --primary-dark: #B91C1C;
+    --primary-light: #450A0A;
+    /* Dark Red BG */
+    --accent: #111827;
+    --accent-dark: #000000;
+
+    --text: #F3F4F6;
     --text-light: #9CA3AF;
     --text-muted: #6B7280;
-    --bg: #020617;
-    --bg-card: #111827;
-    --white: #111827;
-    --gray-50: #020617;
-    --gray-100: #111827;
-    --gray-200: #1F2937;
-    --gray-300: #374151;
-    --shadow-sm: 0 4px 12px rgba(239, 68, 68, 0.25);
-    --shadow: 0 10px 30px rgba(239, 68, 68, 0.35);
-    --shadow-lg: 0 18px 45px rgba(239, 68, 68, 0.5);
+
+    --bg: #000000;
+    --bg-card: #0A0A0A;
+    /* Absolute Dark Gray */
+
+    --white: #0A0A0A;
+    --gray-50: #0A0A0A;
+    --gray-100: #171717;
+    /* Neutral 900 */
+    --gray-200: #262626;
+    /* Neutral 800 */
+    --gray-300: #404040;
+
+    --shadow-sm: 0 4px 6px -1px rgba(220, 38, 38, 0.3);
+    --shadow: 0 10px 25px -5px rgba(220, 38, 38, 0.4);
+    --shadow-lg: 0 20px 25px -5px rgba(220, 38, 38, 0.5);
 }
 
 body.theme-tattoo .container {
@@ -779,71 +803,71 @@ body.theme-tattoo .container {
 }
 
 body.theme-tattoo .bottom-nav {
-    background: rgba(15, 23, 42, 0.96);
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.75);
-    border: 1px solid rgba(55, 65, 81, 0.9);
-}
-
-body.theme-tattoo .nav-item {
-    color: var(--text-light);
+    background: rgba(10, 10, 10, 0.95);
+    border-color: #262626;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
 }
 
 body.theme-tattoo .nav-item:hover {
-    background: rgba(31, 41, 55, 0.9);
+    background: rgba(239, 68, 68, 0.1);
     color: var(--primary);
 }
 
 body.theme-tattoo .nav-item.active {
-    background: rgba(55, 65, 81, 0.9);
+    background: rgba(239, 68, 68, 0.2);
     color: var(--primary);
-    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.9);
 }
 
 body.theme-tattoo .auth-page-body {
-    background: radial-gradient(circle at top, #111827 0%, #020617 40%, #000000 100%);
+    background: radial-gradient(circle at top, #171717 0%, #000000 100%);
 }
 
+
+/* 5. Clínica (Azul Profissional) */
 body.theme-health {
-    --primary: #0288D1;
-    --primary-dark: #01579B;
-    --primary-light: #E1F5FE;
-    --accent: #BAE6FD;
-    --accent-dark: #0369A1;
+    --primary: #2563EB;
+    /* Blue 600 */
+    --primary-dark: #1E40AF;
+    --primary-light: #EFF6FF;
+    /* Blue 50 */
+    --accent: #DBEAFE;
+    --accent-dark: #1E3A8A;
+
     --text: #0F172A;
-    --text-light: #64748B;
+    /* Slate 900 */
+    --text-light: #475569;
     --text-muted: #94A3AF;
-    --bg: #F3F4F6;
+
+    --bg: #F1F5F9;
+    /* Slate 100 */
     --bg-card: #FFFFFF;
+
     --white: #FFFFFF;
-    --gray-50: #F9FAFB;
-    --gray-100: #F3F4F6;
-    --gray-200: #E5E7EB;
-    --gray-300: #D1D5DB;
-    --shadow-sm: 0 4px 12px rgba(37, 99, 235, 0.18);
-    --shadow: 0 10px 30px rgba(37, 99, 235, 0.28);
-    --shadow-lg: 0 18px 45px rgba(37, 99, 235, 0.4);
+    --gray-50: #F8FAFC;
+    --gray-100: #F1F5F9;
+    --gray-200: #E2E8F0;
+    --gray-300: #CBD5E1;
+
+    --shadow-sm: 0 4px 6px -1px rgba(37, 99, 235, 0.1);
+    --shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.15);
+    --shadow-lg: 0 20px 25px -5px rgba(37, 99, 235, 0.2);
 }
 
 body.theme-health .bottom-nav {
-    background: rgba(255, 255, 255, 0.98);
-    box-shadow: 0 15px 40px rgba(148, 163, 184, 0.28);
-    border: 1px solid rgba(209, 213, 219, 0.9);
-}
-
-body.theme-health .nav-item:hover {
-    background: rgba(219, 234, 254, 0.9);
-    color: var(--primary-dark);
+    border-color: #E2E8F0;
 }
 
 body.theme-health .nav-item.active {
-    background: var(--primary-light);
-    color: var(--primary-dark);
-    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.25);
+    background: #EFF6FF;
+    color: #1E40AF;
 }
 
 body.theme-health .auth-page-body {
-    background: linear-gradient(135deg, #EFF6FF 0%, #E0F2FE 100%);
+    background: linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%);
 }
+
+
+/* --- Shared Overrides & Dark Mode Inputs --- */
 
 body[class*="theme-barber"] .card,
 body[class*="theme-tattoo"] .card {
@@ -851,13 +875,26 @@ body[class*="theme-tattoo"] .card {
     border-color: var(--gray-200);
 }
 
-/* Input Fields on Dark Themes */
+/* Fix Input Visibility on Dark Themes */
 body[class*="theme-barber"] .form-input,
 body[class*="theme-barber"] .input,
-body[class*="theme-tattoo"] .form-input {
-    background-color: #2a2a2a;
-    border-color: #444;
-    color: #fff;
+body[class*="theme-tattoo"] .form-input,
+body[class*="theme-tattoo"] .input {
+    background-color: var(--gray-100);
+    border-color: var(--gray-200);
+    color: var(--text);
+}
+
+body[class*="theme-barber"] .form-input:focus,
+body[class*="theme-tattoo"] .form-input:focus {
+    border-color: var(--primary);
+    background-color: var(--gray-100);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+body[class*="theme-barber"] ::placeholder,
+body[class*="theme-tattoo"] ::placeholder {
+    color: var(--text-muted);
 }
 
 
