@@ -48,10 +48,16 @@ db.serialize(() => {
         active BOOLEAN DEFAULT 1,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`, ignoreErr);
-    db.run(`CREATE TABLE IF NOT EXISTS settings(
+    const settingsTableSql = db.isMysql
+        ? `CREATE TABLE IF NOT EXISTS settings(
+        \`key\` VARCHAR(255) PRIMARY KEY,
+        value TEXT
+    )`
+        : `CREATE TABLE IF NOT EXISTS settings(
         key TEXT PRIMARY KEY,
         value TEXT
-    )`, ignoreErr);
+    )`;
+    db.run(settingsTableSql, ignoreErr);
 });
 
 // Static Files
