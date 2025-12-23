@@ -180,17 +180,71 @@ body {
     box-shadow: var(--shadow-md);
 }
 
-.settings-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-}
-
 .form-actions {
     margin-top: 2rem;
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+@media (max-width: 900px) {
+    .settings-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.theme-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.theme-card {
+    display: block;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: linear-gradient(135deg, #f9fafb, #ffffff);
+}
+
+.theme-card input {
+    display: none;
+}
+
+.theme-card-body {
+    padding: 0.85rem 1rem 1rem;
+}
+
+.theme-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--text-main);
+}
+
+.theme-subtitle {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.theme-card:hover {
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    transform: translateY(-2px);
+}
+
+.theme-card input:checked + .theme-card-body,
+.theme-card input:checked ~ .theme-card-body {
+    border-radius: 12px;
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.12);
 }
 
 /* --- Cards --- */

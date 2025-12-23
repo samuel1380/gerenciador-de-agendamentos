@@ -7,6 +7,17 @@
     <title>Meus Agendamentos - Manicure</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const config = await fetch((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                    ? 'http://localhost:3000/api'
+                    : '/api') + '/services/config').then(r => r.json());
+                const theme = config.client_theme || 'nails';
+                document.body.classList.add('theme-' + theme);
+            } catch (e) { }
+        });
+    </script>
 </head>
 
 <body>

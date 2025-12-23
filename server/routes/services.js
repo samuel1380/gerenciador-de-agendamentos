@@ -43,10 +43,17 @@ router.delete('/:id', authenticateToken, isAdmin, (req, res) => {
 // Public Settings Endpoint for client
 router.get('/config', (req, res) => {
     const db = req.db;
-    db.all(`SELECT key, value FROM settings WHERE key IN ('xp_per_level', 'quiz_xp_reward')`, [], (err, rows) => {
+    db.all(`SELECT key, value FROM settings WHERE key IN ('xp_per_level', 'quiz_xp_reward', 'client_theme')`, [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         const config = {};
-        rows.forEach(r => config[r.key] = parseInt(r.value));
+        rows.forEach(r => {
+            if (r.key === 'xp_per_level' || r.key === 'quiz_xp_reward') {
+                config[r.key] = parseInt(r.value);
+            } else {
+                config[r.key] = r.value;
+            }
+        });
+        if (!config.client_theme) config.client_theme = 'nails';
         res.json(config);
     });
 });

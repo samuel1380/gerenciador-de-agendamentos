@@ -26,7 +26,7 @@
             <a href="notifications-admin.html" class="nav-link"><i class="ph-duotone ph-bell-ringing icon-bell"></i>
                 Notificações</a>
             <a href="settings.html" class="nav-link active"><i class="ph-duotone ph-trophy icon-game"></i>
-                Gamificação</a>
+                Configurações</a>
         </nav>
     </div>
     <div class="sidebar-overlay"></div>
@@ -38,54 +38,99 @@
                     <i class="ph-duotone ph-list"></i>
                 </button>
                 <div>
-                    <h1>Configurações de Pontuação</h1>
-                    <p style="color: var(--text-light); margin-top: 4px;">Configure os limites e recompensas do sistema
-                        de
+                    <h1>Configurações</h1>
+                    <p style="color: var(--text-light); margin-top: 4px;">Personalize o visual do app do cliente e a
                         gamificação.</p>
                 </div>
             </div>
         </div>
 
-        <div class="card-modern" style="max-width: 600px;">
-            <form id="settingsForm">
-                <div style="display: grid; gap: 1.5rem;">
+        <div class="settings-grid">
+            <div class="card-modern" style="max-width: 640px;">
+                <h2 style="margin-bottom: 1rem;">Tema do Aplicativo</h2>
+                <form id="themeForm">
                     <div class="form-group">
-                        <label>Limite Diário de Quiz</label>
-                        <input type="number" id="quizLimit" name="quiz_daily_limit" class="input" min="1" max="10"
-                            required>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Quantos quizzes um
-                            usuário pode fazer por dia</p>
+                        <label>Escolha o tema</label>
+                        <div class="theme-options">
+                            <label class="theme-card">
+                                <input type="radio" name="client_theme" value="nails" />
+                                <div class="theme-card-body">
+                                    <div class="theme-title">Unhas & Nail Spa</div>
+                                    <div class="theme-subtitle">Tema atual, tons rosê sofisticados.</div>
+                                </div>
+                            </label>
+                            <label class="theme-card">
+                                <input type="radio" name="client_theme" value="barbershop" />
+                                <div class="theme-card-body">
+                                    <div class="theme-title">Barbearia</div>
+                                    <div class="theme-subtitle">Preto, dourado e visual masculino premium.</div>
+                                </div>
+                            </label>
+                            <label class="theme-card">
+                                <input type="radio" name="client_theme" value="hair_salon" />
+                                <div class="theme-card-body">
+                                    <div class="theme-title">Salão de Cabelo</div>
+                                    <div class="theme-subtitle">Lavanda, roxo e detalhes elegantes.</div>
+                                </div>
+                            </label>
+                            <label class="theme-card">
+                                <input type="radio" name="client_theme" value="spa" />
+                                <div class="theme-card-body">
+                                    <div class="theme-title">Spa & Estética</div>
+                                    <div class="theme-subtitle">Verdes suaves e sensação de relaxamento.</div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>XP por Quiz</label>
-                        <input type="number" id="quizXp" name="quiz_xp_reward" class="input" min="10" max="500"
-                            step="10" required>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Pontos de
-                            experiência ganhos ao completar um quiz</p>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Salvar Tema</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card-modern" style="max-width: 640px;">
+                <h2 style="margin-bottom: 1rem;">Gamificação</h2>
+                <form id="settingsForm">
+                    <div style="display: grid; gap: 1.5rem;">
+                        <div class="form-group">
+                            <label>Limite Diário de Quiz</label>
+                            <input type="number" id="quizLimit" name="quiz_daily_limit" class="input" min="1" max="10"
+                                required>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Quantos quizzes
+                                um usuário pode fazer por dia</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>XP por Quiz</label>
+                            <input type="number" id="quizXp" name="quiz_xp_reward" class="input" min="10" max="500"
+                                step="10" required>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Pontos de
+                                experiência ganhos ao completar um quiz</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>XP por Agendamento Concluído</label>
+                            <input type="number" id="appointmentXp" name="appointment_xp_reward" class="input" min="10"
+                                max="500" step="10" required>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Pontos ganhos
+                                quando um agendamento é marcado como concluído</p>
+                        </div>
+
+                        <div class="form-group">
+                            <label>XP Necessário por Nível</label>
+                            <input type="number" id="xpPerLevel" name="xp_per_level" class="input" min="100"
+                                max="1000" step="50" required>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Quantidade de
+                                XP necessária para subir cada nível</p>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label>XP por Agendamento Concluído</label>
-                        <input type="number" id="appointmentXp" name="appointment_xp_reward" class="input" min="10"
-                            max="500" step="10" required>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Pontos ganhos
-                            quando um agendamento é marcado como concluído</p>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Salvar Configurações</button>
                     </div>
-
-                    <div class="form-group">
-                        <label>XP Necessário por Nível</label>
-                        <input type="number" id="xpPerLevel" name="xp_per_level" class="input" min="100" max="1000"
-                            step="50" required>
-                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Quantidade de XP
-                            necessária para subir cada nível</p>
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Salvar Configurações</button>
-                </div>
-            </form>
+                </form>
+            </div>
 
             <div id="statusMessage" style="margin-top: 1rem; display: none;" class="alert"></div>
         </div>
@@ -94,18 +139,31 @@
     <script src="../client/js/api.js"></script>
     <script src="js/layout.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', loadSettings);
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+            loadTheme();
+        });
 
         async function loadSettings() {
             try {
                 const settings = await api.get('/admin/settings');
-
                 document.getElementById('quizLimit').value = settings.quiz_daily_limit || 3;
                 document.getElementById('quizXp').value = settings.quiz_xp_reward || 50;
                 document.getElementById('appointmentXp').value = settings.appointment_xp_reward || 100;
                 document.getElementById('xpPerLevel').value = settings.xp_per_level || 200;
             } catch (e) {
                 console.error('Error loading settings:', e);
+            }
+        }
+
+        async function loadTheme() {
+            try {
+                const settings = await api.get('/admin/settings');
+                const current = settings.client_theme || 'nails';
+                const input = document.querySelector(`input[name="client_theme"][value="${current}"]`);
+                if (input) input.checked = true;
+            } catch (e) {
+                console.error('Error loading theme:', e);
             }
         }
 
@@ -119,6 +177,19 @@
                 showMessage('Configurações salvas com sucesso!', 'success');
             } catch (err) {
                 showMessage('Erro ao salvar: ' + err.message, 'error');
+            }
+        });
+
+        document.getElementById('themeForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const theme = formData.get('client_theme') || 'nails';
+
+            try {
+                await api.post('/admin/settings', { client_theme: theme });
+                showMessage('Tema atualizado com sucesso!', 'success');
+            } catch (err) {
+                showMessage('Erro ao salvar tema: ' + err.message, 'error');
             }
         });
 
