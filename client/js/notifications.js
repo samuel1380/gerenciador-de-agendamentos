@@ -25,6 +25,8 @@ async function requestNotificationPermission() {
         const banners = document.querySelectorAll('.notif-permission-banner');
         banners.forEach(b => b.remove());
 
+        document.body.style.paddingTop = '';
+
         // 1. Get Public Key and Subscribe
         try {
             const config = await api.get('/push/config');
@@ -135,35 +137,46 @@ function checkPermissionStatus() {
             const banner = document.createElement('div');
             banner.className = 'notif-permission-banner fade-in-up';
             banner.style.position = 'fixed';
-            banner.style.top = '20px';
-            banner.style.left = '50%';
-            banner.style.transform = 'translateX(-50%)';
+            banner.style.top = '16px';
+            banner.style.left = '0';
+            banner.style.right = '0';
+            banner.style.margin = '0 auto';
+            banner.style.transform = 'none';
             banner.style.background = 'var(--primary)';
             banner.style.color = 'white';
-            banner.style.padding = '12px 20px';
-            banner.style.borderRadius = '30px';
+            banner.style.padding = '8px 14px';
+            banner.style.borderRadius = '24px';
             banner.style.zIndex = '10000';
             banner.style.boxShadow = 'var(--shadow-lg)';
             banner.style.display = 'flex';
             banner.style.alignItems = 'center';
+            banner.style.justifyContent = 'flex-start';
             banner.style.gap = '10px';
             banner.style.cursor = 'pointer';
-            banner.style.width = '90%';
-            banner.style.maxWidth = '350px';
+            banner.style.width = 'calc(100% - 32px)';
+            banner.style.maxWidth = '420px';
+            banner.style.boxSizing = 'border-box';
             banner.style.flexWrap = 'wrap';
 
             if (window.innerWidth <= 360) {
-                banner.style.padding = '10px 14px';
+                banner.style.padding = '6px 10px';
             }
 
             banner.innerHTML = `
-                <span style="font-size: 1.2rem;">🔔</span>
-                <span style="flex: 1; font-size: 0.9rem; font-weight: 500;">Ative as notificações para não perder agendamentos!</span>
-                <span style="background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; font-size: 0.8rem;">Ativar</span>
+                <span style="font-size: 1.1rem;">🔔</span>
+                <span style="flex: 1; font-size: 0.8rem; font-weight: 500;">Ative as notificações para não perder agendamentos!</span>
+                <span style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem;">Ativar</span>
             `;
 
             banner.onclick = openNotificationGuide;
             document.body.appendChild(banner);
+
+            requestAnimationFrame(() => {
+                const h = banner.offsetHeight;
+                if (h) {
+                    document.body.style.paddingTop = (h + 16) + 'px';
+                }
+            });
         }
     }
 }
