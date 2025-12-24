@@ -867,29 +867,17 @@
                 // Reset Base Class
                 preview.className = 'phone-screen preview-theme-' + activeThemeId;
 
-                // Apply Custom Colors Override
-                if (customColors.primary) {
-                    preview.style.setProperty('--primary', customColors.primary);
-                    // Hack to make preview buttons use this var if they aren't already
-                    // The CSS for preview uses specific colors (e.g. #d97706), so we MUST set inline styles on elements to override or use JS
-                    // Since the preview CSS (lines 322+) uses static colors, we need to manually inject styles or use CSS vars in the preview CSS.
-                    // Let's manually override the specific elements in the preview for immediate feedback.
-
+                if (customColors.primary || customColors.bg) {
                     const header = preview.querySelector('.mockup-header');
                     const btn = preview.querySelector('.mockup-btn');
+                    const body = preview.querySelector('.mockup-body');
 
-                    if (header) {
-                        // Some themes use black header (Barber), some use primary. 
-                        // Barber: Primary is Gold. Header is Black.
-                        // Most others: Header is Primary.
+                    if (header && customColors.primary) {
                         if (activeThemeId !== 'barber' && activeThemeId !== 'tattoo' && activeThemeId !== 'nail') {
-                            // Standard behavior
                             header.style.background = customColors.primary;
                         }
-                        // Nail gradient? Barber gradient?
-                        // Ideally we just set the button which is always primary.
                     }
-                    if (btn) {
+                    if (btn && customColors.primary) {
                         btn.style.background = customColors.primary;
                         if (activeThemeId === 'barber') {
                             btn.style.borderColor = customColors.primary;
@@ -897,12 +885,16 @@
                             btn.style.background = '#111';
                         }
                     }
+                    if (body && customColors.bg) {
+                        body.style.background = customColors.bg;
+                    }
                 } else {
-                    // Reset inline styles
                     const header = preview.querySelector('.mockup-header');
                     const btn = preview.querySelector('.mockup-btn');
+                    const body = preview.querySelector('.mockup-body');
                     if (header) header.style = '';
                     if (btn) btn.style = '';
+                    if (body) body.style = '';
                 }
             }
         }

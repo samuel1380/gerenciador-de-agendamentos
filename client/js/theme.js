@@ -32,15 +32,13 @@
 
     function applyCustomColors(colors) {
         if (!colors) return;
-        const root = document.documentElement;
+        const root = document.body || document.documentElement;
         if (colors.primary) root.style.setProperty('--primary', colors.primary);
-        // Simple logic to generate variations if not provided
-        // In a real app we might use a color lib, here we trust the admin/default fallback
         if (colors.bg) root.style.setProperty('--bg', colors.bg);
     }
 
     function removeCustomColors() {
-        const root = document.documentElement;
+        const root = document.body || document.documentElement;
         root.style.removeProperty('--primary');
         root.style.removeProperty('--bg');
     }
