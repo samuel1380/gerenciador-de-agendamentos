@@ -77,21 +77,25 @@ function showInstallBannerIfNeeded() {
     const banner = document.createElement('div');
     banner.className = 'install-pwa-banner fade-in-up';
     banner.style.position = 'fixed';
-    banner.style.top = '20px';
-    banner.style.left = '50%';
-    banner.style.transform = 'translateX(-50%)';
+    banner.style.top = '16px';
+    banner.style.left = '16px';
+    banner.style.right = '16px';
     banner.style.background = 'var(--primary)';
     banner.style.color = 'white';
-    banner.style.padding = '12px 20px';
-    banner.style.borderRadius = '30px';
+    banner.style.padding = '12px 16px';
+    banner.style.borderRadius = '16px';
     banner.style.zIndex = '10000';
     banner.style.boxShadow = 'var(--shadow-lg)';
     banner.style.display = 'flex';
-    banner.style.alignItems = 'center';
+    banner.style.alignItems = 'flex-start';
     banner.style.gap = '10px';
     banner.style.cursor = 'pointer';
-    banner.style.width = '90%';
-    banner.style.maxWidth = '360px';
+    banner.style.boxSizing = 'border-box';
+    banner.style.maxWidth = '480px';
+    banner.style.margin = '0 auto';
+    banner.style.right = '16px';
+    banner.style.left = '16px';
+    banner.style.flexWrap = 'wrap';
 
     banner.innerHTML = `
         <span style="font-size: 1.2rem;">📱</span>
@@ -102,8 +106,19 @@ function showInstallBannerIfNeeded() {
 
     banner.onclick = function () {
         banner.remove();
+        const header = document.querySelector('.home-header');
+        if (header) {
+            header.style.marginTop = '';
+        }
     };
     document.body.appendChild(banner);
+    requestAnimationFrame(() => {
+        const header = document.querySelector('.home-header');
+        if (header) {
+            const h = banner.offsetHeight || 0;
+            header.style.marginTop = (h + 16) + 'px';
+        }
+    });
 }
 
 function showNotificationBannerIfNeeded() {
@@ -118,35 +133,54 @@ function showNotificationBannerIfNeeded() {
     }
 
     if (Notification.permission === 'default') {
-        const existing = document.querySelector('.notif-permission-banner');
-        if (!existing) {
-            const banner = document.createElement('div');
-            banner.className = 'notif-permission-banner fade-in-up';
-            banner.style.position = 'fixed';
-            banner.style.top = '20px';
-            banner.style.left = '50%';
-            banner.style.transform = 'translateX(-50%)';
+            const existing = document.querySelector('.notif-permission-banner');
+            if (!existing) {
+                const banner = document.createElement('div');
+                banner.className = 'notif-permission-banner fade-in-up';
+                banner.style.position = 'fixed';
+                banner.style.top = '16px';
+                banner.style.left = '16px';
+                banner.style.right = '16px';
             banner.style.background = 'var(--primary)';
             banner.style.color = 'white';
-            banner.style.padding = '12px 20px';
-            banner.style.borderRadius = '30px';
+            banner.style.padding = '12px 16px';
+            banner.style.borderRadius = '16px';
             banner.style.zIndex = '10000';
             banner.style.boxShadow = 'var(--shadow-lg)';
             banner.style.display = 'flex';
             banner.style.alignItems = 'center';
             banner.style.gap = '10px';
             banner.style.cursor = 'pointer';
-            banner.style.width = '90%';
-            banner.style.maxWidth = '350px';
+            banner.style.boxSizing = 'border-box';
+            banner.style.maxWidth = '480px';
+            banner.style.margin = '0 auto';
+            banner.style.flexWrap = 'wrap';
 
             banner.innerHTML = `
                 <span style="font-size: 1.2rem;">🔔</span>
-                <span style="flex: 1; font-size: 0.9rem; font-weight: 500;">Ative as notificações para não perder agendamentos!</span>
-                <span style="background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; font-size: 0.8rem;">Ativar</span>
+                <span style="flex: 1; min-width: 0; font-size: 0.9rem; font-weight: 500; line-height: 1.4;">
+                    Ative as notificações para não perder agendamentos!
+                </span>
+                <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; white-space: nowrap;">
+                    Ativar
+                </span>
             `;
 
-            banner.onclick = requestNotificationPermission;
+            banner.onclick = () => {
+                requestNotificationPermission();
+                const header = document.querySelector('.home-header');
+                if (header) {
+                    header.style.marginTop = '';
+                }
+            };
             document.body.appendChild(banner);
+            requestAnimationFrame(() => {
+                const header = document.querySelector('.home-header');
+                if (header) {
+                    const h = banner.offsetHeight || 0;
+                    header.style.marginTop = (h + 16) + 'px';
+                }
+            });
         }
     }
 }
