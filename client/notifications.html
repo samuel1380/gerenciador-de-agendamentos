@@ -34,9 +34,7 @@
         document.addEventListener('DOMContentLoaded', async () => {
             const list = document.getElementById('notifList');
             try {
-                // Mark all as read when opening page
-                api.post('/notifications/mark-read', {});
-
+                await api.post('/notifications/mark-read', {});
                 const notifs = await api.get('/notifications');
                 if (notifs.length === 0) {
                     list.innerHTML = '<p class="text-light">Nenhuma notificação.</p>';

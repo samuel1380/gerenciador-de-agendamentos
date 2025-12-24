@@ -249,4 +249,21 @@ async function checkNotifications() {
 // Init
 setInterval(checkNotifications, 5000);
 checkNotifications();
+
+document.addEventListener('DOMContentLoaded', () => {
+    const notifLink = document.getElementById('notificationsLink');
+    if (notifLink) {
+        notifLink.addEventListener('click', () => {
+            const badge = document.getElementById('notifBadge');
+            if (badge) {
+                badge.textContent = '0';
+                badge.classList.add('hidden');
+            }
+            try {
+                api.post('/notifications/mark-read', {});
+            } catch (e) {
+            }
+        });
+    }
+});
 setTimeout(showNotificationBannerIfNeeded, 2000);

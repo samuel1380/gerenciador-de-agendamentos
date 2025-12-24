@@ -1,4 +1,16 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const token = localStorage.getItem('token');
+    let user = null;
+    try {
+        user = JSON.parse(localStorage.getItem('user') || 'null');
+    } catch (e) {
+        user = null;
+    }
+    if (!token || !user || user.role !== 'admin') {
+        window.location.href = '../client/login.html';
+        return;
+    }
+
     // Shared Sidebar Logic for all Admin pages
     const nav = document.querySelector('.nav-links');
     if (nav) {
