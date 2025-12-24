@@ -1,21 +1,12 @@
 const express = require('express');
 const router = express.Router();
-let webpush;
-
-try {
-    webpush = require('web-push');
-} catch (e) {
-    console.error('[PUSH] web-push module not found. Push notifications disabled.');
-    webpush = {
-        setVapidDetails: () => { },
-        sendNotification: () => Promise.resolve()
-    };
-}
+const webpush = require('web-push');
 
 // VAPID Keys (Generated for this project - Replace in production!)
 const publicVapidKey = 'BJ5IxJBWdeqFDJTvrZ4wNRu7uyu2lhW1zIe15vic9s7PdfDAKVqMst8yW55YWJoLez1izb_I0Pkvo8jmwC3S_u0';
 const privateVapidKey = '3KmaqCP5g3cG-8S495X37_q0pW_T72P55e54M1d9_i0';
 
+// Setup web-push
 try {
     webpush.setVapidDetails(
         'mailto:admin@example.com',
@@ -23,7 +14,7 @@ try {
         privateVapidKey
     );
 } catch (e) {
-    console.error('[PUSH] Failed to configure web-push. Push notifications disabled.');
+    console.error('[PUSH] web-push not installed. Run: npm install web-push');
 }
 
 // 1. Get Public Key to send to client

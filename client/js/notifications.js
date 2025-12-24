@@ -19,13 +19,12 @@ function urlBase64ToUint8Array(base64String) {
     return outputArray;
 }
 
+// Request Permission & Subscribe to Push
 async function requestNotificationPermission() {
     const result = await Notification.requestPermission();
     if (result === 'granted') {
         const banners = document.querySelectorAll('.notif-permission-banner');
         banners.forEach(b => b.remove());
-
-        document.body.style.paddingTop = '';
 
         // 1. Get Public Key and Subscribe
         try {
@@ -58,78 +57,65 @@ async function requestNotificationPermission() {
     }
 }
 
-function openNotificationGuide() {
-    const existingModal = document.getElementById('notifGuideOverlay');
-    if (existingModal) existingModal.remove();
-
-    const overlay = document.createElement('div');
-    overlay.id = 'notifGuideOverlay';
-    overlay.style.position = 'fixed';
-    overlay.style.inset = '0';
-    overlay.style.background = 'rgba(0,0,0,0.45)';
-    overlay.style.zIndex = '10001';
-    overlay.style.display = 'flex';
-    overlay.style.alignItems = 'center';
-    overlay.style.justifyContent = 'center';
-    overlay.style.padding = '16px';
-
-    const modal = document.createElement('div');
-    modal.style.background = 'var(--bg-card)';
-    modal.style.borderRadius = '20px';
-    modal.style.padding = '20px 18px';
-    modal.style.width = '100%';
-    modal.style.maxWidth = '420px';
-    modal.style.boxShadow = 'var(--shadow-lg)';
-    modal.style.color = 'var(--text)';
-
-    modal.innerHTML = `
-        <h2 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Receber notificações e adicionar na tela inicial</h2>
-        <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 1rem;">
-            Siga os passos abaixo para instalar o app no seu celular e depois ativar as notificações.
-        </p>
-        <div style="font-size: 0.9rem; display: grid; gap: 0.5rem; margin-bottom: 1.25rem;">
-            <div><strong>1.</strong> No navegador do celular, toque no botão de menu
-                (ícone de compartilhar ou três pontinhos).</div>
-            <div><strong>2.</strong> Escolha a opção <strong>"Adicionar à Tela Inicial"</strong>
-                ou <strong>"Instalar app"</strong>.</div>
-            <div><strong>3.</strong> Confirme para criar o atalho na tela inicial.</div>
-            <div><strong>4.</strong> Depois toque em <strong>"Ativar notificações"</strong> abaixo
-                para permitir os avisos de agendamento.</div>
-        </div>
-        <div style="display:flex; gap:0.75rem; margin-top:0.5rem;">
-            <button id="notifGuideCloseBtn"
-                style="flex:1; padding:0.75rem 1rem; border-radius:999px; border:1px solid var(--gray-200); background:transparent; color:var(--text-light); font-size:0.9rem;">
-                Agora não
-            </button>
-            <button id="notifGuideActivateBtn"
-                style="flex:1; padding:0.75rem 1rem; border-radius:999px; border:none; background:var(--primary); color:white; font-size:0.9rem; font-weight:600;">
-                Ativar notificações
-            </button>
-        </div>
-    `;
-
-    overlay.appendChild(modal);
-    document.body.appendChild(overlay);
-
-    const closeBtn = document.getElementById('notifGuideCloseBtn');
-    const activateBtn = document.getElementById('notifGuideActivateBtn');
-
-    if (closeBtn) {
-        closeBtn.onclick = () => {
-            overlay.remove();
-        };
-    }
-
-    if (activateBtn) {
-        activateBtn.onclick = async () => {
-            overlay.remove();
-            await requestNotificationPermission();
-        };
-    }
+function isIos() {
+    const ua = window.navigator.userAgent || '';
+    return /iphone|ipad|ipod/i.test(ua);
 }
 
-function checkPermissionStatus() {
+function isStandalone() {
+    const mm = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+    const iosStandalone = window.navigator.standalone === true;
+    return mm || iosStandalone;
+}
+
+function showInstallBannerIfNeeded() {
+    if (!isIos()) return;
+    if (isStandalone()) return;
+    const existing = document.querySelector('.install-pwa-banner');
+    if (existing) return;
+
+    const banner = document.createElement('div');
+    banner.className = 'install-pwa-banner fade-in-up';
+    banner.style.position = 'fixed';
+    banner.style.top = '20px';
+    banner.style.left = '50%';
+    banner.style.transform = 'translateX(-50%)';
+    banner.style.background = 'var(--primary)';
+    banner.style.color = 'white';
+    banner.style.padding = '12px 20px';
+    banner.style.borderRadius = '30px';
+    banner.style.zIndex = '10000';
+    banner.style.boxShadow = 'var(--shadow-lg)';
+    banner.style.display = 'flex';
+    banner.style.alignItems = 'center';
+    banner.style.gap = '10px';
+    banner.style.cursor = 'pointer';
+    banner.style.width = '90%';
+    banner.style.maxWidth = '360px';
+
+    banner.innerHTML = `
+        <span style="font-size: 1.2rem;">📱</span>
+        <span style="flex: 1; font-size: 0.9rem; font-weight: 500;">
+            Adicione o app à tela inicial: toque em compartilhar e depois "Tela de Início".
+        </span>
+    `;
+
+    banner.onclick = function () {
+        banner.remove();
+    };
+    document.body.appendChild(banner);
+}
+
+function showNotificationBannerIfNeeded() {
     if (!('Notification' in window)) return;
+
+    const standalone = isStandalone();
+    const ios = isIos();
+
+    if (ios && !standalone) {
+        showInstallBannerIfNeeded();
+        return;
+    }
 
     if (Notification.permission === 'default') {
         const existing = document.querySelector('.notif-permission-banner');
@@ -137,46 +123,30 @@ function checkPermissionStatus() {
             const banner = document.createElement('div');
             banner.className = 'notif-permission-banner fade-in-up';
             banner.style.position = 'fixed';
-            banner.style.top = '16px';
-            banner.style.left = '0';
-            banner.style.right = '0';
-            banner.style.margin = '0 auto';
-            banner.style.transform = 'none';
+            banner.style.top = '20px';
+            banner.style.left = '50%';
+            banner.style.transform = 'translateX(-50%)';
             banner.style.background = 'var(--primary)';
             banner.style.color = 'white';
-            banner.style.padding = '8px 14px';
-            banner.style.borderRadius = '24px';
+            banner.style.padding = '12px 20px';
+            banner.style.borderRadius = '30px';
             banner.style.zIndex = '10000';
             banner.style.boxShadow = 'var(--shadow-lg)';
             banner.style.display = 'flex';
             banner.style.alignItems = 'center';
-            banner.style.justifyContent = 'flex-start';
             banner.style.gap = '10px';
             banner.style.cursor = 'pointer';
-            banner.style.width = 'calc(100% - 32px)';
-            banner.style.maxWidth = '420px';
-            banner.style.boxSizing = 'border-box';
-            banner.style.flexWrap = 'wrap';
-
-            if (window.innerWidth <= 360) {
-                banner.style.padding = '6px 10px';
-            }
+            banner.style.width = '90%';
+            banner.style.maxWidth = '350px';
 
             banner.innerHTML = `
-                <span style="font-size: 1.1rem;">🔔</span>
-                <span style="flex: 1; font-size: 0.8rem; font-weight: 500;">Ative as notificações para não perder agendamentos!</span>
-                <span style="background: rgba(255,255,255,0.2); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem;">Ativar</span>
+                <span style="font-size: 1.2rem;">🔔</span>
+                <span style="flex: 1; font-size: 0.9rem; font-weight: 500;">Ative as notificações para não perder agendamentos!</span>
+                <span style="background: rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 12px; font-size: 0.8rem;">Ativar</span>
             `;
 
-            banner.onclick = openNotificationGuide;
+            banner.onclick = requestNotificationPermission;
             document.body.appendChild(banner);
-
-            requestAnimationFrame(() => {
-                const h = banner.offsetHeight;
-                if (h) {
-                    document.body.style.paddingTop = (h + 16) + 'px';
-                }
-            });
         }
     }
 }
@@ -245,4 +215,4 @@ async function checkNotifications() {
 // Init
 setInterval(checkNotifications, 5000);
 checkNotifications();
-setTimeout(checkPermissionStatus, 2000); // Ask after 2s
+setTimeout(showNotificationBannerIfNeeded, 2000);
