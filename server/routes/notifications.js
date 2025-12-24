@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken, isAdmin } = require('../middleware/auth');
+const pushRouter = require('./push');
 
 router.get('/', authenticateToken, (req, res) => {
     const db = req.db;
@@ -30,6 +31,9 @@ router.post('/send', authenticateToken, isAdmin, (req, res) => {
             const stmt = db.prepare(`INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)`);
             rows.forEach(user => {
                 stmt.run(user.id, title, message);
+                if (pushRouter && typeof pushRouter.sendPushToUser === 'function') {
+                    pushRouter.sendPushToUser(db, user.id, title, message);
+                }
             });
             stmt.finalize();
             res.json({ message: `Sent to ${rows.length} users` });
@@ -42,6 +46,9 @@ router.post('/send', authenticateToken, isAdmin, (req, res) => {
                 [user.id, title, message],
                 (err) => {
                     if (err) return res.status(500).json({ error: err.message });
+                    if (pushRouter && typeof pushRouter.sendPushToUser === 'function') {
+                        pushRouter.sendPushToUser(db, user.id, title, message);
+                    }
                     res.json({ message: 'Sent to user' });
                 }
             );

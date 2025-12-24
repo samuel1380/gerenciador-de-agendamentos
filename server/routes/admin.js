@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticateToken, isAdmin } = require('../middleware/auth');
+const pushRouter = require('./push');
 
 // Apply middleware to all routes in this file
 router.use(authenticateToken, isAdmin);
@@ -116,6 +117,9 @@ router.put('/appointments/:id/status', (req, res) => {
                                             db.run(`INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)`,
                                                 [row.user_id, 'Level Up!', `Parabéns! Você alcançou o nível ${newLevel} e desbloqueou novos benefícios!`]
                                             );
+                                            if (pushRouter && typeof pushRouter.sendPushToUser === 'function') {
+                                                pushRouter.sendPushToUser(db, row.user_id, 'Level Up!', `Parabéns! Você alcançou o nível ${newLevel} e desbloqueou novos benefícios!`);
+                                            }
                                         }
 
                                         db.run(`UPDATE users SET xp = ?, level = ? WHERE id = ?`, [newXp, newLevel, row.user_id]);
@@ -125,6 +129,9 @@ router.put('/appointments/:id/status', (req, res) => {
                                     db.run(`INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)`,
                                         [row.user_id, 'Atualização de Agendamento', msg]
                                     );
+                                    if (pushRouter && typeof pushRouter.sendPushToUser === 'function') {
+                                        pushRouter.sendPushToUser(db, row.user_id, 'Atualização de Agendamento', msg);
+                                    }
                                 });
                             });
                         });
@@ -133,6 +140,9 @@ router.put('/appointments/:id/status', (req, res) => {
                         db.run(`INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)`,
                             [row.user_id, 'Atualização de Agendamento', msg]
                         );
+                        if (pushRouter && typeof pushRouter.sendPushToUser === 'function') {
+                            pushRouter.sendPushToUser(db, row.user_id, 'Atualização de Agendamento', msg);
+                        }
                     }
                 }
             });
@@ -175,9 +185,14 @@ router.put('/appointments/:id', (req, res) => {
                 // Notify User
                 db.get(`SELECT user_id FROM appointments WHERE id = ?`, [id], (err, row) => {
                     if (row) {
+                        const title = 'Agendamento Alterado';
+                        const message = 'Seu agendamento foi reagendado pelo administrador.';
                         db.run(`INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)`,
-                            [row.user_id, 'Agendamento Alterado', `Seu agendamento foi reagendado pelo administrador.`]
+                            [row.user_id, title, message]
                         );
+                        if (pushRouter && typeof pushRouter.sendPushToUser === 'function') {
+                            pushRouter.sendPushToUser(db, row.user_id, title, message);
+                        }
                     }
                 });
 
