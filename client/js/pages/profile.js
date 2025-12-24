@@ -40,6 +40,8 @@ export class ProfilePage {
         if (adminBtn && user && user.role === 'admin') {
             adminBtn.style.display = 'block';
         }
+
+        this.setupInstallInstructions();
     }
 
     async renderUser(user) {
@@ -197,6 +199,45 @@ export class ProfilePage {
             } catch (error) {
                 console.error('Avatar upload failed', error);
                 Toast.error('Erro ao enviar foto.');
+            }
+        });
+    }
+
+    setupInstallInstructions() {
+        const btn = document.getElementById('toggleInstallSteps');
+        const steps = document.getElementById('installSteps');
+        console.log('[Profile] setupInstallInstructions init', { hasButton: !!btn, hasSteps: !!steps });
+        const iosBlock = document.getElementById('installIos');
+        const androidBlock = document.getElementById('installAndroid');
+        const alreadyAppText = document.getElementById('installAlreadyApp');
+
+        if (!btn || !steps) return;
+
+        const ua = (navigator.userAgent || '').toLowerCase();
+        const isIos = /iphone|ipad|ipod/.test(ua);
+        const isAndroid = /android/.test(ua);
+        const isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+
+        if (isIos && androidBlock) {
+            androidBlock.style.display = 'none';
+        } else if (isAndroid && iosBlock) {
+            iosBlock.style.display = 'none';
+        }
+
+        if (isStandalone && alreadyAppText) {
+            alreadyAppText.style.display = 'block';
+        }
+
+        btn.addEventListener('click', () => {
+            console.log('[Profile] toggleInstallSteps clicked');
+            const isVisible = steps.style.display !== 'none';
+            steps.style.display = isVisible ? 'none' : 'block';
+            if (!isVisible) {
+                try {
+                    steps.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } catch (e) {
+                    steps.scrollIntoView();
+                }
             }
         });
     }

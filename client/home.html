@@ -95,35 +95,6 @@
                 <p id="promoDesc" style="opacity: 0.95; margin-top: 0.5rem; font-size: 0.95rem;"></p>
             </div>
 
-            <div id="installAppCard" class="card fade-in-up"
-                style="margin-top: 1.5rem; animation-delay: 0.4s; border-left: 4px solid var(--primary);">
-                <h3 style="font-size: 1.1rem; color: var(--primary-dark); margin-bottom: 0.5rem;">Baixar como
-                    aplicativo</h3>
-                <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.75rem;">
-                    Siga o passo a passo para adicionar o app à tela inicial do seu celular.
-                </p>
-                <div id="installIos" style="margin-top: 0.75rem;">
-                    <h4 style="font-size: 0.95rem; margin-bottom: 0.4rem;">No iPhone (Safari)</h4>
-                    <ol style="padding-left: 1.1rem; font-size: 0.9rem; color: var(--text-light); display: grid; gap: 0.25rem;">
-                        <li>Abra este site no Safari.</li>
-                        <li>Toque no ícone de compartilhar (quadrado com seta para cima).</li>
-                        <li>Desça e toque em "Adicionar à Tela de Início".</li>
-                        <li>Confirme em "Adicionar". O ícone vai aparecer na tela inicial.</li>
-                    </ol>
-                </div>
-                <div id="installAndroid" style="margin-top: 0.75rem;">
-                    <h4 style="font-size: 0.95rem; margin-bottom: 0.4rem;">No Android (Chrome)</h4>
-                    <ol style="padding-left: 1.1rem; font-size: 0.9rem; color: var(--text-light); display: grid; gap: 0.25rem;">
-                        <li>Abra este site no Chrome.</li>
-                        <li>Toque nos três pontinhos no canto superior direito.</li>
-                        <li>Escolha "Adicionar à tela inicial" ou "Instalar app".</li>
-                        <li>Confirme. O ícone vai aparecer junto com seus apps.</li>
-                    </ol>
-                </div>
-                <p id="installAlreadyApp" style="font-size: 0.85rem; color: var(--text-light); margin-top: 0.75rem; display: none;">
-                    Você já está usando o aplicativo instalado. As notificações podem ser ativadas pelo aviso no topo da tela.
-                </p>
-            </div>
         </div>
 
         <!-- Bottom Nav -->
@@ -228,24 +199,6 @@
                     document.getElementById('promoDesc').textContent = promo.description;
                 }
             } catch (e) { console.error('Failed to load promo', e); }
-
-            const ua = (navigator.userAgent || '').toLowerCase();
-            const isIos = /iphone|ipad|ipod/.test(ua);
-            const isAndroid = /android/.test(ua);
-            const iosBlock = document.getElementById('installIos');
-            const androidBlock = document.getElementById('installAndroid');
-            const alreadyAppText = document.getElementById('installAlreadyApp');
-            const isStandalone = (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
-
-            if (isIos && androidBlock) {
-                androidBlock.style.display = 'none';
-            } else if (isAndroid && iosBlock) {
-                iosBlock.style.display = 'none';
-            }
-
-            if (isStandalone && alreadyAppText) {
-                alreadyAppText.style.display = 'block';
-            }
         });
     </script>
 </body>
