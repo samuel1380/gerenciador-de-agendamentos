@@ -33,8 +33,14 @@
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const list = document.getElementById('notifList');
+
             try {
-                await api.post('/notifications/mark-read', {});
+                try {
+                    await api.post('/notifications/mark-read', {});
+                } catch (e) {
+                    console.error('Falha ao marcar notificações como lidas', e);
+                }
+
                 const notifs = await api.get('/notifications');
                 if (notifs.length === 0) {
                     list.innerHTML = '<p class="text-light">Nenhuma notificação.</p>';
