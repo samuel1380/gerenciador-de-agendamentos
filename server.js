@@ -64,7 +64,7 @@ db.serialize(() => {
         id INTEGER PRIMARY KEY ${autoInc},
         user_id INT,
         endpoint TEXT NOT NULL,
-        keys TEXT NOT NULL,
+        \`keys\` TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`, ignoreErr);
 });

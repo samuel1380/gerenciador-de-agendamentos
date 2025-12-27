@@ -1,16 +1,13 @@
 self.addEventListener('install', (event) => {
-    console.log('[SW] install');
     self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-    console.log('[SW] activate');
     event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener('push', (event) => {
     const data = event.data ? event.data.json() : {};
-    console.log('[SW] push event', data);
     const title = data.title || 'Nova Notificação';
     const options = {
         body: data.body || 'Você tem uma nova mensagem.',
@@ -22,7 +19,6 @@ self.addEventListener('push', (event) => {
 });
 
 self.addEventListener('notificationclick', (event) => {
-    console.log('[SW] notificationclick');
     event.notification.close();
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
