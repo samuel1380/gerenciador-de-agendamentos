@@ -193,27 +193,17 @@ async function checkNotifications() {
     try {
         const notifs = await api.get('/notifications');
 
-        const lastReadAtStr = localStorage.getItem('notificationsLastReadAt');
-        let unreadList;
+        const seenMaxIdStr = localStorage.getItem('notificationsSeenMaxId');
+        const seenMaxId = seenMaxIdStr ? parseInt(seenMaxIdStr, 10) || 0 : 0;
 
-        if (lastReadAtStr) {
-            const lastReadAt = new Date(lastReadAtStr);
-            if (!isNaN(lastReadAt.getTime())) {
-                unreadList = notifs.filter(n => {
-                    if (!n.created_at) return !n.read;
-                    const created = new Date(n.created_at);
-                    if (isNaN(created.getTime())) return !n.read;
-                    return created > lastReadAt;
-                });
-            } else {
-                unreadList = notifs.filter(n => !n.read);
-            }
-        } else {
-            unreadList = notifs.filter(n => !n.read);
-        }
-
-        // Sort by ID descending (newest first)
-        unreadList.sort((a, b) => b.id - a.id);
+        const unreadList = notifs
+            .filter(n => {
+                const id = typeof n.id === 'number' ? n.id : parseInt(n.id, 10) || 0;
+                const isUnreadServer = !n.read;
+                if (!isUnreadServer) return false;
+                return id > seenMaxId;
+            })
+            .sort((a, b) => b.id - a.id);
 
         const unreadCount = unreadList.length;
 
@@ -226,6 +216,12 @@ async function checkNotifications() {
 
         localStorage.setItem('notificationsBadgeCount', String(unreadCount));
 
+        const maxId = notifs.reduce((max, n) => {
+            const id = typeof n.id === 'number' ? n.id : parseInt(n.id, 10) || 0;
+            return id > max ? id : max;
+        }, 0);
+        localStorage.setItem('notificationsLastKnownMaxId', String(maxId));
+
         const currentIds = new Set(unreadList.map(n => n.id));
 
         if (!isFirstLoad && Notification.permission === 'granted') {
@@ -234,13 +230,12 @@ async function checkNotifications() {
             newIds.forEach(id => {
                 const notif = unreadList.find(n => n.id === id);
                 if (notif) {
-                    // If on mobile/SW supported, try SW notification for better behavior
                     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
                         navigator.serviceWorker.ready.then(reg => {
                             reg.showNotification('Nova Mensagem', {
                                 body: notif.message,
                                 icon: 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png',
-                                tag: 'notif-' + notif.id // ensure no duplicate stacking
+                                tag: 'notif-' + notif.id
                             });
                         });
                     } else {
@@ -253,7 +248,6 @@ async function checkNotifications() {
             });
         }
 
-        // Update known list
         knownNotificationIds = currentIds;
         isFirstLoad = false;
 
@@ -300,8 +294,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const notifLink = document.getElementById('notificationsLink');
     if (notifLink) {
         notifLink.addEventListener('click', () => {
-            const now = new Date().toISOString();
-            localStorage.setItem('notificationsLastReadAt', now);
+            const lastKnownStr = localStorage.getItem('notificationsLastKnownMaxId');
+            if (lastKnownStr) {
+                localStorage.setItem('notificationsSeenMaxId', lastKnownStr);
+            }
             localStorage.setItem('notificationsBadgeCount', '0');
 
             const badgeEl = document.getElementById('notifBadge');

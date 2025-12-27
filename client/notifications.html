@@ -35,23 +35,31 @@
             const list = document.getElementById('notifList');
 
             try {
-                const now = new Date().toISOString();
-                localStorage.setItem('notificationsLastReadAt', now);
-                localStorage.setItem('notificationsBadgeCount', '0');
-            } catch (e) {
-            }
-
-            try {
-                try {
-                    await api.post('/notifications/mark-read', {});
-                } catch (e) {
-                    console.error('Falha ao marcar notificações como lidas', e);
-                }
-
                 const notifs = await api.get('/notifications');
+
                 if (notifs.length === 0) {
                     list.innerHTML = '<p class="text-light">Nenhuma notificação.</p>';
                     return;
+                }
+
+                const maxId = notifs.reduce((max, n) => {
+                    const id = typeof n.id === 'number' ? n.id : parseInt(n.id, 10) || 0;
+                    return id > max ? id : max;
+                }, 0);
+
+                try {
+                    localStorage.setItem('notificationsSeenMaxId', String(maxId));
+                    localStorage.setItem('notificationsBadgeCount', '0');
+                } catch (e) {
+                }
+
+                try {
+                    api.post('/notifications/mark-read', {}).then(() => {
+                        localStorage.removeItem('notificationsNeedsSync');
+                    }).catch(() => {
+                        localStorage.setItem('notificationsNeedsSync', '1');
+                    });
+                } catch (e) {
                 }
 
                 list.innerHTML = notifs.map(n => `
