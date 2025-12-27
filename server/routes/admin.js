@@ -191,7 +191,7 @@ router.put('/appointments/:id', (req, res) => {
                             [row.user_id, title, message]
                         );
                         if (pushRouter && typeof pushRouter.sendPushToUser === 'function') {
-                            pushRouter.sendPushToUser(db, row.user_id, title, message, './my-appointment.html');
+                            pushRouter.sendPushToUser(db, row.user_id, title, message);
                         }
                     }
                 });

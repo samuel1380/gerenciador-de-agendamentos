@@ -1,17 +1,12 @@
 // Register Service Worker
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js', { scope: './' })
-            .then(reg => {
-                console.log('[SW] Registered with scope:', reg.scope);
-                
-                // Refresh subscription on load if permission is already granted
-                if (Notification.permission === 'granted') {
-                    requestNotificationPermission();
-                }
-            })
-            .catch(err => console.error('[SW] Registration Error:', err));
-    });
+    navigator.serviceWorker.register('/client/sw.js')
+        .then(reg => {
+            console.log('[PWA] Service Worker registrado com escopo', reg.scope);
+        })
+        .catch(err => {
+            console.error('[PWA] Erro ao registrar Service Worker', err);
+        });
 }
 
 // Utility to convert VAPID key
@@ -30,57 +25,60 @@ function urlBase64ToUint8Array(base64String) {
 
 // Request Permission & Subscribe to Push
 async function requestNotificationPermission() {
-    console.log('[Push] Requesting permission...');
+    if (!('Notification' in window)) {
+        console.warn('[PWA] API de Notificações não suportada neste navegador.');
+        return;
+    }
     const result = await Notification.requestPermission();
-    console.log('[Push] Permission result:', result);
-    
     if (result === 'granted') {
         const banners = document.querySelectorAll('.notif-permission-banner');
         banners.forEach(b => b.remove());
 
-        // 1. Get Public Key and Subscribe
-        try {
-            const reg = await navigator.serviceWorker.ready;
-            
-            // Check for existing subscription
-            const existingSub = await reg.pushManager.getSubscription();
-            if (existingSub) {
-                console.log('[Push] Existing subscription found. Updating on server...');
-                await sendSubscriptionToServer(existingSub);
-                return;
-            }
-
-            const config = await api.get('/push/config');
-            if (config.publicKey) {
-                console.log('[Push] Subscribing with public key:', config.publicKey);
-                const subscription = await reg.pushManager.subscribe({
-                    userVisibleOnly: true,
-                    applicationServerKey: urlBase64ToUint8Array(config.publicKey)
-                });
-
-                // 2. Send subscription to server
-                await sendSubscriptionToServer(subscription);
-                console.log('[Push] Push Subscribed successfully!');
-            }
-        } catch (e) {
-            console.error('[Push] Subscription Failed', e);
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+            console.warn('[PWA] Push API não disponível; notificações funcionarão apenas com o app aberto.');
+            new Notification("Notificações Ativadas!", {
+                body: "Você será avisado enquanto o app estiver aberto.",
+                icon: "https://cdn-icons-png.flaticon.com/512/3652/3652191.png"
+            });
+            return;
         }
 
-        // Test Local Notification
+        try {
+            const config = await api.get('/push/config');
+            if (config.publicKey) {
+                const reg = await navigator.serviceWorker.ready;
+                const existing = await reg.pushManager.getSubscription();
+                if (!existing) {
+                    const subscription = await reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array(config.publicKey)
+                    });
+                    const user = JSON.parse(localStorage.getItem('user') || '{}');
+                    await api.post('/push/subscribe', {
+                        subscription: subscription,
+                        userId: user.id
+                    });
+                    console.log('[PWA] Push subscrito com sucesso após permissão.');
+                } else {
+                    const user = JSON.parse(localStorage.getItem('user') || '{}');
+                    await api.post('/push/subscribe', {
+                        subscription: existing,
+                        userId: user.id
+                    });
+                    console.log('[PWA] Push já estava subscrito; dados sincronizados.');
+                }
+            }
+        } catch (e) {
+            console.error('[PWA] Falha ao criar inscrição de push', e);
+        }
+
         new Notification("Notificações Ativadas!", {
             body: "Você será avisado sobre seus agendamentos.",
             icon: "https://cdn-icons-png.flaticon.com/512/3652/3652191.png"
         });
+    } else if (result === 'denied') {
+        console.warn('[PWA] Permissão de notificações negada pelo usuário.');
     }
-}
-
-async function sendSubscriptionToServer(subscription) {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    console.log('[Push] Sending subscription to server for user:', user.id);
-    await api.post('/push/subscribe', {
-        subscription: subscription,
-        userId: user.id
-    });
 }
 
 function isIos() {
@@ -92,6 +90,46 @@ function isStandalone() {
     const mm = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
     const iosStandalone = window.navigator.standalone === true;
     return mm || iosStandalone;
+}
+
+async function ensurePushSubscription() {
+    if (!('Notification' in window)) return;
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    try {
+        const reg = await navigator.serviceWorker.ready;
+        const existing = await reg.pushManager.getSubscription();
+        if (existing) {
+            console.log('[PWA] Inscrição de push já existente.');
+            const userExisting = JSON.parse(localStorage.getItem('user') || '{}');
+            if (userExisting && userExisting.id) {
+                try {
+                    await api.post('/push/subscribe', {
+                        subscription: existing,
+                        userId: userExisting.id
+                    });
+                    console.log('[PWA] Inscrição de push sincronizada com o servidor.');
+                } catch (e) {
+                    console.error('[PWA] Erro ao sincronizar inscrição de push', e);
+                }
+            }
+            return;
+        }
+        const config = await api.get('/push/config');
+        if (!config.publicKey) return;
+        const subscription = await reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: urlBase64ToUint8Array(config.publicKey)
+        });
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        await api.post('/push/subscribe', {
+            subscription: subscription,
+            userId: user.id
+        });
+        console.log('[PWA] Inscrição de push criada automaticamente.');
+    } catch (e) {
+        console.error('[PWA] ensurePushSubscription falhou', e);
+    }
 }
 
 function showInstallBannerIfNeeded() {
@@ -152,6 +190,10 @@ function showNotificationBannerIfNeeded() {
 
     const standalone = isStandalone();
     const ios = isIos();
+    let message = 'Ative as notificações para não perder agendamentos!';
+    if (ios && !('PushManager' in window)) {
+        message = 'Ative as notificações para receber avisos enquanto o app estiver aberto.';
+    }
 
     if (ios && !standalone) {
         showInstallBannerIfNeeded();
@@ -185,7 +227,7 @@ function showNotificationBannerIfNeeded() {
             banner.innerHTML = `
                 <span style="font-size: 1.2rem;">🔔</span>
                 <span style="flex: 1; min-width: 0; font-size: 0.9rem; font-weight: 500; line-height: 1.4;">
-                    Ative as notificações para não perder agendamentos!
+                    ${message}
                 </span>
                 <span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 999px; font-size: 0.8rem; white-space: nowrap;">
                     Ativar
@@ -339,5 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    ensurePushSubscription().catch(e => console.error('[PWA] Erro ao garantir inscrição de push na inicialização', e));
 });
 setTimeout(showNotificationBannerIfNeeded, 2000);

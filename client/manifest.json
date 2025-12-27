@@ -2,22 +2,24 @@
     "name": "App de Agendamentos",
     "short_name": "Agendamentos",
     "start_url": "./home.html",
+    "scope": "./",
     "display": "standalone",
     "background_color": "#ffffff",
-    "theme_color": "#ff4d8d",
-    "orientation": "portrait",
-    "scope": "./",
-    "description": "Gerencie seus agendamentos de forma fácil e rápida.",
+    "theme_color": "#ffffff",
     "icons": [
         {
             "src": "https://cdn-icons-png.flaticon.com/512/3652/3652191.png",
             "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "any maskable"
+            "type": "image/png"
         },
         {
             "src": "https://cdn-icons-png.flaticon.com/512/3652/3652191.png",
             "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "https://cdn-icons-png.flaticon.com/512/3652/3652191.png",
+            "sizes": "180x180",
             "type": "image/png",
             "purpose": "any maskable"
         }
