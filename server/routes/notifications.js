@@ -47,7 +47,7 @@ router.post('/send', authenticateToken, isAdmin, (req, res) => {
                 (err) => {
                     if (err) return res.status(500).json({ error: err.message });
                     if (pushRouter && typeof pushRouter.sendPushToUser === 'function') {
-                        pushRouter.sendPushToUser(db, user.id, title, message);
+                        pushRouter.sendPushToUser(db, user.id, title, message, './notifications.html');
                     }
                     res.json({ message: 'Sent to user' });
                 }

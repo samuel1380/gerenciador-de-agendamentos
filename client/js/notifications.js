@@ -1,8 +1,17 @@
 // Register Service Worker
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('SW Registered'))
-        .catch(err => console.error('SW Error', err));
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js', { scope: './' })
+            .then(reg => {
+                console.log('[SW] Registered with scope:', reg.scope);
+                
+                // Refresh subscription on load if permission is already granted
+                if (Notification.permission === 'granted') {
+                    requestNotificationPermission();
+                }
+            })
+            .catch(err => console.error('[SW] Registration Error:', err));
+    });
 }
 
 // Utility to convert VAPID key
@@ -21,32 +30,40 @@ function urlBase64ToUint8Array(base64String) {
 
 // Request Permission & Subscribe to Push
 async function requestNotificationPermission() {
+    console.log('[Push] Requesting permission...');
     const result = await Notification.requestPermission();
+    console.log('[Push] Permission result:', result);
+    
     if (result === 'granted') {
         const banners = document.querySelectorAll('.notif-permission-banner');
         banners.forEach(b => b.remove());
 
         // 1. Get Public Key and Subscribe
         try {
+            const reg = await navigator.serviceWorker.ready;
+            
+            // Check for existing subscription
+            const existingSub = await reg.pushManager.getSubscription();
+            if (existingSub) {
+                console.log('[Push] Existing subscription found. Updating on server...');
+                await sendSubscriptionToServer(existingSub);
+                return;
+            }
+
             const config = await api.get('/push/config');
             if (config.publicKey) {
-                const reg = await navigator.serviceWorker.ready;
+                console.log('[Push] Subscribing with public key:', config.publicKey);
                 const subscription = await reg.pushManager.subscribe({
                     userVisibleOnly: true,
                     applicationServerKey: urlBase64ToUint8Array(config.publicKey)
                 });
 
                 // 2. Send subscription to server
-                const user = JSON.parse(localStorage.getItem('user') || '{}');
-                await api.post('/push/subscribe', {
-                    subscription: subscription,
-                    userId: user.id
-                });
-
-                console.log('Push Subscribed!');
+                await sendSubscriptionToServer(subscription);
+                console.log('[Push] Push Subscribed successfully!');
             }
         } catch (e) {
-            console.error('Push Subscription Failed', e);
+            console.error('[Push] Subscription Failed', e);
         }
 
         // Test Local Notification
@@ -55,6 +72,15 @@ async function requestNotificationPermission() {
             icon: "https://cdn-icons-png.flaticon.com/512/3652/3652191.png"
         });
     }
+}
+
+async function sendSubscriptionToServer(subscription) {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    console.log('[Push] Sending subscription to server for user:', user.id);
+    await api.post('/push/subscribe', {
+        subscription: subscription,
+        userId: user.id
+    });
 }
 
 function isIos() {

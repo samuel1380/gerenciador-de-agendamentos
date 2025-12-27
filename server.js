@@ -63,7 +63,7 @@ db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS push_subscriptions (
         id INTEGER PRIMARY KEY ${autoInc},
         user_id INT,
-        endpoint TEXT NOT NULL,
+        endpoint TEXT NOT NULL UNIQUE,
         keys TEXT NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )`, ignoreErr);
