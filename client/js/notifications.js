@@ -192,7 +192,25 @@ let isFirstLoad = true;
 async function checkNotifications() {
     try {
         const notifs = await api.get('/notifications');
-        const unreadList = notifs.filter(n => !n.read);
+
+        const lastReadAtStr = localStorage.getItem('notificationsLastReadAt');
+        let unreadList;
+
+        if (lastReadAtStr) {
+            const lastReadAt = new Date(lastReadAtStr);
+            if (!isNaN(lastReadAt.getTime())) {
+                unreadList = notifs.filter(n => {
+                    if (!n.created_at) return !n.read;
+                    const created = new Date(n.created_at);
+                    if (isNaN(created.getTime())) return !n.read;
+                    return created > lastReadAt;
+                });
+            } else {
+                unreadList = notifs.filter(n => !n.read);
+            }
+        } else {
+            unreadList = notifs.filter(n => !n.read);
+        }
 
         // Sort by ID descending (newest first)
         unreadList.sort((a, b) => b.id - a.id);
@@ -206,14 +224,13 @@ async function checkNotifications() {
             else badge.classList.add('hidden');
         }
 
-        // Detect NEW notifications by ID
+        localStorage.setItem('notificationsBadgeCount', String(unreadCount));
+
         const currentIds = new Set(unreadList.map(n => n.id));
 
         if (!isFirstLoad && Notification.permission === 'granted') {
-            // Find IDs that are in currentIds but NOT in knownNotificationIds
             const newIds = [...currentIds].filter(id => !knownNotificationIds.has(id));
 
-            // Trigger notification for each new message
             newIds.forEach(id => {
                 const notif = unreadList.find(n => n.id === id);
                 if (notif) {
@@ -240,9 +257,27 @@ async function checkNotifications() {
         knownNotificationIds = currentIds;
         isFirstLoad = false;
 
+        const needsSync = localStorage.getItem('notificationsNeedsSync');
+        if (needsSync === '1') {
+            try {
+                await api.post('/notifications/mark-read', {});
+                localStorage.removeItem('notificationsNeedsSync');
+            } catch (e) {
+            }
+        }
+
     } catch (e) {
-        // Silent fail
         console.error(e);
+        const badge = document.getElementById('notifBadge');
+        if (badge) {
+            const stored = localStorage.getItem('notificationsBadgeCount');
+            if (stored !== null) {
+                const count = parseInt(stored, 10) || 0;
+                badge.textContent = count;
+                if (count > 0) badge.classList.remove('hidden');
+                else badge.classList.add('hidden');
+            }
+        }
     }
 }
 
@@ -251,18 +286,35 @@ setInterval(checkNotifications, 5000);
 checkNotifications();
 
 document.addEventListener('DOMContentLoaded', () => {
+    const badge = document.getElementById('notifBadge');
+    if (badge) {
+        const stored = localStorage.getItem('notificationsBadgeCount');
+        if (stored !== null) {
+            const count = parseInt(stored, 10) || 0;
+            badge.textContent = count;
+            if (count > 0) badge.classList.remove('hidden');
+            else badge.classList.add('hidden');
+        }
+    }
+
     const notifLink = document.getElementById('notificationsLink');
     if (notifLink) {
         notifLink.addEventListener('click', () => {
-            const badge = document.getElementById('notifBadge');
-            if (badge) {
-                badge.textContent = '0';
-                badge.classList.add('hidden');
+            const now = new Date().toISOString();
+            localStorage.setItem('notificationsLastReadAt', now);
+            localStorage.setItem('notificationsBadgeCount', '0');
+
+            const badgeEl = document.getElementById('notifBadge');
+            if (badgeEl) {
+                badgeEl.textContent = '0';
+                badgeEl.classList.add('hidden');
             }
-            try {
-                api.post('/notifications/mark-read', {});
-            } catch (e) {
-            }
+
+            api.post('/notifications/mark-read', {}).then(() => {
+                localStorage.removeItem('notificationsNeedsSync');
+            }).catch(() => {
+                localStorage.setItem('notificationsNeedsSync', '1');
+            });
         });
     }
 });
