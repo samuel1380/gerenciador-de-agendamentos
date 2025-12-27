@@ -303,7 +303,3 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 setTimeout(showNotificationBannerIfNeeded, 2000);
-
-if (Notification.permission === 'granted') {
-    subscribeToPush();
-}

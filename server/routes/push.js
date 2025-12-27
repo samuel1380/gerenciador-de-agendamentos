@@ -42,30 +42,26 @@ router.post('/subscribe', (req, res) => {
     const endpoint = subscription.endpoint;
     const keys = JSON.stringify(subscription.keys);
 
-    // Using INSERT OR REPLACE to handle re-subscriptions
-    req.db.run(`INSERT OR REPLACE INTO push_subscriptions (user_id, endpoint, \`keys\`) VALUES (?, ?, ?)`,
-        [userId || 0, endpoint, keys],
-        function (err) {
-            if (err) {
-                console.error('[PUSH] DB Error:', err);
-                return res.status(500).json({ error: 'DB Error' });
-            }
-
-            console.log('[PUSH] Client subscribed:', userId);
-            res.status(201).json({ message: 'Subscribed!' });
-
-            // Send immediate test
-            if (webpush) {
-                const payload = JSON.stringify({
-                    title: 'Notificações Ativas! 🚀',
-                    body: 'Tudo pronto. Você receberá avisos aqui.'
-                });
-                webpush.sendNotification(subscription, payload)
-                    .then(() => console.log('[PUSH] Welcome sent.'))
-                    .catch(err => console.error('[PUSH] Send Error:', err));
-            }
+    // Using INSERT OR REPLACE-style behaviour manually to avoid duplicates
+    req.db.run(`DELETE FROM push_subscriptions WHERE endpoint = ?`, [endpoint], function (delErr) {
+        if (delErr) {
+            console.error('[PUSH] DB Delete Error:', delErr);
+            // continue, attempt insert anyway
         }
-    );
+
+        req.db.run(`INSERT INTO push_subscriptions (user_id, endpoint, \`keys\`) VALUES (?, ?, ?)`,
+            [userId || 0, endpoint, keys],
+            function (err) {
+                if (err) {
+                    console.error('[PUSH] DB Error:', err);
+                    return res.status(500).json({ error: 'DB Error' });
+                }
+
+                console.log('[PUSH] Client subscribed:', userId);
+                res.status(201).json({ message: 'Subscribed!' });
+            }
+        );
+    });
 });
 
 // Helper
@@ -83,9 +79,19 @@ router.sendPushToUser = (db, userId, title, message) => {
             return;
         }
 
+        // Ensure we only send once per endpoint (avoid duplicates)
+        const uniqueByEndpoint = [];
+        const seenEndpoints = new Set();
+        for (const sub of rows) {
+            if (sub.endpoint && !seenEndpoints.has(sub.endpoint)) {
+                seenEndpoints.add(sub.endpoint);
+                uniqueByEndpoint.push(sub);
+            }
+        }
+
         const payload = JSON.stringify({ title, body: message });
 
-        rows.forEach(sub => {
+        uniqueByEndpoint.forEach(sub => {
             let subscription;
             try {
                 subscription = {
