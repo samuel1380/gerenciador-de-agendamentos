@@ -197,7 +197,7 @@ function showNotificationBannerIfNeeded() {
     }
 }
 
-// Polling for notifications (and simulating push if permission granted)
+// Polling for notifications (badge e lista)
 let knownNotificationIds = new Set();
 let isFirstLoad = true;
 
@@ -235,30 +235,6 @@ async function checkNotifications() {
         localStorage.setItem('notificationsLastKnownMaxId', String(maxId));
 
         const currentIds = new Set(unreadList.map(n => n.id));
-
-        if (!isFirstLoad && Notification.permission === 'granted') {
-            const newIds = [...currentIds].filter(id => !knownNotificationIds.has(id));
-
-            newIds.forEach(id => {
-                const notif = unreadList.find(n => n.id === id);
-                if (notif) {
-                    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
-                        navigator.serviceWorker.ready.then(reg => {
-                            reg.showNotification('Nova Mensagem', {
-                                body: notif.message,
-                                icon: 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png',
-                                tag: 'notif-' + notif.id
-                            });
-                        });
-                    } else {
-                        new Notification('Nova Mensagem', {
-                            body: notif.message,
-                            icon: 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png'
-                        });
-                    }
-                }
-            });
-        }
 
         knownNotificationIds = currentIds;
         isFirstLoad = false;
