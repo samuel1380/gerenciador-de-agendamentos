@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const { authenticateAdminPage } = require('./server/middleware/auth');
 
 require('dotenv').config();
 
@@ -71,9 +72,9 @@ db.serialize(() => {
 
 // Static Files
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/client', express.static(path.join(__dirname, 'client')));
-app.use('/admin', express.static(path.join(__dirname, 'admin')));
+app.use('/admin', authenticateAdminPage, express.static(path.join(__dirname, 'admin')));
 
 // Routes
 // Public Settings Route (Theme)

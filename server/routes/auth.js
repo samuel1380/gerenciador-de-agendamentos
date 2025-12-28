@@ -65,17 +65,32 @@ router.post('/login', (req, res) => {
         if (!match) return res.status(401).json({ error: 'Invalid credentials' });
 
         const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' });
+        const userPayload = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            level: user.level || 1,
+            xp: user.xp || 0,
+            avatar: user.avatar,
+            role: user.role || 'user'
+        };
+
+        const cookieOptions = {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        };
+
+        if (userPayload.role === 'admin') {
+            res.cookie('admin_token', token, cookieOptions);
+        } else {
+            res.clearCookie('admin_token');
+        }
+
         res.json({
             token,
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                level: user.level || 1,
-                xp: user.xp || 0,
-                avatar: user.avatar,
-                role: user.role || 'user'
-            }
+            user: userPayload
         });
     });
 });
