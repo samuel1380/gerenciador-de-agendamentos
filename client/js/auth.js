@@ -48,13 +48,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Redirect if already logged in (on auth pages)
     if (localStorage.getItem('token') && (window.location.pathname.includes('login') || window.location.pathname.includes('register'))) {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        if (user.role === 'admin') {
-            window.location.href = '../admin/index.html';
-        } else {
-            window.location.href = 'home.html';
-        }
+        api.get('/auth/me')
+            .then(user => {
+                if (!user || !user.id) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                    return;
+                }
+                localStorage.setItem('user', JSON.stringify(user));
+                if (user.role === 'admin') {
+                    window.location.href = '../admin/index.html';
+                } else {
+                    window.location.href = 'home.html';
+                }
+            })
+            .catch(() => {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+            });
     }
 });

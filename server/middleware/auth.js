@@ -59,12 +59,12 @@ const authenticateAdminPage = (req, res, next) => {
     }
 
     if (!token) {
-        return res.redirect('/client/login.html');
+        return res.status(401).send('Não autenticado.');
     }
 
     jwt.verify(token, JWT_SECRET, (err, decoded) => {
         if (err) {
-            return res.redirect('/client/login.html');
+            return res.status(401).send('Token inválido ou expirado.');
         }
 
         const db = req.db;
