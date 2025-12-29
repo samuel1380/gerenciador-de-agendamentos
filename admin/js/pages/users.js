@@ -58,7 +58,7 @@ function renderUsers(users) {
             </td>
             <td style="font-weight: 600;">R$ ${Number(u.ltv || 0).toFixed(2)}</td>
             <td><span style="background: var(--bg-body); padding: 4px 10px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">${u.total_appointments || 0}</span></td>
-            <td><span class="badge ${(u.active ?? 1) ? 'badge-success' : 'badge-danger'}">${(u.active ?? 1) ? 'Ativo' : 'Bloqueado'}</span></td>
+            <td><span class="badge ${(u.active ?? 1) ? 'badge-success' : 'badge-danger'}">${(u.active ?? 1) ? 'Ativo' : 'Bloqueado'}${u.role === 'admin' ? ' • Admin' : ''}</span></td>
             <td>
                 <button onclick="viewUser(${u.id})" class="btn-icon" title="Ver Detalhes" style="color:var(--info);">
                     <i class="ph-bold ph-eye"></i>
@@ -66,8 +66,8 @@ function renderUsers(users) {
                 <button ${u.role === 'admin' ? 'disabled' : ''} onclick="toggleUser(${u.id})" class="btn-icon" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}" style="color:${(u.active ?? 1) ? 'var(--error)' : 'var(--success)'}; ${u.role === 'admin' ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
                     <i class="ph-bold ${(u.active ?? 1) ? 'ph-prohibit' : 'ph-check-circle'}"></i>
                 </button>
-                <button ${u.role === 'admin' ? 'disabled' : ''} onclick="makeAdmin(${u.id})" class="btn-icon" title="Promover a Admin" style="color:var(--warning); ${u.role === 'admin' ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
-                    <i class="ph-bold ph-crown"></i>
+                <button onclick="toggleAdmin(${u.id}, '${u.role}')" class="btn-icon" title="${u.role === 'admin' ? 'Remover administrador' : 'Tornar administrador'}" style="color:var(--warning);">
+                    <i class="ph-bold ph-crown" style="${u.role === 'admin' ? 'color:var(--warning);' : ''}"></i>
                 </button>
             </td>
         </tr>
@@ -110,8 +110,8 @@ function renderUsers(users) {
                         <button ${u.role === 'admin' ? 'disabled' : ''} onclick="toggleUser(${u.id})" class="btn-icon" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}" style="color:${(u.active ?? 1) ? 'var(--error)' : 'var(--success)'}; ${u.role === 'admin' ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
                             <i class="ph-bold ${(u.active ?? 1) ? 'ph-prohibit' : 'ph-check-circle'}"></i>
                         </button>
-                        <button ${u.role === 'admin' ? 'disabled' : ''} onclick="makeAdmin(${u.id})" class="btn-icon" title="Promover a Admin" style="color:var(--warning); ${u.role === 'admin' ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
-                            <i class="ph-bold ph-crown"></i>
+                        <button onclick="toggleAdmin(${u.id}, '${u.role}')" class="btn-icon" title="${u.role === 'admin' ? 'Remover administrador' : 'Tornar administrador'}" style="color:var(--warning);">
+                            <i class="ph-bold ph-crown" style="${u.role === 'admin' ? 'color:var(--warning);' : ''}"></i>
                         </button>
                     </div>
                 </div>
@@ -227,11 +227,15 @@ window.toggleUser = async function (id) {
     } catch (e) { alert(e.message); }
 }
 
-window.makeAdmin = async function (id) {
-    if (!confirm('ATENÇÃO: Deseja promover este usuário a ADMINISTRADOR? \n\nEle terá acesso total ao painel admin.')) return;
+window.toggleAdmin = async function (id, currentRole) {
+    const isPromote = currentRole !== 'admin';
+    const msg = isPromote
+        ? 'ATENÇÃO: Deseja promover este usuário a ADMINISTRADOR?\n\nEle terá acesso total ao painel admin.'
+        : 'ATENÇÃO: Deseja remover este usuário do cargo de ADMINISTRADOR?';
+    if (!confirm(msg)) return;
     try {
-        await api.put(`/admin/users/${id}/promote`, {});
-        alert('Usuário promovido com sucesso!');
+        const res = await api.put(`/admin/users/${id}/admin-toggle`, {});
+        alert(isPromote ? 'Usuário promovido com sucesso!' : 'Usuário removido do cargo de administrador com sucesso!');
         loadUsers();
     } catch (e) {
         alert(e.message);

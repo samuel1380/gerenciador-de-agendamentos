@@ -363,6 +363,29 @@ router.put('/users/:id/promote', (req, res) => {
     });
 });
 
+// TOGGLE USER ADMIN ROLE (admin <-> user)
+router.put('/users/:id/admin-toggle', (req, res) => {
+    const db = req.db;
+    const { id } = req.params;
+
+    const currentUserId = req.user && req.user.id;
+    if (currentUserId && Number(id) === Number(currentUserId)) {
+        return res.status(400).json({ error: 'Você não pode alterar seu próprio status de administrador.' });
+    }
+
+    db.get(`SELECT role FROM users WHERE id = ?`, [id], (err, row) => {
+        if (err) return res.status(500).json({ error: err.message });
+        if (!row) return res.status(404).json({ error: 'User not found' });
+
+        const newRole = row.role === 'admin' ? 'user' : 'admin';
+
+        db.run(`UPDATE users SET role = ? WHERE id = ?`, [newRole, id], function (updateErr) {
+            if (updateErr) return res.status(500).json({ error: updateErr.message });
+            res.json({ message: 'User role updated successfully', role: newRole });
+        });
+    });
+});
+
 // --- ANALYTICS ---
 
 // QUIZ STATS
