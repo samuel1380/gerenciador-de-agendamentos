@@ -81,9 +81,10 @@ function renderUsers(users) {
             mobileList.innerHTML = users.map(u => `
                 <div class="users-mobile-card ${u.active ? '' : 'users-mobile-card-banned'}">
                     <div class="users-mobile-header">
-                        <div>
+                        <div class="users-mobile-meta">
                             <div class="users-mobile-name">${u.name}</div>
                             <div class="users-mobile-email">${u.email}</div>
+                            ${u.role === 'admin' ? '<span class="users-mobile-role">Administrador</span>' : ''}
                         </div>
                         <div class="users-mobile-status">
                             <span class="badge ${(u.active ?? 1) ? 'badge-success' : 'badge-danger'}">${(u.active ?? 1) ? 'Ativo' : 'Bloqueado'}</span>
@@ -104,14 +105,14 @@ function renderUsers(users) {
                         </div>
                     </div>
                     <div class="users-mobile-actions">
-                        <button onclick="viewUser(${u.id})" class="btn-icon" title="Ver Detalhes" style="color:var(--info);">
+                        <button onclick="viewUser(${u.id})" class="btn-icon users-mobile-action-btn" title="Ver Detalhes">
                             <i class="ph-bold ph-eye"></i>
                         </button>
-                        <button ${u.role === 'admin' ? 'disabled' : ''} onclick="toggleUser(${u.id})" class="btn-icon" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}" style="color:${(u.active ?? 1) ? 'var(--error)' : 'var(--success)'}; ${u.role === 'admin' ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
+                        <button ${u.role === 'admin' ? 'disabled' : ''} onclick="toggleUser(${u.id})" class="btn-icon users-mobile-action-btn" title="${(u.active ?? 1) ? 'Bloquear' : 'Desbloquear'}">
                             <i class="ph-bold ${(u.active ?? 1) ? 'ph-prohibit' : 'ph-check-circle'}"></i>
                         </button>
-                        <button onclick="toggleAdmin(${u.id}, '${u.role}')" class="btn-icon" title="${u.role === 'admin' ? 'Remover administrador' : 'Tornar administrador'}" style="color:var(--warning);">
-                            <i class="ph-bold ph-crown" style="${u.role === 'admin' ? 'color:var(--warning);' : ''}"></i>
+                        <button onclick="toggleAdmin(${u.id}, '${u.role}')" class="btn-icon users-mobile-action-btn" title="${u.role === 'admin' ? 'Remover administrador' : 'Tornar administrador'}">
+                            <i class="ph-bold ph-crown"></i>
                         </button>
                     </div>
                 </div>

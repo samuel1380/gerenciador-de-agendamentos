@@ -1024,17 +1024,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .users-mobile-card {
         border: 1px solid var(--border);
         border-radius: var(--radius-lg);
-        padding: 0.9rem 1rem;
-        margin-bottom: 0.75rem;
+        padding: 1rem 1.1rem;
+        margin-bottom: 0.9rem;
         background: var(--bg-surface);
         box-shadow: var(--shadow-sm);
         display: flex;
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.75rem;
     }
 
     .users-mobile-card-banned {
-        opacity: 0.75;
+        opacity: 0.8;
     }
 
     .users-mobile-header {
@@ -1042,6 +1042,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         justify-content: space-between;
         align-items: flex-start;
         gap: 0.75rem;
+    }
+
+    .users-mobile-meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
     }
 
     .users-mobile-name {
@@ -1055,6 +1061,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         color: var(--text-secondary);
     }
 
+    .users-mobile-role {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.1rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--primary-dark);
+        background: rgba(236, 72, 153, 0.08);
+    }
+
     .users-mobile-status {
         flex-shrink: 0;
     }
@@ -1062,14 +1080,14 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .users-mobile-body {
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: 0.3rem;
         margin-top: 0.25rem;
     }
 
     .users-mobile-row {
         display: flex;
         justify-content: space-between;
-        gap: 0.5rem;
+        gap: 0.75rem;
         font-size: 0.8rem;
     }
 
@@ -1085,8 +1103,39 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .users-mobile-actions {
         display: flex;
         justify-content: flex-end;
-        gap: 0.35rem;
-        margin-top: 0.35rem;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .users-mobile-action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .users-mobile-action-btn i {
+        font-size: 1.05rem;
+    }
+
+    @media (max-width: 480px) {
+        .users-mobile-row {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .users-mobile-value {
+            text-align: left;
+        }
+
+        .users-mobile-actions {
+            justify-content: flex-start;
+        }
     }
 }
 
