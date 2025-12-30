@@ -24,8 +24,11 @@ self.addEventListener('push', (event) => {
     const title = data.title || 'Nova Notificação';
     const options = {
         body: data.body || 'Você tem uma nova mensagem.',
-        icon: 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png',
-        badge: 'https://cdn-icons-png.flaticon.com/512/3652/3652191.png'
+        icon: data.icon || '/client/icons/icon-192.png',
+        badge: data.badge || '/client/icons/icon-96.png',
+        tag: data.tag || 'agendamentos-general',
+        renotify: typeof data.renotify === 'boolean' ? data.renotify : true,
+        data: data.data || {}
     };
 
     event.waitUntil(self.registration.showNotification(title, options));

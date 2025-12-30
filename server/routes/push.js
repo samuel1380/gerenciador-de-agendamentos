@@ -89,7 +89,14 @@ router.sendPushToUser = (db, userId, title, message) => {
             }
         }
 
-        const payload = JSON.stringify({ title, body: message });
+        const payload = JSON.stringify({
+            title,
+            body: message,
+            badge: '/client/icons/icon-96.png',
+            icon: '/client/icons/icon-192.png',
+            tag: 'agendamentos-general',
+            renotify: true
+        });
 
         uniqueByEndpoint.forEach(sub => {
             let subscription;
