@@ -45,39 +45,137 @@
             </div>
         </div>
 
-        <div class="card-modern" style="max-width: 600px;">
-            <form id="notifForm">
-                <div style="display: grid; gap: 1.5rem;">
-                    <div class="form-group">
-                        <label>Destinatário</label>
-                        <select id="targetSelect" name="target" class="input" onchange="toggleEmail()" required>
-                            <option value="all">Todos os Clientes</option>
-                            <option value="email">Cliente Específico (Email)</option>
-                        </select>
+        <div class="notifications-layout">
+            <div class="card-modern notifications-card">
+                <h2 style="margin-bottom: 1rem;">Envio manual</h2>
+                <form id="notifForm">
+                    <div class="notifications-form-grid">
+                        <div class="form-group">
+                            <label>Destinatário</label>
+                            <select id="targetSelect" name="target" class="input" required>
+                                <option value="all">Todos os Clientes</option>
+                                <option value="email">Cliente Específico (Email)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" id="emailGroup" style="display: none;">
+                            <label>Email do Cliente</label>
+                            <input type="email" name="email" class="input" placeholder="cliente@exemplo.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Título</label>
+                            <input type="text" name="title" class="input" placeholder="Ex: Promoção Relâmpago!" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Mensagem</label>
+                            <textarea name="message" class="input" rows="4" placeholder="Escreva sua mensagem aqui..."
+                                required></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label style="display: flex; align-items: center; gap: 0.5rem;">
+                                <input type="checkbox" id="saveAsTemplateCheckbox">
+                                Salvar esta mensagem como template
+                            </label>
+                            <small style="color: var(--text-muted); display:block; margin-top:4px;">
+                                O título será usado como nome interno do template.
+                            </small>
+                        </div>
                     </div>
 
-                    <div class="form-group" id="emailGroup" style="display: none;">
-                        <label>Email do Cliente</label>
-                        <input type="email" name="email" class="input" placeholder="cliente@exemplo.com">
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Enviar Notificação <i
+                                class="ph-bold ph-paper-plane-right"></i></button>
                     </div>
+                </form>
+            </div>
 
-                    <div class="form-group">
-                        <label>Título</label>
-                        <input type="text" name="title" class="input" placeholder="Ex: Promoção Relâmpago!" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Mensagem</label>
-                        <textarea name="message" class="input" rows="4" placeholder="Escreva sua mensagem aqui..."
-                            required></textarea>
+            <div class="card-modern notifications-card">
+                <div class="notifications-card-header">
+                    <div>
+                        <h2>Ações rápidas</h2>
+                        <p class="notifications-card-subtitle">Envie notificações frequentes em 1 clique.</p>
                     </div>
                 </div>
+                <div id="quickActionsContainer" class="notifications-quick-actions-grid">
+                </div>
+            </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Enviar Notificação <i
-                            class="ph-bold ph-paper-plane-right"></i></button>
+            <div class="card-modern notifications-card">
+                <div class="notifications-card-header">
+                    <div>
+                        <h2>Notificações salvas</h2>
+                        <p class="notifications-card-subtitle">Crie, edite e reutilize templates personalizados.</p>
+                    </div>
+                    <button type="button" id="newTemplateBtn" class="btn btn-outline btn-sm">
+                        <i class="ph-bold ph-plus"></i> Novo template
+                    </button>
+                </div>
+                <div id="templatesList" class="notifications-templates-list">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="templateModal"
+        style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(15,23,42,0.45); backdrop-filter: blur(4px); align-items:center; justify-content:center; padding: 1rem;">
+        <div class="card-modern" style="width: 600px; max-width: 100%; max-height: 90vh; overflow-y: auto; position:relative;">
+            <button type="button" id="closeTemplateModalBtn" class="btn-icon"
+                style="position:absolute; top:1rem; right:1rem;">
+                <i class="ph-bold ph-x"></i>
+            </button>
+            <h2 style="margin-bottom: 1rem;">Template de notificação</h2>
+            <form id="templateForm">
+                <input type="hidden" name="id">
+                <div class="form-group">
+                    <label>Nome interno</label>
+                    <input type="text" name="name" class="input" required>
+                </div>
+                <div class="form-group">
+                    <label>Destinatário padrão</label>
+                    <select name="target_type" class="input" id="templateTargetTypeSelect">
+                        <option value="all">Todos os clientes</option>
+                        <option value="email">Email específico</option>
+                        <option value="none">Definir na hora do envio</option>
+                    </select>
+                </div>
+                <div class="form-group" id="templateEmailGroup" style="display:none;">
+                    <label>Email padrão (opcional)</label>
+                    <input type="email" name="default_email" class="input" placeholder="cliente@exemplo.com">
+                </div>
+                <div class="form-group">
+                    <label>Título</label>
+                    <input type="text" name="title" class="input" required>
+                </div>
+                <div class="form-group">
+                    <label>Mensagem</label>
+                    <textarea name="message" rows="4" class="input" required></textarea>
+                </div>
+                <div class="form-actions" style="justify-content:flex-end; gap:0.5rem;">
+                    <button type="button" class="btn btn-outline" id="cancelTemplateBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Salvar template</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <div id="templateConfirmModal"
+        style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(15,23,42,0.45); backdrop-filter: blur(4px); align-items:center; justify-content:center; padding: 1rem;">
+        <div class="card-modern" style="width: 480px; max-width: 100%; max-height: 90vh; overflow-y: auto;">
+            <h2 style="margin-bottom: 0.5rem;">Confirmar envio</h2>
+            <p id="templateConfirmName" style="font-weight:600; margin-bottom:0.25rem;"></p>
+            <p id="templateConfirmTarget" style="color:var(--text-secondary); margin-bottom:0.5rem;"></p>
+            <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;">
+                <span style="display:block; font-weight:500; margin-bottom:0.25rem;">Prévia da mensagem:</span>
+                <span id="templateConfirmPreview"></span>
+            </p>
+            <div class="form-actions" style="justify-content:flex-end; gap:0.5rem;">
+                <button type="button" class="btn btn-outline" id="templateConfirmCancelBtn">Cancelar</button>
+                <button type="button" class="btn btn-outline" id="templateConfirmEditBtn">Editar antes de enviar</button>
+                <button type="button" class="btn btn-primary" id="templateConfirmSendBtn">Enviar agora</button>
+            </div>
         </div>
     </div>
 
@@ -93,20 +191,347 @@
             else input.removeAttribute('required');
         }
 
-        document.getElementById('notifForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData.entries());
+        (function () {
+            let templates = [];
+            let currentTemplateId = null;
 
-            try {
-                const res = await api.post('/notifications/send', data);
-                alert('Sucesso: ' + res.message);
-                e.target.reset();
-                toggleEmail();
-            } catch (err) {
-                alert('Erro: ' + err.message);
+            const notifForm = document.getElementById('notifForm');
+            const saveAsTemplateCheckbox = document.getElementById('saveAsTemplateCheckbox');
+            const quickActionsContainer = document.getElementById('quickActionsContainer');
+            const templatesList = document.getElementById('templatesList');
+            const newTemplateBtn = document.getElementById('newTemplateBtn');
+
+            const templateModal = document.getElementById('templateModal');
+            const closeTemplateModalBtn = document.getElementById('closeTemplateModalBtn');
+            const cancelTemplateBtn = document.getElementById('cancelTemplateBtn');
+            const templateForm = document.getElementById('templateForm');
+            const templateTargetTypeSelect = document.getElementById('templateTargetTypeSelect');
+            const templateEmailGroup = document.getElementById('templateEmailGroup');
+
+            const templateConfirmModal = document.getElementById('templateConfirmModal');
+            const templateConfirmName = document.getElementById('templateConfirmName');
+            const templateConfirmTarget = document.getElementById('templateConfirmTarget');
+            const templateConfirmPreview = document.getElementById('templateConfirmPreview');
+            const templateConfirmCancelBtn = document.getElementById('templateConfirmCancelBtn');
+            const templateConfirmEditBtn = document.getElementById('templateConfirmEditBtn');
+            const templateConfirmSendBtn = document.getElementById('templateConfirmSendBtn');
+
+            function openTemplateModal(template) {
+                templateForm.reset();
+                templateEmailGroup.style.display = 'none';
+                if (template) {
+                    templateForm.elements.id.value = template.id;
+                    templateForm.elements.name.value = template.name;
+                    templateForm.elements.title.value = template.title;
+                    templateForm.elements.message.value = template.message;
+                    templateForm.elements.target_type.value = template.target_type;
+                    if (template.target_type === 'email') {
+                        templateEmailGroup.style.display = 'block';
+                        templateForm.elements.default_email.value = template.default_email || '';
+                    }
+                } else {
+                    templateForm.elements.id.value = '';
+                    templateForm.elements.target_type.value = 'all';
+                }
+                templateModal.style.display = 'flex';
             }
-        });
+
+            function closeTemplateModal() {
+                templateModal.style.display = 'none';
+            }
+
+            function openTemplateConfirm(template) {
+                currentTemplateId = template.id;
+                templateConfirmName.textContent = template.name || template.title;
+
+                let targetText = 'Alvo: ';
+                if (template.target_type === 'all') {
+                    targetText += 'Todos os clientes';
+                } else if (template.target_type === 'email') {
+                    targetText += 'Cliente específico';
+                    if (template.default_email) {
+                        targetText += ' (' + template.default_email + ')';
+                    }
+                } else {
+                    targetText += 'Definir na hora do envio';
+                }
+                templateConfirmTarget.textContent = targetText;
+
+                const preview = (template.message || '').length > 140
+                    ? template.message.substring(0, 140) + '...'
+                    : template.message || '';
+                templateConfirmPreview.textContent = preview;
+
+                if (template.target_type === 'none') {
+                    templateConfirmSendBtn.disabled = true;
+                    templateConfirmSendBtn.classList.add('btn-outline');
+                } else {
+                    templateConfirmSendBtn.disabled = false;
+                    templateConfirmSendBtn.classList.remove('btn-outline');
+                }
+
+                templateConfirmModal.style.display = 'flex';
+            }
+
+            function closeTemplateConfirm() {
+                templateConfirmModal.style.display = 'none';
+                currentTemplateId = null;
+            }
+
+            async function loadTemplates() {
+                try {
+                    const data = await api.get('/admin/notification-templates');
+                    templates = Array.isArray(data) ? data : [];
+                    renderQuickActions();
+                    renderTemplatesList();
+                } catch (e) {
+                    console.error('Erro ao carregar templates', e);
+                }
+            }
+
+            function renderQuickActions() {
+                if (!quickActionsContainer) return;
+                const quick = templates.filter(t => t.is_quick_action);
+                if (quick.length === 0) {
+                    quickActionsContainer.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">Nenhuma ação rápida configurada.</p>';
+                    return;
+                }
+                quickActionsContainer.innerHTML = quick.map(t => {
+                    const icon = t.slug === 'open_store' ? '🟢'
+                        : t.slug === 'close_store' ? '🔴'
+                            : t.slug === 'active_promotion' ? '🔥'
+                                : t.slug === 'open_promotion' ? '🎉'
+                                    : '🔔';
+                    const subtitle = (t.message || '').length > 80 ? t.message.substring(0, 80) + '...' : (t.message || '');
+                    return `
+                        <button type="button" class="quick-action-btn" data-template-id="${t.id}">
+                            <span class="quick-action-icon">${icon}</span>
+                            <span class="quick-action-content">
+                                <span class="quick-action-title">${t.name || t.title}</span>
+                                <span class="quick-action-subtitle">${subtitle}</span>
+                            </span>
+                        </button>
+                    `;
+                }).join('');
+
+                quickActionsContainer.querySelectorAll('.quick-action-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = Number(btn.getAttribute('data-template-id'));
+                        const template = templates.find(t => t.id === id);
+                        if (template) {
+                            openTemplateConfirm(template);
+                        }
+                    });
+                });
+            }
+
+            function renderTemplatesList() {
+                if (!templatesList) return;
+                const saved = templates.filter(t => !t.is_quick_action);
+                if (saved.length === 0) {
+                    templatesList.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">Nenhum template salvo ainda.</p>';
+                    return;
+                }
+
+                templatesList.innerHTML = saved.map(t => {
+                    const targetLabel = t.target_type === 'all'
+                        ? 'Todos os clientes'
+                        : t.target_type === 'email'
+                            ? (t.default_email ? `Cliente específico (${t.default_email})` : 'Cliente específico')
+                            : 'Definir na hora do envio';
+                    const preview = (t.message || '').length > 80 ? t.message.substring(0, 80) + '...' : (t.message || '');
+                    const canDelete = !t.is_quick_action && t.editable;
+
+                    return `
+                        <div class="notification-template-item" data-template-id="${t.id}">
+                            <div class="notification-template-main">
+                                <div class="notification-template-title">${t.name || t.title}</div>
+                                <div class="notification-template-meta">${targetLabel}</div>
+                                <div class="notification-template-preview">${preview}</div>
+                            </div>
+                            <div class="notification-template-actions">
+                                <button type="button" class="btn-outline btn-sm notification-template-send">
+                                    <i class="ph-bold ph-paper-plane-right"></i>
+                                </button>
+                                <button type="button" class="btn-outline btn-sm notification-template-edit">
+                                    <i class="ph-bold ph-pencil-simple"></i>
+                                </button>
+                                ${canDelete ? `
+                                <button type="button" class="btn-outline btn-sm notification-template-delete">
+                                    <i class="ph-bold ph-trash"></i>
+                                </button>` : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                templatesList.querySelectorAll('.notification-template-send').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const wrapper = btn.closest('.notification-template-item');
+                        const id = Number(wrapper.getAttribute('data-template-id'));
+                        const template = templates.find(t => t.id === id);
+                        if (template) {
+                            openTemplateConfirm(template);
+                        }
+                    });
+                });
+
+                templatesList.querySelectorAll('.notification-template-edit').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const wrapper = btn.closest('.notification-template-item');
+                        const id = Number(wrapper.getAttribute('data-template-id'));
+                        const template = templates.find(t => t.id === id);
+                        if (template) {
+                            openTemplateModal(template);
+                        }
+                    });
+                });
+
+                templatesList.querySelectorAll('.notification-template-delete').forEach(btn => {
+                    btn.addEventListener('click', async () => {
+                        const wrapper = btn.closest('.notification-template-item');
+                        const id = Number(wrapper.getAttribute('data-template-id'));
+                        const template = templates.find(t => t.id === id);
+                        if (!template) return;
+                        if (!confirm('Tem certeza que deseja excluir este template?')) return;
+                        try {
+                            await api.request('/admin/notification-templates/' + id, 'DELETE');
+                            loadTemplates();
+                        } catch (e) {
+                            alert('Erro ao excluir template: ' + e.message);
+                        }
+                    });
+                });
+            }
+
+            templateTargetTypeSelect.addEventListener('change', () => {
+                const val = templateTargetTypeSelect.value;
+                if (val === 'email') {
+                    templateEmailGroup.style.display = 'block';
+                } else {
+                    templateEmailGroup.style.display = 'none';
+                }
+            });
+
+            if (newTemplateBtn) {
+                newTemplateBtn.addEventListener('click', () => openTemplateModal(null));
+            }
+
+            closeTemplateModalBtn.addEventListener('click', closeTemplateModal);
+            cancelTemplateBtn.addEventListener('click', closeTemplateModal);
+
+            templateForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(templateForm);
+                const payload = Object.fromEntries(formData.entries());
+                const id = payload.id;
+                delete payload.id;
+                try {
+                    if (payload.default_email === '') {
+                        delete payload.default_email;
+                    }
+                    if (id) {
+                        await api.put('/admin/notification-templates/' + id, payload);
+                    } else {
+                        await api.post('/admin/notification-templates', payload);
+                    }
+                    closeTemplateModal();
+                    loadTemplates();
+                } catch (e) {
+                    alert('Erro ao salvar template: ' + e.message);
+                }
+            });
+
+            templateConfirmCancelBtn.addEventListener('click', () => {
+                closeTemplateConfirm();
+            });
+
+            templateConfirmEditBtn.addEventListener('click', () => {
+                if (!currentTemplateId) return;
+                const template = templates.find(t => t.id === currentTemplateId);
+                if (!template) return;
+
+                const targetSelect = document.getElementById('targetSelect');
+                const emailInput = document.querySelector('#emailGroup input[name="email"]');
+                const titleInput = notifForm.elements.title;
+                const messageInput = notifForm.elements.message;
+
+                if (template.target_type === 'all') {
+                    targetSelect.value = 'all';
+                } else if (template.target_type === 'email') {
+                    targetSelect.value = 'email';
+                } else {
+                    targetSelect.value = 'all';
+                }
+                toggleEmail();
+                if (template.target_type === 'email' && emailInput) {
+                    emailInput.value = template.default_email || '';
+                } else if (emailInput) {
+                    emailInput.value = '';
+                }
+
+                titleInput.value = template.title || '';
+                messageInput.value = template.message || '';
+
+                closeTemplateConfirm();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            templateConfirmSendBtn.addEventListener('click', async () => {
+                if (!currentTemplateId) return;
+                const template = templates.find(t => t.id === currentTemplateId);
+                if (!template) return;
+                if (template.target_type === 'none') {
+                    alert('Defina o destinatário deste template antes de enviar.');
+                    return;
+                }
+                try {
+                    await api.post('/admin/notifications/send-template', { template_id: currentTemplateId });
+                    closeTemplateConfirm();
+                    alert('Notificação enviada com sucesso.');
+                } catch (e) {
+                    alert('Erro ao enviar notificação: ' + e.message);
+                }
+            });
+
+            notifForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(notifForm);
+                const data = Object.fromEntries(formData.entries());
+                try {
+                    const res = await api.post('/notifications/send', data);
+
+                    if (saveAsTemplateCheckbox && saveAsTemplateCheckbox.checked) {
+                        try {
+                            const target_type = data.target;
+                            const default_email = target_type === 'email' ? (data.email || null) : null;
+                            await api.post('/admin/notification-templates', {
+                                name: data.title,
+                                title: data.title,
+                                message: data.message,
+                                target_type,
+                                default_email
+                            });
+                            loadTemplates();
+                        } catch (tplErr) {
+                            console.error('Erro ao salvar template a partir do envio manual', tplErr);
+                        }
+                    }
+
+                    alert('Sucesso: ' + res.message);
+                    notifForm.reset();
+                    saveAsTemplateCheckbox.checked = false;
+                    toggleEmail();
+                } catch (err) {
+                    alert('Erro: ' + err.message);
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', () => {
+                toggleEmail();
+                loadTemplates();
+            });
+        })();
     </script>
 </body>
 

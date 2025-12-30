@@ -3,6 +3,83 @@ const router = express.Router();
 const { authenticateToken, isAdmin } = require('../middleware/auth');
 const pushRouter = require('./push');
 
+function ensureNotificationTemplatesTable(db, callback) {
+    db.run(`
+        CREATE TABLE IF NOT EXISTS notification_templates (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            title TEXT NOT NULL,
+            message TEXT NOT NULL,
+            target_type TEXT NOT NULL,
+            default_email TEXT,
+            is_quick_action INTEGER DEFAULT 0,
+            editable INTEGER DEFAULT 1,
+            slug TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `, (err) => {
+        if (err) return callback(err);
+
+        db.get(`SELECT COUNT(*) as count FROM notification_templates WHERE is_quick_action = 1`, [], (err2, row) => {
+            if (err2) return callback(err2);
+            if (row && row.count > 0) return callback(null);
+
+            const stmt = db.prepare(`
+                INSERT INTO notification_templates
+                    (name, title, message, target_type, default_email, is_quick_action, editable, slug, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+            `);
+
+            const defaults = [
+                {
+                    name: 'Estabelecimento aberto',
+                    title: 'Estamos abertos!',
+                    message: 'O estabelecimento está aberto hoje. Agende seu horário ou venha nos visitar.',
+                    target_type: 'all',
+                    slug: 'open_store'
+                },
+                {
+                    name: 'Estabelecimento fechado',
+                    title: 'Hoje estamos fechados',
+                    message: 'Hoje o estabelecimento estará fechado. Voltaremos em breve com novos horários.',
+                    target_type: 'all',
+                    slug: 'close_store'
+                },
+                {
+                    name: 'Promoção ativa',
+                    title: 'Promoção ativa!',
+                    message: 'Temos uma promoção especial ativa por tempo limitado. Confira agora no app.',
+                    target_type: 'all',
+                    slug: 'active_promotion'
+                },
+                {
+                    name: 'Entre e veja a promoção',
+                    title: 'Entre agora e veja a promoção',
+                    message: 'Acesse o app agora e confira a promoção exclusiva disponível para você.',
+                    target_type: 'all',
+                    slug: 'open_promotion'
+                }
+            ];
+
+            defaults.forEach(t => {
+                stmt.run(
+                    t.name,
+                    t.title,
+                    t.message,
+                    t.target_type,
+                    null,
+                    1,
+                    1,
+                    t.slug
+                );
+            });
+
+            stmt.finalize(callback);
+        });
+    });
+}
+
 // Apply middleware to all routes in this file
 router.use(authenticateToken, isAdmin);
 
@@ -474,6 +551,167 @@ router.get('/analytics/financials', (req, res) => {
                     recent: recentRows
                 });
             });
+        });
+    });
+});
+
+router.get('/notification-templates', (req, res) => {
+    const db = req.db;
+    ensureNotificationTemplatesTable(db, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+        db.all(`SELECT * FROM notification_templates ORDER BY is_quick_action DESC, name ASC`, [], (err2, rows) => {
+            if (err2) return res.status(500).json({ error: err2.message });
+            res.json(rows);
+        });
+    });
+});
+
+router.post('/notification-templates', (req, res) => {
+    const db = req.db;
+    const { name, title, message, target_type, default_email, is_quick_action, editable, slug } = req.body;
+
+    if (!name || !title || !message || !target_type) {
+        return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    ensureNotificationTemplatesTable(db, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        const stmt = db.prepare(`
+            INSERT INTO notification_templates
+                (name, title, message, target_type, default_email, is_quick_action, editable, slug, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+        `);
+
+        stmt.run(
+            name,
+            title,
+            message,
+            target_type,
+            default_email || null,
+            is_quick_action ? 1 : 0,
+            editable === false ? 0 : 1,
+            slug || null,
+            function (runErr) {
+                if (runErr) return res.status(500).json({ error: runErr.message });
+                res.status(201).json({ id: this.lastID });
+            }
+        );
+    });
+});
+
+router.put('/notification-templates/:id', (req, res) => {
+    const db = req.db;
+    const { id } = req.params;
+    const { name, title, message, target_type, default_email } = req.body;
+
+    ensureNotificationTemplatesTable(db, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        db.get(`SELECT * FROM notification_templates WHERE id = ?`, [id], (getErr, existing) => {
+            if (getErr) return res.status(500).json({ error: getErr.message });
+            if (!existing) return res.status(404).json({ error: 'Template not found' });
+            if (!existing.editable) return res.status(403).json({ error: 'Template is not editable' });
+
+            const newName = name || existing.name;
+            const newTitle = title || existing.title;
+            const newMessage = message || existing.message;
+            const newTargetType = target_type || existing.target_type;
+            const newDefaultEmail = typeof default_email !== 'undefined' ? default_email : existing.default_email;
+
+            db.run(
+                `UPDATE notification_templates
+                 SET name = ?, title = ?, message = ?, target_type = ?, default_email = ?, updated_at = CURRENT_TIMESTAMP
+                 WHERE id = ?`,
+                [newName, newTitle, newMessage, newTargetType, newDefaultEmail, id],
+                (updateErr) => {
+                    if (updateErr) return res.status(500).json({ error: updateErr.message });
+                    res.json({ message: 'Template updated' });
+                }
+            );
+        });
+    });
+});
+
+router.delete('/notification-templates/:id', (req, res) => {
+    const db = req.db;
+    const { id } = req.params;
+
+    ensureNotificationTemplatesTable(db, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        db.get(`SELECT * FROM notification_templates WHERE id = ?`, [id], (getErr, existing) => {
+            if (getErr) return res.status(500).json({ error: getErr.message });
+            if (!existing) return res.status(404).json({ error: 'Template not found' });
+            if (!existing.editable) return res.status(403).json({ error: 'Template cannot be deleted' });
+
+            db.run(`DELETE FROM notification_templates WHERE id = ?`, [id], (delErr) => {
+                if (delErr) return res.status(500).json({ error: delErr.message });
+                res.json({ message: 'Template deleted' });
+            });
+        });
+    });
+});
+
+router.post('/notifications/send-template', (req, res) => {
+    const db = req.db;
+    const { template_id, override_target_type, override_email } = req.body;
+
+    if (!template_id) {
+        return res.status(400).json({ error: 'template_id is required' });
+    }
+
+    ensureNotificationTemplatesTable(db, (err) => {
+        if (err) return res.status(500).json({ error: err.message });
+
+        db.get(`SELECT * FROM notification_templates WHERE id = ?`, [template_id], (getErr, template) => {
+            if (getErr) return res.status(500).json({ error: getErr.message });
+            if (!template) return res.status(404).json({ error: 'Template not found' });
+
+            let target = override_target_type || template.target_type;
+            let email = override_email || template.default_email;
+            const title = template.title;
+            const message = template.message;
+
+            if (!target || target === 'none') {
+                return res.status(400).json({ error: 'Target must be specified' });
+            }
+
+            if (target === 'all') {
+                db.all(`SELECT id FROM users`, [], (listErr, rows) => {
+                    if (listErr) return res.status(500).json({ error: listErr.message });
+
+                    const stmt = db.prepare(`INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)`);
+                    rows.forEach(user => {
+                        stmt.run(user.id, title, message);
+                        if (pushRouter && typeof pushRouter.sendPushToUser === 'function') {
+                            pushRouter.sendPushToUser(db, user.id, title, message);
+                        }
+                    });
+                    stmt.finalize();
+                    res.json({ message: `Sent to ${rows.length} users` });
+                });
+            } else if (target === 'email') {
+                if (!email) {
+                    return res.status(400).json({ error: 'Email is required for email target' });
+                }
+                db.get(`SELECT id FROM users WHERE email = ?`, [email], (userErr, user) => {
+                    if (userErr || !user) return res.status(404).json({ error: 'User not found' });
+
+                    db.run(`INSERT INTO notifications (user_id, title, message) VALUES (?, ?, ?)`,
+                        [user.id, title, message],
+                        (insertErr) => {
+                            if (insertErr) return res.status(500).json({ error: insertErr.message });
+                            if (pushRouter && typeof pushRouter.sendPushToUser === 'function') {
+                                pushRouter.sendPushToUser(db, user.id, title, message);
+                            }
+                            res.json({ message: 'Sent to user' });
+                        }
+                    );
+                });
+            } else {
+                res.status(400).json({ error: 'Invalid target' });
+            }
         });
     });
 });
