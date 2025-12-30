@@ -47,3 +47,8 @@ const api = {
     post(endpoint, body) { return this.request(endpoint, 'POST', body); },
     put(endpoint, body) { return this.request(endpoint, 'PUT', body); },
 };
+
+try {
+    window.dispatchEvent(new Event('client-api-ready'));
+} catch (e) {
+}

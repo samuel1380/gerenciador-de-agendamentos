@@ -1,23 +1,43 @@
-(async function () {
+(function () {
     try {
-        // Apply saved theme from local storage instantly
         const localTheme = localStorage.getItem('client_theme');
         const localColors = localStorage.getItem('client_theme_colors');
 
-        if (localTheme) document.body.classList.add('theme-' + localTheme);
+        applyThemeFromStorage(localTheme);
         if (localColors) applyCustomColors(JSON.parse(localColors));
 
         if (typeof api !== 'undefined') {
-            const data = await api.get('/settings/public');
+            syncThemeFromServer();
+        } else {
+            window.addEventListener('client-api-ready', function () {
+                syncThemeFromServer();
+            }, { once: true });
+        }
+    } catch (e) {
+    }
 
-            // Sync Theme
-            if (data.client_theme && localTheme !== data.client_theme) {
-                document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
-                document.body.classList.add('theme-' + data.client_theme);
+    function applyThemeFromStorage(theme) {
+        if (!theme) return;
+        const className = 'theme-' + theme;
+        const root = document.documentElement;
+        if (!root.classList.contains(className)) {
+            root.classList.add(className);
+        }
+    }
+
+    async function syncThemeFromServer() {
+        if (typeof api === 'undefined') return;
+
+        try {
+            const data = await api.get('/settings/public');
+            const currentTheme = localStorage.getItem('client_theme');
+
+            if (data.client_theme && currentTheme !== data.client_theme) {
+                clearThemeClasses();
+                applyThemeFromStorage(data.client_theme);
                 localStorage.setItem('client_theme', data.client_theme);
             }
 
-            // Sync Colors
             if (data.client_theme_colors) {
                 localStorage.setItem('client_theme_colors', data.client_theme_colors);
                 applyCustomColors(JSON.parse(data.client_theme_colors));
@@ -25,17 +45,21 @@
                 localStorage.removeItem('client_theme_colors');
                 removeCustomColors();
             }
+        } catch (e) {
         }
-    } catch (e) {
-        // Silent fail
+    }
+
+    function clearThemeClasses() {
+        const root = document.documentElement;
+        const classes = root.className.split(/\s+/).filter(Boolean);
+        const filtered = classes.filter(function (c) { return !/^theme-[\w-]+$/.test(c); });
+        root.className = filtered.join(' ');
     }
 
     function applyCustomColors(colors) {
         if (!colors) return;
         const root = document.documentElement;
         if (colors.primary) root.style.setProperty('--primary', colors.primary);
-        // Simple logic to generate variations if not provided
-        // In a real app we might use a color lib, here we trust the admin/default fallback
         if (colors.bg) root.style.setProperty('--bg', colors.bg);
     }
 

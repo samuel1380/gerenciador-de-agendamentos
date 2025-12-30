@@ -630,7 +630,7 @@ textarea.form-input {
 /* --- THEMES (Enhanced Visuals) --- */
 
 
-body.theme-barber {
+html.theme-barber {
     --primary: #C5A028;
     /* Classic Gold */
     --primary-dark: #A17F1A;
@@ -663,46 +663,46 @@ body.theme-barber {
 }
 
 /* Barber Glow Buttons */
-body.theme-barber .btn {
+html.theme-barber .btn {
     box-shadow: 0 0 15px rgba(197, 160, 40, 0.3);
     border: 1px solid rgba(197, 160, 40, 0.3);
 }
 
-body.theme-barber .btn:hover {
+html.theme-barber .btn:hover {
     box-shadow: 0 0 25px rgba(197, 160, 40, 0.5);
 }
 
-body.theme-barber .container {
+html.theme-barber .container {
     background: var(--bg) !important;
 }
 
-body.theme-barber .bottom-nav {
+html.theme-barber .bottom-nav {
     background: rgba(17, 24, 39, 0.95);
     border-color: #374151;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
 }
 
-body.theme-barber .nav-item:hover {
+html.theme-barber .nav-item:hover {
     background: rgba(255, 255, 255, 0.05);
     color: var(--primary);
 }
 
-body.theme-barber .nav-item.active {
+html.theme-barber .nav-item.active {
     background: rgba(197, 160, 40, 0.15);
     color: var(--primary);
 }
 
-body.theme-barber .auth-page-body {
+html.theme-barber .auth-page-body {
     background: radial-gradient(circle at top, #1F2937 0%, #0B0F19 100%);
 }
 
-body.theme-barber .ph-duotone {
+html.theme-barber .ph-duotone {
     color: var(--primary);
 }
 
 
 /* 2. Salão Gold (Luxo Clean) */
-body.theme-hair {
+html.theme-hair {
     --primary: #D97706;
     /* Amber 600 */
     --primary-dark: #B45309;
@@ -732,22 +732,22 @@ body.theme-hair {
     --shadow-lg: 0 20px 25px -5px rgba(217, 119, 6, 0.2);
 }
 
-body.theme-hair .bottom-nav {
+html.theme-hair .bottom-nav {
     border-color: #E7E5E4;
 }
 
-body.theme-hair .nav-item.active {
+html.theme-hair .nav-item.active {
     background: #FFFBEB;
     color: #B45309;
 }
 
-body.theme-hair .auth-page-body {
+html.theme-hair .auth-page-body {
     background: linear-gradient(135deg, #FFFBEB 0%, #FFFFFF 100%);
 }
 
 
 /* 3. Spa & Relax (Verde Calma - Soft Organic) */
-body.theme-spa {
+html.theme-spa {
     --primary: #059669;
     /* Emerald 600 */
     --primary-dark: #047857;
@@ -781,22 +781,22 @@ body.theme-spa {
     /* Extra round for softness */
 }
 
-body.theme-spa .bottom-nav {
+html.theme-spa .bottom-nav {
     border-color: #D1FAE5;
 }
 
-body.theme-spa .nav-item.active {
+html.theme-spa .nav-item.active {
     background: #ECFDF5;
     color: #047857;
 }
 
-body.theme-spa .auth-page-body {
+html.theme-spa .auth-page-body {
     background: linear-gradient(135deg, #ECFDF5 0%, #FFFFFF 100%);
 }
 
 
 /* 4. Estúdio Tattoo (Preto Intenso - Sharp & Neon) */
-body.theme-tattoo {
+html.theme-tattoo {
     --primary: #EF4444;
     /* Red 500 */
     --primary-dark: #B91C1C;
@@ -830,45 +830,45 @@ body.theme-tattoo {
 }
 
 /* Tattoo Neon Effects */
-body.theme-tattoo .btn {
+html.theme-tattoo .btn {
     text-transform: uppercase;
     letter-spacing: 1px;
     box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
     border: 1px solid var(--primary);
 }
 
-body.theme-tattoo .btn:hover {
+html.theme-tattoo .btn:hover {
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
     background: var(--primary);
 }
 
-body.theme-tattoo .container {
+html.theme-tattoo .container {
     background: #000000;
 }
 
-body.theme-tattoo .bottom-nav {
+html.theme-tattoo .bottom-nav {
     background: rgba(10, 10, 10, 0.95);
     border-color: #262626;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9);
 }
 
-body.theme-tattoo .nav-item:hover {
+html.theme-tattoo .nav-item:hover {
     background: rgba(239, 68, 68, 0.1);
     color: var(--primary);
 }
 
-body.theme-tattoo .nav-item.active {
+html.theme-tattoo .nav-item.active {
     background: rgba(239, 68, 68, 0.2);
     color: var(--primary);
 }
 
-body.theme-tattoo .auth-page-body {
+html.theme-tattoo .auth-page-body {
     background: radial-gradient(circle at top, #171717 0%, #000000 100%);
 }
 
 
 /* 5. Clínica (Azul Profissional) */
-body.theme-health {
+html.theme-health {
     --primary: #2563EB;
     /* Blue 600 */
     --primary-dark: #1E40AF;
@@ -897,47 +897,47 @@ body.theme-health {
     --shadow-lg: 0 20px 25px -5px rgba(37, 99, 235, 0.2);
 }
 
-body.theme-health .bottom-nav {
+html.theme-health .bottom-nav {
     border-color: #E2E8F0;
 }
 
-body.theme-health .nav-item.active {
+html.theme-health .nav-item.active {
     background: #EFF6FF;
     color: #1E40AF;
 }
 
-body.theme-health .auth-page-body {
+html.theme-health .auth-page-body {
     background: linear-gradient(135deg, #EFF6FF 0%, #FFFFFF 100%);
 }
 
 
 /* --- Shared Overrides & Dark Mode Inputs --- */
 
-body[class*="theme-barber"] .card,
-body[class*="theme-tattoo"] .card {
+html[class*="theme-barber"] .card,
+html[class*="theme-tattoo"] .card {
     background-color: var(--bg-card) !important;
     border-color: var(--gray-200);
 }
 
 /* Fix Input Visibility on Dark Themes */
-body[class*="theme-barber"] .form-input,
-body[class*="theme-barber"] .input,
-body[class*="theme-tattoo"] .form-input,
-body[class*="theme-tattoo"] .input {
+html[class*="theme-barber"] .form-input,
+html[class*="theme-barber"] .input,
+html[class*="theme-tattoo"] .form-input,
+html[class*="theme-tattoo"] .input {
     background-color: var(--gray-100);
     border-color: var(--gray-200);
     color: var(--text);
 }
 
-body[class*="theme-barber"] .form-input:focus,
-body[class*="theme-tattoo"] .form-input:focus {
+html[class*="theme-barber"] .form-input:focus,
+html[class*="theme-tattoo"] .form-input:focus {
     border-color: var(--primary);
     background-color: var(--gray-100);
     box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
 }
 
-body[class*="theme-barber"] ::placeholder,
-body[class*="theme-tattoo"] ::placeholder {
+html[class*="theme-barber"] ::placeholder,
+html[class*="theme-tattoo"] ::placeholder {
     color: var(--text-muted);
 }
 
