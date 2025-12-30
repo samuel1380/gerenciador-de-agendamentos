@@ -1048,6 +1048,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         display: flex;
         flex-direction: column;
         gap: 0.15rem;
+        flex: 1 1 auto;
+        min-width: 0;
     }
 
     .users-mobile-name {
@@ -1059,6 +1061,10 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     .users-mobile-email {
         font-size: 0.8rem;
         color: var(--text-secondary);
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .users-mobile-role {
