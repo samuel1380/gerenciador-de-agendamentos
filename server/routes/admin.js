@@ -4,7 +4,22 @@ const { authenticateToken, isAdmin } = require('../middleware/auth');
 const pushRouter = require('./push');
 
 function ensureNotificationTemplatesTable(db, callback) {
-    db.run(`
+    const createSql = db.isMysql
+        ? `
+        CREATE TABLE IF NOT EXISTS notification_templates (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255) NOT NULL,
+            title VARCHAR(255) NOT NULL,
+            message TEXT NOT NULL,
+            target_type VARCHAR(32) NOT NULL,
+            default_email VARCHAR(255),
+            is_quick_action TINYINT(1) DEFAULT 0,
+            editable TINYINT(1) DEFAULT 1,
+            slug VARCHAR(64),
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        )`
+        : `
         CREATE TABLE IF NOT EXISTS notification_templates (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
@@ -17,8 +32,9 @@ function ensureNotificationTemplatesTable(db, callback) {
             slug TEXT,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    `, (err) => {
+        )`;
+
+    db.run(createSql, (err) => {
         if (err) return callback(err);
 
         db.get(`SELECT COUNT(*) as count FROM notification_templates WHERE is_quick_action = 1`, [], (err2, row) => {
