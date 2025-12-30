@@ -164,30 +164,53 @@
                 }
             }
 
-            // Load active appointment
+            function renderActiveAppointment(appts) {
+                const el = document.getElementById('activeAppt');
+                if (!appts || !appts.length) {
+                    el.classList.add('hidden');
+                    return;
+                }
+                const active = appts.find(a => ['pending', 'accepted'].includes(a.status));
+                if (!active) {
+                    el.classList.add('hidden');
+                    return;
+                }
+                el.classList.remove('hidden');
+                document.getElementById('nextApptService').textContent = active.service_title;
+                document.getElementById('nextApptTime').textContent = `${active.date.split('-').reverse().join('/')} às ${active.time}`;
+                const statusEl = document.getElementById('nextApptStatus');
+                statusEl.textContent = active.status === 'pending' ? 'Pendente' : 'Confirmado';
+                statusEl.style.backgroundColor = active.status === 'pending' ? '#fef08a' : '#86efac';
+                statusEl.style.color = active.status === 'pending' ? '#854d0e' : '#14532d';
+            }
+
             async function loadActiveAppointment() {
                 try {
                     const appts = await api.get('/appointments/me');
-                    const active = appts.find(a => ['pending', 'accepted'].includes(a.status));
-
-                    const el = document.getElementById('activeAppt');
-                    if (active) {
-                        el.classList.remove('hidden');
-                        document.getElementById('nextApptService').textContent = active.service_title;
-                        document.getElementById('nextApptTime').textContent = `${active.date.split('-').reverse().join('/')} às ${active.time}`;
-                        const statusEl = document.getElementById('nextApptStatus');
-                        statusEl.textContent = active.status === 'pending' ? 'Pendente' : 'Confirmado';
-                        statusEl.style.backgroundColor = active.status === 'pending' ? '#fef08a' : '#86efac';
-                        statusEl.style.color = active.status === 'pending' ? '#854d0e' : '#14532d';
-                    } else {
-                        // Hide if no longer active (e.g. cancelled/completed elsewhere)
-                        el.classList.add('hidden');
+                    renderActiveAppointment(appts);
+                    if (typeof window !== 'undefined' && window.ClientCache) {
+                        window.ClientCache.set('appointments_me_cache', appts);
                     }
                 } catch (e) { console.error(e); }
             }
 
+            let apptIntervalId = null;
+            const cachedAppts = typeof window !== 'undefined' && window.ClientCache ? window.ClientCache.get('appointments_me_cache', 60000) : null;
+            if (cachedAppts && cachedAppts.length) {
+                renderActiveAppointment(cachedAppts);
+            }
+
             loadActiveAppointment();
-            setInterval(loadActiveAppointment, 5000);
+            if (apptIntervalId) {
+                clearInterval(apptIntervalId);
+            }
+            apptIntervalId = setInterval(loadActiveAppointment, 5000);
+            window.addEventListener('pagehide', () => {
+                if (apptIntervalId) {
+                    clearInterval(apptIntervalId);
+                    apptIntervalId = null;
+                }
+            }, { once: true });
 
             // Load Active Promotion
             try {
