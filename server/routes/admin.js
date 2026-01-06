@@ -389,7 +389,7 @@ router.post('/settings', (req, res) => {
     const db = req.db;
     const settings = req.body;
 
-    const stmt = db.prepare("INSERT OR REPLACE INTO settings (`key`, value) VALUES (?, ?)");
+    const stmt = db.prepare("REPLACE INTO settings (`key`, value) VALUES (?, ?)");
 
     Object.entries(settings).forEach(([key, value]) => {
         stmt.run(key, value.toString());
@@ -410,7 +410,7 @@ router.post('/settings/icon', upload.single('icon'), (req, res) => {
     // Filename is set in storage config above
     const iconUrl = '/client/icons/' + req.file.filename + '?t=' + Date.now();
 
-    const stmt = db.prepare("INSERT OR REPLACE INTO settings (`key`, value) VALUES (?, ?)");
+    const stmt = db.prepare("REPLACE INTO settings (`key`, value) VALUES (?, ?)");
     stmt.run('notification_icon_url', iconUrl, function (err) {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: 'Icon updated', url: iconUrl });
