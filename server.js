@@ -139,6 +139,36 @@ db.serialize(() => {
     )`, ignoreErr);
 });
 
+// Dynamic Manifest for PWA Customization
+app.get('/client/manifest.json', (req, res) => {
+    req.db.get("SELECT value FROM settings WHERE `key` = 'notification_icon_url'", (err, row) => {
+        const iconUrl = (row && row.value) ? row.value : 'icons/icon-192.png';
+
+        const manifest = {
+            "name": "Manicure",
+            "short_name": "Manicure",
+            "start_url": "./home.html",
+            "display": "standalone",
+            "background_color": "#ffffff",
+            "theme_color": "#ffffff",
+            "icons": [
+                {
+                    "src": iconUrl,
+                    "sizes": "192x192",
+                    "type": "image/png"
+                },
+                {
+                    "src": iconUrl,
+                    "sizes": "512x512",
+                    "type": "image/png"
+                }
+            ]
+        };
+
+        res.json(manifest);
+    });
+});
+
 // Static Files
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

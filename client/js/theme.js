@@ -45,6 +45,14 @@
                 localStorage.removeItem('client_theme_colors');
                 removeCustomColors();
             }
+
+            if (data.notification_icon_url) {
+                // Update Apple Touch Icon
+                const appleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+                if (appleIcon) {
+                    appleIcon.href = data.notification_icon_url;
+                }
+            }
         } catch (e) {
         }
     }
