@@ -757,6 +757,10 @@
                         }
                     } catch (e) { }
                 }
+
+                if (settings.notification_icon_url) {
+                    document.getElementById('iconPreview').src = settings.notification_icon_url;
+                }
             } catch (e) {
                 console.warn('Could not load settings', e);
             }
