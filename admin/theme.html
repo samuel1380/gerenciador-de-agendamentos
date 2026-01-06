@@ -585,58 +585,86 @@
             </div>
 
             <!-- Custom Colors Section -->
-            <div
-                style="margin-top: 3rem; background: #fff; padding: 2rem; border-radius: 16px; border: 1px solid var(--border);">
-                <div style="margin-bottom: 2rem;">
-                    <h3 style="font-size: 1.2rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;">
-                        <i class="ph-duotone ph-palette" style="color: var(--primary);"></i>
-                        Personalizar Cores
-                    </h3>
-                    <p style="color: var(--text-secondary); font-size: 0.9rem;">
-                        Deseja ajustar as cores mantendo a lógica do tema escolhido?
-                        Personalize abaixo para usar a identidade visual exata da sua marca.
-                    </p>
-                </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem;">
-                    <!-- Primary Color -->
-                    <div class="color-control">
-                        <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Cor Principal
-                            (Marca)</label>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <input type="color" id="primaryColorInput"
-                                style="width: 50px; height: 50px; border: none; cursor: pointer; border-radius: 8px;"
-                                onchange="updatePreviewColor(this.value, 'primary')">
-                            <span id="primaryColorHex"
-                                style="font-family: monospace; color: var(--text-muted);">#------</span>
-                        </div>
-                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Botões, destaques e
-                            ícones.</p>
+                <!-- Color Customization -->
+                <div style="background: #fff; padding: 2rem; border-radius: 16px; border: 1px solid var(--border);">
+                    <div style="margin-bottom: 2rem;">
+                        <h3
+                            style="font-size: 1.2rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;">
+                            <i class="ph-duotone ph-palette" style="color: var(--primary);"></i>
+                            Personalizar Cores
+                        </h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            Deseja ajustar as cores mantendo a lógica do tema escolhido?
+                        </p>
                     </div>
 
-                    <!-- Background Color (Optional) -->
-                    <div class="color-control">
-                        <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Cor de Fundo
-                            (Opcional)</label>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <input type="color" id="bgColorInput"
-                                style="width: 50px; height: 50px; border: none; cursor: pointer; border-radius: 8px;"
-                                onchange="updatePreviewColor(this.value, 'bg')">
-                            <span id="bgColorHex"
-                                style="font-family: monospace; color: var(--text-muted);">Padrão</span>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;">
+                        <!-- Primary Color -->
+                        <div class="color-control">
+                            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Principal</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="color" id="primaryColorInput"
+                                    style="width: 50px; height: 50px; border: none; cursor: pointer; border-radius: 8px;"
+                                    onchange="updatePreviewColor(this.value, 'primary')">
+                                <span id="primaryColorHex"
+                                    style="font-family: monospace; color: var(--text-muted);">#------</span>
+                            </div>
                         </div>
-                        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px;">Só altere se quiser
-                            fugir do padrão do tema.</p>
+
+                        <!-- Background Color (Optional) -->
+                        <div class="color-control">
+                            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Fundo</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="color" id="bgColorInput"
+                                    style="width: 50px; height: 50px; border: none; cursor: pointer; border-radius: 8px;"
+                                    onchange="updatePreviewColor(this.value, 'bg')">
+                                <span id="bgColorHex"
+                                    style="font-family: monospace; color: var(--text-muted);">Padrão</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
+                        <button class="btn"
+                            style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--text);"
+                            onclick="resetColors()">
+                            Restaurar Cores
+                        </button>
                     </div>
                 </div>
 
-                <div style="margin-top: 2rem; display: flex; justify-content: flex-end;">
-                    <button class="btn"
-                        style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--text);"
-                        onclick="resetColors()">
-                        Restaurar Cores do Tema
-                    </button>
+                <!-- Icon Customization -->
+                <div
+                    style="background: #fff; padding: 2rem; border-radius: 16px; border: 1px solid var(--border); display: flex; flex-direction: column;">
+                    <div style="margin-bottom: 1.5rem;">
+                        <h3
+                            style="font-size: 1.2rem; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;">
+                            <i class="ph-duotone ph-image" style="color: var(--primary);"></i>
+                            Ícone da Notificação (PWA)
+                        </h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                            Este ícone aparecerá nas notificações push do cliente (iPhone/Android).
+                            Recomendado: 192x192px PNG transparente.
+                        </p>
+                    </div>
+
+                    <div
+                        style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; border: 2px dashed var(--border); border-radius: 12px; padding: 1.5rem;">
+                        <img id="iconPreview" src="/client/icons/icon-192.png" alt="Icon Preview"
+                            style="width: 64px; height: 64px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+
+                        <input type="file" id="iconInput" accept="image/*" style="display: none;"
+                            onchange="uploadIcon(this)">
+
+                        <button onclick="document.getElementById('iconInput').click()" class="btn"
+                            style="background: var(--bg-surface); border: 1px solid var(--border);">
+                            <i class="ph-bold ph-upload-simple"></i> Escolher Arquivo
+                        </button>
+                    </div>
                 </div>
+
             </div>
         </div>
 
@@ -837,6 +865,45 @@
                 statusMsg.style.color = 'var(--error)';
                 statusMsg.textContent = 'Erro ao salvar tema.';
                 console.error(err);
+            }
+        }
+
+        async function uploadIcon(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('icon', file);
+
+            const statusMsg = document.getElementById('statusMessage');
+            statusMsg.style.display = 'block';
+            statusMsg.style.color = 'var(--text-muted)';
+            statusMsg.textContent = 'Enviando ícone...';
+
+            try {
+                // Assuming we use standard fetch or update api.js to support upload
+                // The 'api' helper typically strings JSON. Let's use raw fetch for multipart
+                const token = sessionStorage.getItem('token');
+                const res = await fetch('/api/admin/settings/icon', {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token }, // No Content-Type, browser sets it for FormData
+                    body: formData
+                });
+
+                if (!res.ok) throw new Error('Falha no upload');
+
+                const data = await res.json();
+
+                // Update Preview
+                document.getElementById('iconPreview').src = data.url;
+
+                statusMsg.style.color = 'var(--success)';
+                statusMsg.textContent = 'Ícone atualizado!';
+                setTimeout(() => statusMsg.style.display = 'none', 3000);
+            } catch (e) {
+                console.error(e);
+                statusMsg.style.color = 'var(--error)';
+                statusMsg.textContent = 'Erro ao enviar ícone.';
             }
         }
     </script>

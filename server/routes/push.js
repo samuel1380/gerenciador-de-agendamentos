@@ -73,50 +73,55 @@ router.sendPushToUser = (db, userId, title, message) => {
 
     console.log(`[PUSH] Sending to User ${userId}: ${title}`);
 
-    db.all(`SELECT * FROM push_subscriptions WHERE user_id = ?`, [userId], (err, rows) => {
-        if (err || !rows || rows.length === 0) {
-            console.log('[PUSH] No subscriptions found for user', userId);
-            return;
-        }
+    // Fetch Custom Icon Setting
+    db.get("SELECT value FROM settings WHERE `key` = 'notification_icon_url'", (errSet, rowSet) => {
+        const customIcon = (rowSet && rowSet.value) ? rowSet.value : '/client/icons/icon-192.png';
 
-        // Ensure we only send once per endpoint (avoid duplicates)
-        const uniqueByEndpoint = [];
-        const seenEndpoints = new Set();
-        for (const sub of rows) {
-            if (sub.endpoint && !seenEndpoints.has(sub.endpoint)) {
-                seenEndpoints.add(sub.endpoint);
-                uniqueByEndpoint.push(sub);
-            }
-        }
-
-        const payload = JSON.stringify({
-            title,
-            body: message,
-            badge: '/client/icons/icon-96.png',
-            icon: '/client/icons/icon-192.png',
-            tag: 'agendamentos-general',
-            renotify: true
-        });
-
-        uniqueByEndpoint.forEach(sub => {
-            let subscription;
-            try {
-                subscription = {
-                    endpoint: sub.endpoint,
-                    keys: JSON.parse(sub.keys)
-                };
-            } catch (e) {
-                return; // bad json
+        db.all(`SELECT * FROM push_subscriptions WHERE user_id = ?`, [userId], (err, rows) => {
+            if (err || !rows || rows.length === 0) {
+                console.log('[PUSH] No subscriptions found for user', userId);
+                return;
             }
 
-            webpush.sendNotification(subscription, payload)
-                .then(() => console.log('[PUSH] Sent successfully to endpointid', sub.id))
-                .catch(err => {
-                    console.error('[PUSH] Failed to send:', err.statusCode);
-                    if (err.statusCode === 410 || err.statusCode === 404) {
-                        db.run(`DELETE FROM push_subscriptions WHERE id = ?`, [sub.id]);
-                    }
-                });
+            // Ensure we only send once per endpoint (avoid duplicates)
+            const uniqueByEndpoint = [];
+            const seenEndpoints = new Set();
+            for (const sub of rows) {
+                if (sub.endpoint && !seenEndpoints.has(sub.endpoint)) {
+                    seenEndpoints.add(sub.endpoint);
+                    uniqueByEndpoint.push(sub);
+                }
+            }
+
+            const payload = JSON.stringify({
+                title,
+                body: message,
+                badge: '/client/icons/icon-96.png', // Badge is usually small monochrome
+                icon: customIcon,
+                tag: 'agendamentos-general',
+                renotify: true
+            });
+
+            uniqueByEndpoint.forEach(sub => {
+                let subscription;
+                try {
+                    subscription = {
+                        endpoint: sub.endpoint,
+                        keys: JSON.parse(sub.keys)
+                    };
+                } catch (e) {
+                    return; // bad json
+                }
+
+                webpush.sendNotification(subscription, payload)
+                    .then(() => console.log('[PUSH] Sent successfully to endpointid', sub.id))
+                    .catch(err => {
+                        console.error('[PUSH] Failed to send:', err.statusCode);
+                        if (err.statusCode === 410 || err.statusCode === 404) {
+                            db.run(`DELETE FROM push_subscriptions WHERE id = ?`, [sub.id]);
+                        }
+                    });
+            });
         });
     });
 };

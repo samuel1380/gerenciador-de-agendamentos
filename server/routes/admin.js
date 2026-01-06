@@ -3,6 +3,28 @@ const router = express.Router();
 const { authenticateToken, isAdmin } = require('../middleware/auth');
 const pushRouter = require('./push');
 
+const mult = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Configure Multer
+const storage = mult.diskStorage({
+    destination: function (req, file, cb) {
+        // Ensure directory exists
+        const dir = path.join(__dirname, '../../client/icons');
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        cb(null, dir);
+    },
+    filename: function (req, file, cb) {
+        // Force filename to specific name to avoid junk or use timestamp
+        const ext = path.extname(file.originalname);
+        cb(null, 'notification-icon-custom' + ext);
+    }
+});
+const upload = mult({ storage: storage });
+
 function ensureNotificationTemplatesTable(db, callback) {
     const createSql = db.isMysql
         ? `
@@ -376,6 +398,22 @@ router.post('/settings', (req, res) => {
     stmt.finalize((err) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ message: 'Settings updated successfully' });
+    });
+});
+
+// UPLOAD NOTIFICATION ICON
+router.post('/settings/icon', upload.single('icon'), (req, res) => {
+    const db = req.db;
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+
+    // Path relative to client root, accessible via static server
+    // Filename is set in storage config above
+    const iconUrl = '/client/icons/' + req.file.filename + '?t=' + Date.now();
+
+    const stmt = db.prepare("INSERT OR REPLACE INTO settings (`key`, value) VALUES (?, ?)");
+    stmt.run('notification_icon_url', iconUrl, function (err) {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ message: 'Icon updated', url: iconUrl });
     });
 });
 
