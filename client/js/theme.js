@@ -69,11 +69,17 @@
         const root = document.documentElement;
         if (colors.primary) root.style.setProperty('--primary', colors.primary);
         if (colors.bg) root.style.setProperty('--bg', colors.bg);
+        if (colors.bgCard) root.style.setProperty('--bg-card', colors.bgCard);
+        if (colors.text) root.style.setProperty('--text', colors.text);
+        if (colors.radius) root.style.setProperty('--radius', colors.radius);
     }
 
     function removeCustomColors() {
         const root = document.documentElement;
         root.style.removeProperty('--primary');
         root.style.removeProperty('--bg');
+        root.style.removeProperty('--bg-card');
+        root.style.removeProperty('--text');
+        root.style.removeProperty('--radius');
     }
 })();

@@ -911,6 +911,52 @@ html.theme-health .auth-page-body {
 }
 
 
+/* 6. Clínica de Estética (Roxo Sofisticado) */
+html.theme-esthetic {
+    --primary: #7C3AED;
+    /* Violet 600 */
+    --primary-dark: #6D28D9;
+    --primary-light: #F3E8FF;
+    /* Violet 50 */
+    --accent: #E9D5FF;
+    --accent-dark: #5B21B6;
+
+    --text: #4C1D95;
+    /* Violet 900 */
+    --text-light: #6B7280;
+    --text-muted: #9CA3AF;
+
+    --bg: #F5F3FF;
+    /* Violet 50 tint */
+    --bg-card: #FFFFFF;
+
+    --white: #FFFFFF;
+    --gray-50: #F9FAFB;
+    --gray-100: #F3E8FF;
+    --gray-200: #E9D5FF;
+    --gray-300: #C4B5FD;
+
+    --shadow-sm: 0 4px 6px -1px rgba(124, 58, 237, 0.1);
+    --shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.15);
+    --shadow-lg: 0 20px 25px -5px rgba(124, 58, 237, 0.2);
+
+    --radius: 20px;
+}
+
+html.theme-esthetic .bottom-nav {
+    border-color: #E9D5FF;
+}
+
+html.theme-esthetic .nav-item.active {
+    background: #F3E8FF;
+    color: #6D28D9;
+}
+
+html.theme-esthetic .auth-page-body {
+    background: linear-gradient(135deg, #F3E8FF 0%, #FFFFFF 100%);
+}
+
+
 /* --- Shared Overrides & Dark Mode Inputs --- */
 
 html[class*="theme-barber"] .card,

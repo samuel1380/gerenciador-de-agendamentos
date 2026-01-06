@@ -412,6 +412,20 @@
             background: #2563eb;
         }
 
+        /* Esthetic: Purple */
+        .bg-gradient-esthetic {
+            background: linear-gradient(135deg, #f3e8ff 0%, #7c3aed 100%);
+            color: #fff;
+        }
+
+        .preview-theme-esthetic .mockup-header {
+            background: #7c3aed;
+        }
+
+        .preview-theme-esthetic .mockup-btn {
+            background: #7c3aed;
+        }
+
         /* Responsive Save Bar */
         .save-bar {
             background: var(--bg-surface);
@@ -581,6 +595,19 @@
                             <p>Azul claro e branco, com visual mais clínico e confiável.</p>
                         </div>
                     </div>
+
+                    <!-- Esthetic Theme -->
+                    <div class="theme-card" data-theme="esthetic" onclick="selectTheme('esthetic')">
+                        <div class="active-check"><i class="ph-bold ph-check"></i></div>
+                        <div class="theme-card-header bg-gradient-esthetic">
+                            <span class="theme-tag">Roxo sofisticado</span>
+                            <i class="ph-duotone ph-sparkle theme-icon-large"></i>
+                        </div>
+                        <div class="theme-info">
+                            <h4>Clínica de Estética</h4>
+                            <p>Tons de roxo e lavanda, transmitindo luxo e transformação.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -600,28 +627,94 @@
                         </p>
                     </div>
 
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem;">
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.5rem;">
                         <!-- Primary Color -->
                         <div class="color-control">
-                            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Principal</label>
+                            <label
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">Principal</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="color" id="primaryColorInput"
-                                    style="width: 50px; height: 50px; border: none; cursor: pointer; border-radius: 8px;"
-                                    onchange="updatePreviewColor(this.value, 'primary')">
+                                <div style="position: relative; width: 42px; height: 42px;">
+                                    <input type="color" id="primaryColorInput"
+                                        style="position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; cursor: pointer; opacity: 0;"
+                                        onchange="updatePreviewColor(this.value, 'primary')">
+                                    <div id="primaryColorPreview"
+                                        style="width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--border); background-color: var(--primary);">
+                                    </div>
+                                </div>
                                 <span id="primaryColorHex"
-                                    style="font-family: monospace; color: var(--text-muted);">#------</span>
+                                    style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">#------</span>
                             </div>
                         </div>
 
-                        <!-- Background Color (Optional) -->
+                        <!-- Background Color -->
                         <div class="color-control">
-                            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem;">Fundo</label>
+                            <label
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">Fundo
+                                do Site</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
-                                <input type="color" id="bgColorInput"
-                                    style="width: 50px; height: 50px; border: none; cursor: pointer; border-radius: 8px;"
-                                    onchange="updatePreviewColor(this.value, 'bg')">
+                                <div style="position: relative; width: 42px; height: 42px;">
+                                    <input type="color" id="bgColorInput"
+                                        style="position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; cursor: pointer; opacity: 0;"
+                                        onchange="updatePreviewColor(this.value, 'bg')">
+                                    <div id="bgColorPreview"
+                                        style="width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--border); background-color: #fff;">
+                                    </div>
+                                </div>
                                 <span id="bgColorHex"
-                                    style="font-family: monospace; color: var(--text-muted);">Padrão</span>
+                                    style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">Padrão</span>
+                            </div>
+                        </div>
+
+                        <!-- Card Background Color -->
+                        <div class="color-control">
+                            <label
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">Fundo
+                                dos Cards</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div style="position: relative; width: 42px; height: 42px;">
+                                    <input type="color" id="bgCardColorInput"
+                                        style="position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; cursor: pointer; opacity: 0;"
+                                        onchange="updatePreviewColor(this.value, 'bgCard')">
+                                    <div id="bgCardColorPreview"
+                                        style="width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--border); background-color: #fff;">
+                                    </div>
+                                </div>
+                                <span id="bgCardColorHex"
+                                    style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">Padrão</span>
+                            </div>
+                        </div>
+
+                        <!-- Text Color -->
+                        <div class="color-control">
+                            <label
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">Cor
+                                do Texto</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div style="position: relative; width: 42px; height: 42px;">
+                                    <input type="color" id="textColorInput"
+                                        style="position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; cursor: pointer; opacity: 0;"
+                                        onchange="updatePreviewColor(this.value, 'text')">
+                                    <div id="textColorPreview"
+                                        style="width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--border); background-color: #000;">
+                                    </div>
+                                </div>
+                                <span id="textColorHex"
+                                    style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">Padrão</span>
+                            </div>
+                        </div>
+
+                        <!-- Radius Slider -->
+                        <div class="color-control" style="grid-column: span 2;">
+                            <label
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">Arredondamento
+                                (Cantos)</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="range" id="radiusInput" min="0" max="40" value="12"
+                                    style="flex: 1; accent-color: var(--primary);"
+                                    oninput="updatePreviewColor(this.value + 'px', 'radius')">
+                                <span id="radiusVal"
+                                    style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem; width: 40px;">12px</span>
                             </div>
                         </div>
                     </div>
@@ -630,7 +723,7 @@
                         <button class="btn"
                             style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--text);"
                             onclick="resetColors()">
-                            Restaurar Cores
+                            <i class="ph-bold ph-arrow-counter-clockwise"></i> Restaurar Padrões
                         </button>
                     </div>
                 </div>
@@ -747,14 +840,26 @@
                     try {
                         customColors = JSON.parse(settings.client_theme_colors);
                         // Populate Inputs
-                        if (customColors.primary) {
-                            document.getElementById('primaryColorInput').value = customColors.primary;
-                            document.getElementById('primaryColorHex').textContent = customColors.primary;
+                        const setInput = (id, val, hexId, previewId) => {
+                            const el = document.getElementById(id);
+                            if (el && val) {
+                                el.value = val;
+                                if (hexId) document.getElementById(hexId).textContent = val;
+                                if (previewId) document.getElementById(previewId).style.backgroundColor = val;
+                            }
+                        };
+
+                        setInput('primaryColorInput', customColors.primary, 'primaryColorHex', 'primaryColorPreview');
+                        setInput('bgColorInput', customColors.bg, 'bgColorHex', 'bgColorPreview');
+                        setInput('bgCardColorInput', customColors.bgCard, 'bgCardColorHex', 'bgCardColorPreview');
+                        setInput('textColorInput', customColors.text, 'textColorHex', 'textColorPreview');
+
+                        if (customColors.radius) {
+                            const rVal = customColors.radius.replace('px', '');
+                            document.getElementById('radiusInput').value = rVal;
+                            document.getElementById('radiusVal').textContent = customColors.radius;
                         }
-                        if (customColors.bg) {
-                            document.getElementById('bgColorInput').value = customColors.bg;
-                            document.getElementById('bgColorHex').textContent = customColors.bg;
-                        }
+
                     } catch (e) { }
                 }
 
@@ -775,17 +880,48 @@
 
         function updatePreviewColor(val, type) {
             customColors[type] = val;
-            if (type === 'primary') document.getElementById('primaryColorHex').textContent = val;
-            if (type === 'bg') document.getElementById('bgColorHex').textContent = val;
+
+            // Update Text Labels & Color Previews
+            if (type === 'primary') {
+                document.getElementById('primaryColorHex').textContent = val;
+                document.getElementById('primaryColorPreview').style.backgroundColor = val;
+            }
+            if (type === 'bg') {
+                document.getElementById('bgColorHex').textContent = val;
+                document.getElementById('bgColorPreview').style.backgroundColor = val;
+            }
+            if (type === 'bgCard') {
+                document.getElementById('bgCardColorHex').textContent = val;
+                document.getElementById('bgCardColorPreview').style.backgroundColor = val;
+            }
+            if (type === 'text') {
+                document.getElementById('textColorHex').textContent = val;
+                document.getElementById('textColorPreview').style.backgroundColor = val;
+            }
+            if (type === 'radius') {
+                document.getElementById('radiusVal').textContent = val;
+            }
+
             updateUI(currentTheme);
         }
 
         function resetColors() {
             customColors = {};
-            document.getElementById('primaryColorInput').value = "#000000"; // Reset visual
-            document.getElementById('primaryColorHex').textContent = "Padrão";
-            document.getElementById('bgColorInput').value = "#ffffff";
-            document.getElementById('bgColorHex').textContent = "Padrão";
+
+            const resetInput = (id, hexId, previewId, defHex) => {
+                document.getElementById(id).value = "#000000";
+                document.getElementById(hexId).textContent = "Padrão";
+                if (previewId) document.getElementById(previewId).style.backgroundColor = defHex || 'transparent';
+            };
+
+            resetInput('primaryColorInput', 'primaryColorHex', 'primaryColorPreview', 'transparent');
+            resetInput('bgColorInput', 'bgColorHex', 'bgColorPreview', 'transparent');
+            resetInput('bgCardColorInput', 'bgCardColorHex', 'bgCardColorPreview', 'transparent');
+            resetInput('textColorInput', 'textColorHex', 'textColorPreview', 'transparent');
+
+            document.getElementById('radiusInput').value = 12;
+            document.getElementById('radiusVal').textContent = "12px";
+
             updateUI(currentTheme);
         }
 
@@ -805,42 +941,36 @@
                 // Reset Base Class
                 preview.className = 'phone-screen preview-theme-' + activeThemeId;
 
+                // Remove old inline styles first to ensure clean state if vars not present
+                preview.style = '';
+
                 // Apply Custom Colors Override
                 if (customColors.primary) {
                     preview.style.setProperty('--primary', customColors.primary);
-                    // Hack to make preview buttons use this var if they aren't already
-                    // The CSS for preview uses specific colors (e.g. #d97706), so we MUST set inline styles on elements to override or use JS
-                    // Since the preview CSS (lines 322+) uses static colors, we need to manually inject styles or use CSS vars in the preview CSS.
-                    // Let's manually override the specific elements in the preview for immediate feedback.
 
                     const header = preview.querySelector('.mockup-header');
                     const btn = preview.querySelector('.mockup-btn');
+                    // Force override specifically for preview elements that might need it
+                    if (activeThemeId !== 'barber' && activeThemeId !== 'tattoo') {
+                        if (header) header.style.background = customColors.primary;
+                        if (btn) btn.style.background = customColors.primary;
+                    }
+                }
 
-                    if (header) {
-                        // Some themes use black header (Barber), some use primary. 
-                        // Barber: Primary is Gold. Header is Black.
-                        // Most others: Header is Primary.
-                        if (activeThemeId !== 'barber' && activeThemeId !== 'tattoo' && activeThemeId !== 'nail') {
-                            // Standard behavior
-                            header.style.background = customColors.primary;
-                        }
-                        // Nail gradient? Barber gradient?
-                        // Ideally we just set the button which is always primary.
-                    }
-                    if (btn) {
-                        btn.style.background = customColors.primary;
-                        if (activeThemeId === 'barber') {
-                            btn.style.borderColor = customColors.primary;
-                            btn.style.color = customColors.primary;
-                            btn.style.background = '#111';
-                        }
-                    }
-                } else {
-                    // Reset inline styles
-                    const header = preview.querySelector('.mockup-header');
+                if (customColors.bg) {
+                    // The preview screen background
+                    preview.style.background = customColors.bg;
+                }
+
+                if (customColors.bgCard) {
+                    preview.querySelectorAll('.mockup-card').forEach(c => c.style.backgroundColor = customColors.bgCard);
+                }
+
+                if (customColors.radius) {
+                    preview.style.borderRadius = customColors.radius; // Phone radius? No, internal elements
+                    preview.querySelectorAll('.mockup-card').forEach(c => c.style.borderRadius = customColors.radius);
                     const btn = preview.querySelector('.mockup-btn');
-                    if (header) header.style = '';
-                    if (btn) btn.style = '';
+                    if (btn) btn.style.borderRadius = customColors.radius;
                 }
             }
         }
