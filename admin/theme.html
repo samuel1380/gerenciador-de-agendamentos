@@ -883,14 +883,17 @@
             try {
                 // Assuming we use standard fetch or update api.js to support upload
                 // The 'api' helper typically strings JSON. Let's use raw fetch for multipart
-                const token = sessionStorage.getItem('token');
+                const token = localStorage.getItem('token');
                 const res = await fetch('/api/admin/settings/icon', {
                     method: 'POST',
                     headers: { 'Authorization': 'Bearer ' + token }, // No Content-Type, browser sets it for FormData
                     body: formData
                 });
 
-                if (!res.ok) throw new Error('Falha no upload');
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(errorText || 'Falha no upload');
+                }
 
                 const data = await res.json();
 
@@ -903,7 +906,7 @@
             } catch (e) {
                 console.error(e);
                 statusMsg.style.color = 'var(--error)';
-                statusMsg.textContent = 'Erro ao enviar ícone.';
+                statusMsg.textContent = 'Erro: ' + e.message;
             }
         }
     </script>
