@@ -912,11 +912,14 @@ html.theme-health .auth-page-body {
 
 
 /* 6. Clínica de Estética (Roxo Sofisticado) */
+/* 6. Clínica de Estética (Roxo Sofisticado) */
 html.theme-esthetic {
     --primary: #7C3AED;
     /* Violet 600 */
+    --primary-rgb: 124, 58, 237;
     --primary-dark: #6D28D9;
     --primary-light: #F3E8FF;
+    /* Fallback */
     /* Violet 50 */
     --accent: #E9D5FF;
     --accent-dark: #5B21B6;
@@ -936,24 +939,24 @@ html.theme-esthetic {
     --gray-200: #E9D5FF;
     --gray-300: #C4B5FD;
 
-    --shadow-sm: 0 4px 6px -1px rgba(124, 58, 237, 0.1);
-    --shadow: 0 10px 25px -5px rgba(124, 58, 237, 0.15);
-    --shadow-lg: 0 20px 25px -5px rgba(124, 58, 237, 0.2);
+    --shadow-sm: 0 4px 6px -1px rgba(var(--primary-rgb), 0.1);
+    --shadow: 0 10px 25px -5px rgba(var(--primary-rgb), 0.15);
+    --shadow-lg: 0 20px 25px -5px rgba(var(--primary-rgb), 0.2);
 
     --radius: 20px;
 }
 
 html.theme-esthetic .bottom-nav {
-    border-color: #E9D5FF;
+    border-color: rgba(var(--primary-rgb), 0.2);
 }
 
 html.theme-esthetic .nav-item.active {
-    background: #F3E8FF;
-    color: #6D28D9;
+    background: var(--primary-light);
+    color: var(--primary);
 }
 
 html.theme-esthetic .auth-page-body {
-    background: linear-gradient(135deg, #F3E8FF 0%, #FFFFFF 100%);
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-card) 100%);
 }
 
 

@@ -67,11 +67,31 @@
     function applyCustomColors(colors) {
         if (!colors) return;
         const root = document.documentElement;
-        if (colors.primary) root.style.setProperty('--primary', colors.primary);
+        if (colors.primary) {
+            root.style.setProperty('--primary', colors.primary);
+            // Derive variations
+            const rgb = hexToRgb(colors.primary);
+            if (rgb) {
+                root.style.setProperty('--primary-rgb', rgb);
+                root.style.setProperty('--primary-light', `rgba(${rgb}, 0.1)`);
+            }
+        }
         if (colors.bg) root.style.setProperty('--bg', colors.bg);
         if (colors.bgCard) root.style.setProperty('--bg-card', colors.bgCard);
         if (colors.text) root.style.setProperty('--text', colors.text);
         if (colors.radius) root.style.setProperty('--radius', colors.radius);
+    }
+
+    function hexToRgb(hex) {
+        // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+        var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+        hex = hex.replace(shorthandRegex, function (m, r, g, b) {
+            return r + r + g + g + b + b;
+        });
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ?
+            `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
+            : null;
     }
 
     function removeCustomColors() {
