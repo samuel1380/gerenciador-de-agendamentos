@@ -873,8 +873,52 @@
             updateUI(currentTheme);
         });
 
+        // Theme Defaults Map
+        const themeDefaults = {
+            nail: { primary: '#be185d', bg: '#ffffff', bgCard: '#ffffff', text: '#000000', radius: '12px' },
+            barber: { primary: '#d4af37', bg: '#0B0F19', bgCard: '#111827', text: '#F3F4F6', radius: '4px' },
+            hair: { primary: '#D97706', bg: '#FAFAF9', bgCard: '#ffffff', text: '#1C1917', radius: '12px' },
+            spa: { primary: '#059669', bg: '#F0FDF4', bgCard: '#ffffff', text: '#064E3B', radius: '24px' },
+            tattoo: { primary: '#EF4444', bg: '#050505', bgCard: '#0A0A0A', text: '#F3F4F6', radius: '4px' },
+            health: { primary: '#2563EB', bg: '#F1F5F9', bgCard: '#ffffff', text: '#0F172A', radius: '12px' },
+            esthetic: { primary: '#7C3AED', bg: '#F5F3FF', bgCard: '#ffffff', text: '#4C1D95', radius: '20px' }
+        };
+
         function selectTheme(themeId) {
             currentTheme = themeId;
+
+            // Auto-populate custom colors with theme defaults to avoid conflicts
+            if (themeDefaults[themeId]) {
+                // We create a copy to not mutate the default object directly if used elsewhere (though constant)
+                customColors = { ...themeDefaults[themeId] };
+
+                // Helper to safely update inputs if they exist
+                const updateInput = (id, val, hexId, previewId) => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = val;
+                    const hex = document.getElementById(hexId);
+                    if (hex) hex.textContent = val;
+                    const prev = document.getElementById(previewId);
+                    if (prev) prev.style.backgroundColor = val;
+                };
+
+                updateInput('primaryColorInput', customColors.primary, 'primaryColorHex', 'primaryColorPreview');
+                updateInput('bgColorInput', customColors.bg, 'bgColorHex', 'bgColorPreview');
+                updateInput('bgCardColorInput', customColors.bgCard, 'bgCardColorHex', 'bgCardColorPreview');
+                updateInput('textColorInput', customColors.text, 'textColorHex', 'textColorPreview');
+
+                // Radius
+                if (customColors.radius) {
+                    const rVal = customColors.radius.replace('px', '');
+                    const rInput = document.getElementById('radiusInput');
+                    if (rInput) rInput.value = rVal;
+                    const rLabel = document.getElementById('radiusVal');
+                    if (rLabel) rLabel.textContent = customColors.radius;
+                }
+            } else {
+                customColors = {};
+            }
+
             updateUI(themeId);
         }
 
@@ -907,22 +951,28 @@
 
         function resetColors() {
             customColors = {};
+            if (themeDefaults[currentTheme]) {
+                selectTheme(currentTheme);
+            } else {
+                const resetInput = (id, hexId, previewId, defHex) => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = "#000000";
+                    const hex = document.getElementById(hexId);
+                    if (hex) hex.textContent = "Padrão";
+                    const prev = document.getElementById(previewId);
+                    if (prev) prev.style.backgroundColor = defHex || 'transparent';
+                };
 
-            const resetInput = (id, hexId, previewId, defHex) => {
-                document.getElementById(id).value = "#000000";
-                document.getElementById(hexId).textContent = "Padrão";
-                if (previewId) document.getElementById(previewId).style.backgroundColor = defHex || 'transparent';
-            };
+                resetInput('primaryColorInput', 'primaryColorHex', 'primaryColorPreview', 'transparent');
+                resetInput('bgColorInput', 'bgColorHex', 'bgColorPreview', 'transparent');
+                resetInput('bgCardColorInput', 'bgCardColorHex', 'bgCardColorPreview', 'transparent');
+                resetInput('textColorInput', 'textColorHex', 'textColorPreview', 'transparent');
 
-            resetInput('primaryColorInput', 'primaryColorHex', 'primaryColorPreview', 'transparent');
-            resetInput('bgColorInput', 'bgColorHex', 'bgColorPreview', 'transparent');
-            resetInput('bgCardColorInput', 'bgCardColorHex', 'bgCardColorPreview', 'transparent');
-            resetInput('textColorInput', 'textColorHex', 'textColorPreview', 'transparent');
+                document.getElementById('radiusInput').value = 12;
+                document.getElementById('radiusVal').textContent = "12px";
 
-            document.getElementById('radiusInput').value = 12;
-            document.getElementById('radiusVal').textContent = "12px";
-
-            updateUI(currentTheme);
+                updateUI(currentTheme);
+            }
         }
 
         function updateUI(activeThemeId) {

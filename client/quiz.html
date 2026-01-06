@@ -327,7 +327,52 @@
                     if (score <= 7) return { title: "Avaliação Estética", desc: "Vamos cuidar de você. Agende uma Avaliação Facial/Corporal." };
                     return { title: "Atendimento Prioritário", desc: "Não adie sua saúde. Recomendamos agendar o horário mais próximo." };
                 }
+            },
+            esthetic: {
+                title: "Diagnóstico Estético",
+                questions: [
+                    {
+                        text: "O que mais incomoda na sua pele?",
+                        options: [
+                            { text: "Manchas e falta de brilho", score: 2 },
+                            { text: "Acne e oleosidade", score: 1 },
+                            { text: "Linhas finas e flacidez", score: 3 },
+                            { text: "Apenas manutenção preventiva", score: 1 }
+                        ]
+                    },
+                    {
+                        text: "Membro corporal que deseja focar?",
+                        options: [
+                            { text: "Rosto (Face)", score: 1 },
+                            { text: "Abdômen/Cintura", score: 2 },
+                            { text: "Pernas/Glúteos (Celulite)", score: 2 },
+                            { text: "Corpo todo", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Como você prefere os tratamentos?",
+                        options: [
+                            { text: "Naturais e relaxantes", score: 1 },
+                            { text: "Tecnológicos (Laser, Radiofrequência)", score: 2 },
+                            { text: "Injetáveis (Botox, Preenchimento)", score: 3 }
+                        ]
+                    },
+                    {
+                        text: "Qual seu objetivo principal?",
+                        options: [
+                            { text: "Rejuvenescimento", score: 3 },
+                            { text: "Limpeza e Hidratação", score: 1 },
+                            { text: "Redução de Medidas", score: 2 }
+                        ]
+                    }
+                ],
+                getResult: (score) => {
+                    if (score <= 5) return { title: "Glow Natural", desc: "Realce sua beleza natural. Recomendamos Limpeza de Pele Profunda + Hidratação." };
+                    if (score <= 8) return { title: "Protocolo Corporal", desc: "Foco em contorno e redução. Recomendamos Drenagem Linfática ou Criofrequência." };
+                    return { title: "Harmonização & Rejuvenescimento", desc: "Resultados visíveis e duradouros. Recomendamos Botox ou Bioestimuladores." };
+                }
             }
+        }
         };
 
         const activeTheme = localStorage.getItem('client_theme') || 'nail';
