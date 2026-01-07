@@ -76,9 +76,14 @@
                 root.style.setProperty('--primary-light', `rgba(${rgb}, 0.1)`);
             }
         }
+        if (colors.primaryDark) root.style.setProperty('--primary-dark', colors.primaryDark);
+        if (colors.accent) root.style.setProperty('--accent', colors.accent);
         if (colors.bg) root.style.setProperty('--bg', colors.bg);
         if (colors.bgCard) root.style.setProperty('--bg-card', colors.bgCard);
         if (colors.text) root.style.setProperty('--text', colors.text);
+        if (colors.textLight) root.style.setProperty('--text-light', colors.textLight);
+        if (colors.textMuted) root.style.setProperty('--text-muted', colors.textMuted);
+        if (colors.border) root.style.setProperty('--border', colors.border);
         if (colors.radius) root.style.setProperty('--radius', colors.radius);
     }
 
@@ -97,9 +102,16 @@
     function removeCustomColors() {
         const root = document.documentElement;
         root.style.removeProperty('--primary');
+        root.style.removeProperty('--primary-dark');
+        root.style.removeProperty('--primary-rgb');
+        root.style.removeProperty('--primary-light');
+        root.style.removeProperty('--accent');
         root.style.removeProperty('--bg');
         root.style.removeProperty('--bg-card');
         root.style.removeProperty('--text');
+        root.style.removeProperty('--text-light');
+        root.style.removeProperty('--text-muted');
+        root.style.removeProperty('--border');
         root.style.removeProperty('--radius');
     }
 })();

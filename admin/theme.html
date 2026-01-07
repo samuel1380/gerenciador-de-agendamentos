@@ -627,12 +627,13 @@
                         </p>
                     </div>
 
-                    <div
-                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1.5rem;">
+                    <div <div
+                        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.5rem;">
                         <!-- Primary Color -->
                         <div class="color-control">
                             <label
-                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">Principal</label>
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">🎨
+                                Cor Principal</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <div style="position: relative; width: 42px; height: 42px;">
                                     <input type="color" id="primaryColorInput"
@@ -647,11 +648,48 @@
                             </div>
                         </div>
 
+                        <!-- Primary Dark (Hover) -->
+                        <div class="color-control">
+                            <label
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">🔘
+                                Botões (Hover)</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div style="position: relative; width: 42px; height: 42px;">
+                                    <input type="color" id="primaryDarkColorInput"
+                                        style="position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; cursor: pointer; opacity: 0;"
+                                        onchange="updatePreviewColor(this.value, 'primaryDark')">
+                                    <div id="primaryDarkColorPreview"
+                                        style="width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--border); background-color: #000;">
+                                    </div>
+                                </div>
+                                <span id="primaryDarkColorHex"
+                                    style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">Padrão</span>
+                            </div>
+                        </div>
+
+                        <!-- Accent Color -->
+                        <div class="color-control">
+                            <label style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">✨
+                                Destaques</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div style="position: relative; width: 42px; height: 42px;">
+                                    <input type="color" id="accentColorInput"
+                                        style="position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; cursor: pointer; opacity: 0;"
+                                        onchange="updatePreviewColor(this.value, 'accent')">
+                                    <div id="accentColorPreview"
+                                        style="width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--border); background-color: #ffd700;">
+                                    </div>
+                                </div>
+                                <span id="accentColorHex"
+                                    style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">Padrão</span>
+                            </div>
+                        </div>
+
                         <!-- Background Color -->
                         <div class="color-control">
                             <label
-                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">Fundo
-                                do Site</label>
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">🖼️
+                                Fundo Geral</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <div style="position: relative; width: 42px; height: 42px;">
                                     <input type="color" id="bgColorInput"
@@ -669,8 +707,8 @@
                         <!-- Card Background Color -->
                         <div class="color-control">
                             <label
-                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">Fundo
-                                dos Cards</label>
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">📦
+                                Fundo Cards</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <div style="position: relative; width: 42px; height: 42px;">
                                     <input type="color" id="bgCardColorInput"
@@ -688,8 +726,8 @@
                         <!-- Text Color -->
                         <div class="color-control">
                             <label
-                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">Cor
-                                do Texto</label>
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">📝
+                                Texto Principal</label>
                             <div style="display: flex; gap: 10px; align-items: center;">
                                 <div style="position: relative; width: 42px; height: 42px;">
                                     <input type="color" id="textColorInput"
@@ -700,6 +738,63 @@
                                     </div>
                                 </div>
                                 <span id="textColorHex"
+                                    style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">Padrão</span>
+                            </div>
+                        </div>
+
+                        <!-- Text Light (Secondary) -->
+                        <div class="color-control">
+                            <label
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">💬
+                                Texto Secundário</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div style="position: relative; width: 42px; height: 42px;">
+                                    <input type="color" id="textLightColorInput"
+                                        style="position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; cursor: pointer; opacity: 0;"
+                                        onchange="updatePreviewColor(this.value, 'textLight')">
+                                    <div id="textLightColorPreview"
+                                        style="width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--border); background-color: #666;">
+                                    </div>
+                                </div>
+                                <span id="textLightColorHex"
+                                    style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">Padrão</span>
+                            </div>
+                        </div>
+
+                        <!-- Text Muted (Disabled) -->
+                        <div class="color-control">
+                            <label
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">🔇
+                                Texto Desabilitado</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div style="position: relative; width: 42px; height: 42px;">
+                                    <input type="color" id="textMutedColorInput"
+                                        style="position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; cursor: pointer; opacity: 0;"
+                                        onchange="updatePreviewColor(this.value, 'textMuted')">
+                                    <div id="textMutedColorPreview"
+                                        style="width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--border); background-color: #999;">
+                                    </div>
+                                </div>
+                                <span id="textMutedColorHex"
+                                    style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">Padrão</span>
+                            </div>
+                        </div>
+
+                        <!-- Border Color -->
+                        <div class="color-control">
+                            <label
+                                style="display: block; font-weight: 500; margin-bottom: 0.5rem; font-size: 0.9rem;">🔲
+                                Bordas</label>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <div style="position: relative; width: 42px; height: 42px;">
+                                    <input type="color" id="borderColorInput"
+                                        style="position: absolute; top:0; left:0; width: 100%; height: 100%; border: none; cursor: pointer; opacity: 0;"
+                                        onchange="updatePreviewColor(this.value, 'border')">
+                                    <div id="borderColorPreview"
+                                        style="width: 100%; height: 100%; border-radius: 8px; border: 1px solid var(--border); background-color: #e0e0e0;">
+                                    </div>
+                                </div>
+                                <span id="borderColorHex"
                                     style="font-family: monospace; color: var(--text-muted); font-size: 0.85rem;">Padrão</span>
                             </div>
                         </div>
@@ -850,9 +945,14 @@
                         };
 
                         setInput('primaryColorInput', customColors.primary, 'primaryColorHex', 'primaryColorPreview');
+                        setInput('primaryDarkColorInput', customColors.primaryDark, 'primaryDarkColorHex', 'primaryDarkColorPreview');
+                        setInput('accentColorInput', customColors.accent, 'accentColorHex', 'accentColorPreview');
                         setInput('bgColorInput', customColors.bg, 'bgColorHex', 'bgColorPreview');
                         setInput('bgCardColorInput', customColors.bgCard, 'bgCardColorHex', 'bgCardColorPreview');
                         setInput('textColorInput', customColors.text, 'textColorHex', 'textColorPreview');
+                        setInput('textLightColorInput', customColors.textLight, 'textLightColorHex', 'textLightColorPreview');
+                        setInput('textMutedColorInput', customColors.textMuted, 'textMutedColorHex', 'textMutedColorPreview');
+                        setInput('borderColorInput', customColors.border, 'borderColorHex', 'borderColorPreview');
 
                         if (customColors.radius) {
                             const rVal = customColors.radius.replace('px', '');
@@ -873,15 +973,15 @@
             updateUI(currentTheme);
         });
 
-        // Theme Defaults Map
+        // Theme Defaults Map (Complete)
         const themeDefaults = {
-            nail: { primary: '#be185d', bg: '#ffffff', bgCard: '#ffffff', text: '#000000', radius: '12px' },
-            barber: { primary: '#d4af37', bg: '#0B0F19', bgCard: '#111827', text: '#F3F4F6', radius: '4px' },
-            hair: { primary: '#D97706', bg: '#FAFAF9', bgCard: '#ffffff', text: '#1C1917', radius: '12px' },
-            spa: { primary: '#059669', bg: '#F0FDF4', bgCard: '#ffffff', text: '#064E3B', radius: '24px' },
-            tattoo: { primary: '#EF4444', bg: '#050505', bgCard: '#0A0A0A', text: '#F3F4F6', radius: '4px' },
-            health: { primary: '#2563EB', bg: '#F1F5F9', bgCard: '#ffffff', text: '#0F172A', radius: '12px' },
-            esthetic: { primary: '#7C3AED', bg: '#F5F3FF', bgCard: '#ffffff', text: '#4C1D95', radius: '20px' }
+            nail: { primary: '#be185d', primaryDark: '#9f1239', accent: '#fce7f3', bg: '#ffffff', bgCard: '#ffffff', text: '#000000', textLight: '#6b7280', textMuted: '#9ca3af', border: '#e5e7eb', radius: '12px' },
+            barber: { primary: '#d4af37', primaryDark: '#a17f1a', accent: '#1f2937', bg: '#0B0F19', bgCard: '#111827', text: '#F3F4F6', textLight: '#9CA3AF', textMuted: '#6B7280', border: '#374151', radius: '4px' },
+            hair: { primary: '#D97706', primaryDark: '#B45309', accent: '#FDE68A', bg: '#FAFAF9', bgCard: '#ffffff', text: '#1C1917', textLight: '#57534E', textMuted: '#A8A29E', border: '#E7E5E4', radius: '12px' },
+            spa: { primary: '#059669', primaryDark: '#047857', accent: '#A7F3D0', bg: '#F0FDF4', bgCard: '#ffffff', text: '#064E3B', textLight: '#374151', textMuted: '#9CA3AF', border: '#D1FAE5', radius: '24px' },
+            tattoo: { primary: '#EF4444', primaryDark: '#B91C1C', accent: '#111827', bg: '#050505', bgCard: '#0A0A0A', text: '#F3F4F6', textLight: '#9CA3AF', textMuted: '#6B7280', border: '#262626', radius: '4px' },
+            health: { primary: '#2563EB', primaryDark: '#1E40AF', accent: '#DBEAFE', bg: '#F1F5F9', bgCard: '#ffffff', text: '#0F172A', textLight: '#475569', textMuted: '#94A3AF', border: '#E2E8F0', radius: '12px' },
+            esthetic: { primary: '#7C3AED', primaryDark: '#6D28D9', accent: '#E9D5FF', bg: '#F5F3FF', bgCard: '#ffffff', text: '#4C1D95', textLight: '#6B7280', textMuted: '#9CA3AF', border: '#E9D5FF', radius: '20px' }
         };
 
         function selectTheme(themeId) {
@@ -903,9 +1003,14 @@
                 };
 
                 updateInput('primaryColorInput', customColors.primary, 'primaryColorHex', 'primaryColorPreview');
+                updateInput('primaryDarkColorInput', customColors.primaryDark, 'primaryDarkColorHex', 'primaryDarkColorPreview');
+                updateInput('accentColorInput', customColors.accent, 'accentColorHex', 'accentColorPreview');
                 updateInput('bgColorInput', customColors.bg, 'bgColorHex', 'bgColorPreview');
                 updateInput('bgCardColorInput', customColors.bgCard, 'bgCardColorHex', 'bgCardColorPreview');
                 updateInput('textColorInput', customColors.text, 'textColorHex', 'textColorPreview');
+                updateInput('textLightColorInput', customColors.textLight, 'textLightColorHex', 'textLightColorPreview');
+                updateInput('textMutedColorInput', customColors.textMuted, 'textMutedColorHex', 'textMutedColorPreview');
+                updateInput('borderColorInput', customColors.border, 'borderColorHex', 'borderColorPreview');
 
                 // Radius
                 if (customColors.radius) {
@@ -926,22 +1031,25 @@
             customColors[type] = val;
 
             // Update Text Labels & Color Previews
-            if (type === 'primary') {
-                document.getElementById('primaryColorHex').textContent = val;
-                document.getElementById('primaryColorPreview').style.backgroundColor = val;
+            const colorMap = {
+                'primary': { hex: 'primaryColorHex', preview: 'primaryColorPreview' },
+                'primaryDark': { hex: 'primaryDarkColorHex', preview: 'primaryDarkColorPreview' },
+                'accent': { hex: 'accentColorHex', preview: 'accentColorPreview' },
+                'bg': { hex: 'bgColorHex', preview: 'bgColorPreview' },
+                'bgCard': { hex: 'bgCardColorHex', preview: 'bgCardColorPreview' },
+                'text': { hex: 'textColorHex', preview: 'textColorPreview' },
+                'textLight': { hex: 'textLightColorHex', preview: 'textLightColorPreview' },
+                'textMuted': { hex: 'textMutedColorHex', preview: 'textMutedColorPreview' },
+                'border': { hex: 'borderColorHex', preview: 'borderColorPreview' }
+            };
+
+            if (colorMap[type]) {
+                const hexEl = document.getElementById(colorMap[type].hex);
+                const prevEl = document.getElementById(colorMap[type].preview);
+                if (hexEl) hexEl.textContent = val;
+                if (prevEl) prevEl.style.backgroundColor = val;
             }
-            if (type === 'bg') {
-                document.getElementById('bgColorHex').textContent = val;
-                document.getElementById('bgColorPreview').style.backgroundColor = val;
-            }
-            if (type === 'bgCard') {
-                document.getElementById('bgCardColorHex').textContent = val;
-                document.getElementById('bgCardColorPreview').style.backgroundColor = val;
-            }
-            if (type === 'text') {
-                document.getElementById('textColorHex').textContent = val;
-                document.getElementById('textColorPreview').style.backgroundColor = val;
-            }
+
             if (type === 'radius') {
                 document.getElementById('radiusVal').textContent = val;
             }
