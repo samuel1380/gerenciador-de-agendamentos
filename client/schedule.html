@@ -57,103 +57,267 @@
                 </div>
 
                 <button type="submit" id="confirmBtn" class="btn mt-4" disabled>Confirmar Agendamento</button>
-            </form>
-        </div>
-    </div>
+                <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+                    rel="stylesheet">
+                </head>
 
-    <script src="js/api.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const serviceId = urlParams.get('service');
-            if (!serviceId) { alert('Serviço não selecionado'); window.location.href = 'services.html'; }
-            document.getElementById('serviceId').value = serviceId;
+                <body>
+                    <div class="container pb-5">
+                        <div class="p-4">
+                            <!-- Header -->
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                                <button onclick="history.back()" class="btn-icon-back" title="Voltar">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M19 12H5"></path>
+                                        <path d="M12 19l-7-7 7-7"></path>
+                                    </svg>
+                                </button>
+                                <h1
+                                    style="font-size: 1.5rem; margin: 0; color: var(--primary-dark); font-family: 'Playfair Display', serif;">
+                                    Agendar Horário</h1>
+                            </div>
 
-            // Set min date to tomorrow
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const dateInput = document.getElementById('dateInput');
-            dateInput.min = new Date().toISOString().split('T')[0];
-            dateInput.value = tomorrow.toISOString().split('T')[0];
+                            <form id="bookingForm" class="fade-in-up">
+                                <div class="form-group">
+                                    <label class="form-label"
+                                        style="font-size: 1rem; color: var(--text); font-weight: 600; margin-bottom: 0.75rem;">Escolha
+                                        a
+                                        Data</label>
+                                    <input type="date" id="dateInput" class="form-input" required>
+                                </div>
 
-            loadSlots(dateInput.value);
+                                <div id="slotsContainer" class="hidden" style="margin-top: 2rem;">
+                                    <label class="form-label"
+                                        style="font-size: 1rem; color: var(--text); font-weight: 600; margin-bottom: 0.75rem;">Horários
+                                        Disponíveis</label>
+                                    <div id="slotsGrid" class="slot-grid"></div>
+                                </div>
 
-            dateInput.addEventListener('change', (e) => loadSlots(e.target.value));
+                                <input type="hidden" id="selectedTime">
+                                <input type="hidden" id="serviceId">
 
-            document.getElementById('bookingForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const date = dateInput.value;
-                const time = document.getElementById('selectedTime').value;
-                const note = document.getElementById('noteInput').value;
+                                <div class="form-group slide-in-up" style="animation-delay: 0.2s;">
+                                    <label class="form-label">
+                                        <span
+                                            style="font-size: 1.1rem; vertical-align: middle; margin-right: 8px;">📝</span>
+                                        Alguma observação?
+                                    </label>
+                                    <textarea id="noteInput" class="form-input"
+                                        placeholder="Ex: Gostaria de unhas de gel, tenho alergia a..."
+                                        rows="4"></textarea>
+                                    <p
+                                        style="font-size: 0.85rem; color: var(--text-light); margin-top: 6px; margin-left: 4px;">
+                                        Opcional. Nos ajude a preparar seu atendimento com carinho.</p>
+                                </div>
 
-                if (!time) return alert('Selecione um horário');
+                                <button type="submit" id="confirmBtn" class="btn mt-4" disabled>Confirmar
+                                    Agendamento</button>
+                            </form>
+                        </div>
+                    </div>
 
-                try {
-                    await api.post('/appointments', {
-                        service_id: serviceId,
-                        date,
-                        time,
-                        note
-                    });
-                    alert('Agendamento solicitado! Aguarde a confirmação.');
-                    window.location.href = 'my-appointment.html';
-                } catch (err) {
-                    alert(err.message);
-                }
-            });
-        });
+                    <script src="js/api.js"></script>
+                    <script>
+                        let currentService = null;
+                        let paymentWhatsapp = null;
 
-        async function loadSlots(date) {
-            const grid = document.getElementById('slotsGrid');
-            const container = document.getElementById('slotsContainer');
-            const confirmBtn = document.getElementById('confirmBtn');
-            const serviceId = document.getElementById('serviceId').value;
+                        document.addEventListener('DOMContentLoaded', async () => {
+                            const urlParams = new URLSearchParams(window.location.search);
+                            const serviceId = urlParams.get('service');
+                            if (!serviceId) { alert('Serviço não selecionado'); window.location.href = 'services.html'; }
+                            document.getElementById('serviceId').value = serviceId;
 
-            grid.innerHTML = 'Carregando...';
-            container.classList.remove('hidden');
-            confirmBtn.disabled = true;
+                            // Load Resources in Parallel
+                            try {
+                                const [services, settings] = await Promise.all([
+                                    api.get('/services'),
+                                    api.get('/settings/public')
+                                ]);
 
-            try {
-                const slots = await api.get(`/schedules?date=${date}&service_id=${serviceId}`);
-                grid.innerHTML = '';
+                                currentService = services.find(s => s.id == serviceId);
+                                if (currentService) {
+                                    document.querySelector('h1').textContent = `Agendar ${currentService.title}`;
+                                }
 
-                // Deduplicate slots based on time to prevent UI repetition
-                const seenTimes = new Set();
-                const uniqueSlots = slots.filter(slot => {
-                    if (seenTimes.has(slot.time)) return false;
-                    seenTimes.add(slot.time);
-                    return true;
-                });
+                                if (settings && settings.payment_whatsapp) {
+                                    paymentWhatsapp = settings.payment_whatsapp.replace(/\D/g, ''); // Ensure only numbers
+                                }
+                            } catch (e) {
+                                console.error('Error loading resources', e);
+                            }
 
-                if (uniqueSlots.length === 0) {
-                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Nenhum horário disponível nesta data.</p>';
-                    return;
-                }
+                            // Set min date to tomorrow
+                            const tomorrow = new Date();
+                            tomorrow.setDate(tomorrow.getDate() + 1);
+                            const dateInput = document.getElementById('dateInput');
+                            dateInput.min = new Date().toISOString().split('T')[0];
+                            dateInput.value = tomorrow.toISOString().split('T')[0];
 
-                // Sort slots by time explicitly to be safe
-                uniqueSlots.sort((a, b) => a.time.localeCompare(b.time));
+                            loadSlots(dateInput.value);
 
-                uniqueSlots.forEach(slot => {
-                    const el = document.createElement('div');
-                    el.className = `slot ${slot.is_blocked ? 'blocked' : 'available'}`;
-                    el.textContent = slot.time;
+                            dateInput.addEventListener('change', (e) => loadSlots(e.target.value));
 
-                    if (!slot.is_blocked) {
-                        el.onclick = () => {
-                            document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
-                            el.classList.add('selected');
-                            document.getElementById('selectedTime').value = slot.time;
-                            confirmBtn.disabled = false;
-                        };
-                    }
-                    grid.appendChild(el);
-                });
-            } catch (e) {
-                console.error(e);
-                grid.innerHTML = 'Erro ao carregar horários.';
-            }
-        }
-    </script>
-</body>
+                            document.getElementById('bookingForm').addEventListener('submit', async (e) => {
+                                e.preventDefault();
+                                const time = document.getElementById('selectedTime').value;
+                                if (!time) return alert('Selecione um horário');
+
+                                // If WhatsApp is configured, show choice
+                                if (paymentWhatsapp) {
+                                    showPaymentModal();
+                                } else {
+                                    // Standard flow
+                                    processAppointment();
+                                }
+                            });
+                        });
+
+                        async function processAppointment(redirectUrl = null) {
+                            const date = document.getElementById('dateInput').value;
+                            const time = document.getElementById('selectedTime').value;
+                            const note = document.getElementById('noteInput').value;
+                            const serviceId = document.getElementById('serviceId').value;
+
+                            try {
+                                await api.post('/appointments', {
+                                    service_id: serviceId,
+                                    date,
+                                    time,
+                                    note
+                                });
+
+                                if (redirectUrl) {
+                                    window.location.href = redirectUrl;
+                                } else {
+                                    alert('Agendamento solicitado! Aguarde a confirmação.');
+                                    window.location.href = 'my-appointment.html';
+                                }
+                            } catch (err) {
+                                alert(err.message);
+                            }
+                        }
+
+                        function showPaymentModal() {
+                            document.getElementById('paymentModal').classList.remove('hidden');
+                        }
+
+                        function closePaymentModal() {
+                            document.getElementById('paymentModal').classList.add('hidden');
+                        }
+
+                        function handlePayLocal() {
+                            closePaymentModal();
+                            processAppointment();
+                        }
+
+                        async function handlePayNow() {
+                            if (!paymentWhatsapp || !currentService) return;
+
+                            const date = document.getElementById('dateInput').value.split('-').reverse().join('/');
+                            const time = document.getElementById('selectedTime').value;
+                            const price = Number(currentService.price).toFixed(2);
+
+                            const message = `Olá! Gostaria de confirmar meu agendamento:
+*Serviço:* ${currentService.title}
+*Valor:* R$ ${price}
+*Data:* ${date}
+*Hora:* ${time}
+
+Gostaria de pagar agora.`;
+
+                            const url = `https://wa.me/55${paymentWhatsapp}?text=${encodeURIComponent(message)}`;
+
+                            // Create appointment and redirect to WhatsApp
+                            await processAppointment(url);
+                        }
+                        async function loadSlots(date) {
+                            const grid = document.getElementById('slotsGrid');
+                            const container = document.getElementById('slotsContainer');
+                            const confirmBtn = document.getElementById('confirmBtn');
+                            const serviceId = document.getElementById('serviceId').value;
+
+                            grid.innerHTML = 'Carregando...';
+                            container.classList.remove('hidden');
+                            confirmBtn.disabled = true;
+
+                            try {
+                                const slots = await api.get(`/schedules?date=${date}&service_id=${serviceId}`);
+                                grid.innerHTML = '';
+
+                                // Deduplicate slots based on time to prevent UI repetition
+                                const seenTimes = new Set();
+                                const uniqueSlots = slots.filter(slot => {
+                                    if (seenTimes.has(slot.time)) return false;
+                                    seenTimes.add(slot.time);
+                                    return true;
+                                });
+
+                                if (uniqueSlots.length === 0) {
+                                    grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center;">Nenhum horário disponível nesta data.</p>';
+                                    return;
+                                }
+
+                                // Sort slots by time explicitly to be safe
+                                uniqueSlots.sort((a, b) => a.time.localeCompare(b.time));
+
+                                uniqueSlots.forEach(slot => {
+                                    const el = document.createElement('div');
+                                    el.className = `slot ${slot.is_blocked ? 'blocked' : 'available'}`;
+                                    el.textContent = slot.time;
+
+                                    if (!slot.is_blocked) {
+                                        el.onclick = () => {
+                                            document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+                                            el.classList.add('selected');
+                                            document.getElementById('selectedTime').value = slot.time;
+                                            confirmBtn.disabled = false;
+                                        };
+                                    }
+                                    grid.appendChild(el);
+                                });
+                            } catch (e) {
+                                console.error(e);
+                                grid.innerHTML = 'Erro ao carregar horários.';
+                            }
+                        }
+                    </script>
+
+                    <!-- Payment Modal -->
+                    <div id="paymentModal" class="hidden"
+                        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: flex; align-items: flex-end; justify-content: center; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);">
+                        <div class="fade-in-up"
+                            style="background: var(--bg-card); width: 100%; max-width: 500px; border-radius: 20px 20px 0 0; padding: 2rem; box-shadow: 0 -4px 20px rgba(0,0,0,0.1);">
+                            <div style="text-align: center; margin-bottom: 2rem;">
+                                <h2
+                                    style="font-size: 1.5rem; color: var(--text); margin-bottom: 0.5rem; font-family: 'Playfair Display', serif;">
+                                    Como deseja pagar?</h2>
+                                <p style="color: var(--text-light); font-size: 0.95rem;">Escolha a opção mais
+                                    conveniente para você.</p>
+                            </div>
+
+                            <div style="display: grid; gap: 1rem;">
+                                <!-- Pay Now -->
+                                <button onclick="handlePayNow()"
+                                    style="background: #25D366; color: white; border: none; padding: 1.25rem; border-radius: 12px; font-weight: 600; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: transform 0.1s;">
+                                    <i class="ph-bold ph-whatsapp-logo" style="font-size: 1.4rem;"></i>
+                                    Pagar Agora (WhatsApp)
+                                </button>
+
+                                <!-- Pay Local -->
+                                <button onclick="handlePayLocal()"
+                                    style="background: var(--primary); color: white; border: none; padding: 1.25rem; border-radius: 12px; font-weight: 600; font-size: 1rem; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">
+                                    <i class="ph-bold ph-storefront" style="font-size: 1.4rem;"></i>
+                                    Pagar no Local
+                                </button>
+
+                                <button onclick="closePaymentModal()"
+                                    style="background: transparent; border: 1px solid var(--border); color: var(--text-light); padding: 1rem; border-radius: 12px; font-weight: 500; cursor: pointer; margin-top: 0.5rem;">
+                                    Cancelar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </body>
 
 </html>
