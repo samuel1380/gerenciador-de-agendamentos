@@ -49,20 +49,6 @@
 
         <div class="card-modern" style="max-width: 600px;">
             <form id="settingsForm">
-                <div style="margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 2rem;">
-                    <h3 style="font-size: 1.1rem; color: var(--primary-color); margin-bottom: 1rem;">Pagamento
-                        (WhatsApp)</h3>
-                    <div class="form-group">
-                        <label>Número do WhatsApp para Pagamento</label>
-                        <input type="text" id="paymentWhatsapp" name="payment_whatsapp" class="input"
-                            placeholder="5511999999999">
-                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 4px;">Apenas números
-                            (DDD + Número). Se preenchido, o cliente verá a opção "Pagar Agora".</p>
-                    </div>
-                </div>
-
-                <h3 style="font-size: 1.1rem; color: var(--primary-color); margin-bottom: 1rem;">Gamificação</h3>
-
                 <div style="display: grid; gap: 1.5rem;">
                     <div class="form-group">
                         <label>Limite Diário de Quiz</label>
@@ -119,7 +105,6 @@
                 document.getElementById('quizXp').value = settings.quiz_xp_reward || 50;
                 document.getElementById('appointmentXp').value = settings.appointment_xp_reward || 100;
                 document.getElementById('xpPerLevel').value = settings.xp_per_level || 200;
-                document.getElementById('paymentWhatsapp').value = settings.payment_whatsapp || '';
             } catch (e) {
                 console.error('Error loading settings:', e);
             }

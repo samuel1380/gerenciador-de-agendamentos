@@ -178,7 +178,7 @@ app.use('/admin', authenticateAdminPage, express.static(path.join(__dirname, 'ad
 // Routes
 // Public Settings Route (Theme)
 app.get('/api/settings/public', (req, res) => {
-    req.db.all("SELECT `key`, value FROM settings WHERE `key` IN ('client_theme', 'client_theme_colors', 'notification_icon_url', 'payment_whatsapp')", [], (err, rows) => {
+    req.db.all("SELECT `key`, value FROM settings WHERE `key` IN ('client_theme', 'client_theme_colors', 'notification_icon_url')", [], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         const result = { client_theme: 'nail' };
         rows.forEach(r => {
