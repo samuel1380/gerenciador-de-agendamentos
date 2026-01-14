@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Concursos 2026</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Merriweather:ital,wght@0,300;0,700;1,400&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <!-- New Premium Header -->
+        <div class="quiz-header-premium">
+            <a href="dashboard.html" style="color: var(--text-secondary); font-size: 1.2rem; transition: color 0.2s;">
+                <i class="fa-solid fa-xmark"></i>
+            </a>
+
+            <div class="quiz-progress-track">
+                <div class="quiz-progress-fill" id="quiz-progress"></div>
+            </div>
+
+            <div class="user-stats">
+                <div class="stat-item">
+                    <i class="fa-solid fa-heart" style="color: var(--color-error);"></i> <span id="lives-counter"
+                        style="min-width: 20px;">5</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-container">
+            <div id="question-area">
+                <div class="question-header">
+                    <div class="question-meta-row">
+                        <span id="question-category" class="question-tag">
+                            <i class="fa-solid fa-layer-group"></i> Geral
+                        </span>
+                        <span style="font-size: 0.85rem; color: var(--text-tertiary);" id="question-counter">1/20</span>
+                    </div>
+                    <h2 class="question-text" id="question-text">Carregando pergunta...</h2>
+                </div>
+
+                <div class="options-grid" id="options-grid">
+                    <!-- Options injected by JS as .option-card -->
+                </div>
+            </div>
+
+            <div class="quiz-footer">
+                <!-- Premium Feedback Area -->
+                <div id="feedback-area" style="display: none;">
+                    <!-- Injected by JS -->
+                </div>
+
+                <div class="quiz-actions">
+                    <button class="btn-primary-glow" id="check-btn" disabled>
+                        Verificar Resposta
+                    </button>
+                    <button class="btn-primary-glow" id="next-btn" style="display: none;">
+                        Próxima <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="sound-correct" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-jump-coin-216.mp3"></audio>
+    <audio id="sound-wrong"
+        src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

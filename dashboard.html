@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bizu - Área do Estudante</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <img src="assets/img/logo_bizu.png" alt="Bizu Logo">
+            </div>
+            <div class="user-stats">
+                <div class="stat-item" title="Vidas">
+                    <i class="fa-solid fa-heart" style="color: #ef4444;"></i> <span id="lives-counter">500</span>
+                    <span id="lives-timer" style="font-size: 0.7rem; color: #94a3b8; margin-left: 5px;"></span>
+                </div>
+                <div class="stat-item" title="Dias Seguidos">
+                    <i class="fa-solid fa-fire" style="color: #fb923c;"></i> <span id="streak-counter">0</span>
+                </div>
+                <!-- XP removed to clean up, kept inside profile or hero -->
+                <button onclick="openProfile()" class="stat-item"
+                    style="background: transparent; border: none; cursor: pointer; color: var(--text-color); font-size: 1.2rem;">
+                    <i class="fa-solid fa-circle-user"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <div class="dashboard-hero">
+            <div class="hero-stats-card">
+                <h2>Olá, Estudante</h2>
+                <p>Seu desempenho está acima da média. Continue focado.</p>
+                <div style="margin-top: 20px; display: flex; gap: 20px;">
+                    <div>
+                        <div style="font-size: 2.5rem; font-weight: 800;" id="xp-display">0</div>
+                        <div style="text-transform: uppercase; opacity: 0.7; font-size: 0.8rem;">Pontos de Experiência
+                        </div>
+                    </div>
+                    <div style="border-left: 1px solid rgba(255,255,255,0.2); padding-left: 20px;">
+                        <div style="font-size: 2.5rem; font-weight: 800;" id="level-display">1</div>
+                        <div style="text-transform: uppercase; opacity: 0.7; font-size: 0.8rem;">Nível Atual</div>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chart-line hero-progress-ring"></i>
+            </div>
+
+            <div class="quick-actions">
+                <div class="action-btn" onclick="openProfile()">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <div>
+                        <strong>Meu Perfil</strong><br>
+                        <span style="font-size: 0.8rem; color: #94a3b8;">Ver estatísticas completas</span>
+                    </div>
+                </div>
+                <div class="action-btn" onclick="window.scrollTo({top: 500, behavior: 'smooth'})">
+                    <i class="fa-solid fa-play"></i>
+                    <div>
+                        <strong>Continuar Estudo</strong><br>
+                        <span style="font-size: 0.8rem; color: #94a3b8;">Ir para meus cursos</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="concursos-grid" id="concursos-list">
+            <!-- Populated by JS -->
+        </div>
+    </div>
+
+    <!-- Profile/Database Modal -->
+    <div id="profile-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 1.5rem;"><i class="fa-solid fa-database"></i> Dados do Aluno</h2>
+                <button onclick="closeProfile()" style="background: none; color: #94a3b8; font-size: 1.2rem;"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="stat-grid">
+                <div class="stat-box">
+                    <div class="stat-value" id="db-level">1</div>
+                    <div class="stat-label">Nível Atual</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="db-xp" style="color: var(--accent-color)">0</div>
+                    <div class="stat-label">XP Total</div>
+                </div>
+                <div class="stat-box" onclick="openStore()" style="cursor: pointer; transition: transform 0.2s;"
+                    onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    <div class="stat-value"><i class="fa-solid fa-gem"
+                            style="color: var(--accent-color); font-size: 1rem;"></i> <span id="db-gems">0</span></div>
+                    <div class="stat-label">Loja</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="db-gems" style="color: #22d3ee">0</div>
+                    <div class="stat-label">Cristais</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="db-completed">0</div>
+                    <div class="stat-label">Lições Feitas</div>
+                </div>
+            </div>
+
+            <div
+                style="text-align: left; margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+                <div class="profile-progress-info">
+                    <span>Progresso para <strong>Nível <span id="next-level-num">2</span></strong></span>
+                    <span id="db-progress-percent" class="progress-badge">0%</span>
+                </div>
+                <div class="progress-container" style="height: 10px;">
+                    <div id="db-progress-bar" class="progress-bar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Study Theory Modal (MISSING PREVIOUSLY) -->
+    <div id="study-modal" class="modal-overlay">
+        <div class="modal-content fullscreen-modal-content">
+            <div
+                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0;">
+                <h2 style="font-size: 1.5rem;" id="study-title"><i class="fa-solid fa-book-open"></i> Teoria & Bizus
+                </h2>
+                <button onclick="closeStudy()" style="background: none; color: #94a3b8; font-size: 1.2rem;"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div id="study-content-area" class="study-content-container" style="flex: 1; overflow-y: auto;">
+                <!-- Dynamic Content Loads Here -->
+            </div>
+
+
+            <!-- End Study Content -->
+        </div>
+    </div>
+
+    <!-- Store Modal (Moved Outside) -->
+    <div id="store-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 500px; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="font-size: 1.5rem; color: var(--text-color);"><i class="fa-solid fa-store"
+                        style="color: var(--accent-color);"></i> Loja Bizu</h2>
+                <button onclick="closeStore()" style="background: none; color: #94a3b8; font-size: 1.2rem;"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div
+                style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <span style="color: #94a3b8;">Seu Saldo:</span>
+                <span style="font-size: 1.5rem; font-weight: 800; color: var(--accent-color);"><i
+                        class="fa-solid fa-gem"></i> <span id="store-gems-display">0</span></span>
+            </div>
+
+            <div class="store-grid">
+                <!-- Item 1: Lives Refill -->
+                <div class="store-item">
+                    <div class="store-icon-box">
+                        <i class="fa-solid fa-heart-pulse"></i>
+                    </div>
+                    <div style="flex: 1; text-align: left;">
+                        <h4>Recarregar Vidas</h4>
+                        <p>Enche suas 500 vidas agora.</p>
+                    </div>
+                    <button class="buy-btn" onclick="UserDB.buyItem('lives_refill')">
+                        500 <i class="fa-solid fa-gem"></i>
+                    </button>
+                </div>
+
+                <!-- Item 2: Skip Question (Visual Only for now) -->
+                <div class="store-item locked">
+                    <div class="store-icon-box" style="background: rgba(255,255,255,0.05); color: #64748b;">
+                        <i class="fa-solid fa-forward"></i>
+                    </div>
+                    <div style="flex: 1; text-align: left;">
+                        <h4 style="color: #64748b;">Pular Questão</h4>
+                        <p style="color: #475569;">Pule sem perder vida.</p>
+                    </div>
+                    <button class="buy-btn disabled">
+                        Breve
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
